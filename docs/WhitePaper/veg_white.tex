@@ -1,0 +1,83 @@
+%%%%%%%%%%%%%%%%%%%% book.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% sample root file for the chapters of your "monograph"
+%
+% Use this file as a template for your own input.
+%
+%%%%%%%%%%%%%%%% Springer-Verlag %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% RECOMMENDED %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[graybox,envcountchap,sectrefs]{svmono}
+
+% choose options for [] as required from the list
+% in the Reference Guide
+
+\usepackage{mathptmx}
+\usepackage{helvet}
+\usepackage{courier}
+
+%
+\usepackage{type1cm}
+
+\usepackage{makeidx}         % allows index generation
+\usepackage{graphicx}        % standard LaTeX graphics tool
+                             % when including figure files
+\graphicspath{{Figures/}}
+\usepackage{multicol}        % used for the two-column index
+\usepackage[bottom]{footmisc}% places footnotes at page bottom
+
+%%% The following removes the Springer label from the book
+\usepackage{xpatch}
+\makeatletter
+\xpatchcmd{\@maketitle}{{\Large Springer\par}}{}{}{}
+\makeatother
+
+% see the list of further useful packages
+% in the Reference Guide
+
+\makeindex             % used for the subject index
+                       % please use the style svind.ist with
+                       % your makeindex program
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Command to allow for headers at the top of certain pages
+\usepackage{titleps}
+\newpagestyle{withheadrule}{%
+ \headrule
+\sethead[\footnotesize\thepage][][\footnotesize\thechapter~\chaptertitle]{\footnotesize\thesection~\sectiontitle}{}{\footnotesize\thepage}
+\setfoot{}{}{}
+}
+\pagestyle{withheadrule}
+
+\begin{document}
+
+\title{Creating Vegvisir: A Partition Tolerant Blockchain}
+\subtitle{A White Paper}
+\author{Danny Adams, Gloire Rubambiza, Xinwen Wang, and Robbert van Renesse}
+\frontmatter%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\let\cleardoublepage\clearpage
+\maketitle
+\tableofcontents
+
+\include{Contents/acronym}
+\include{Contents/intro}
+\mainmatter%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\include{Contents/part1}
+\include{Contents/chapter_1}
+\include{Contents/part2}
+\include{Contents/part3}
+\include{Contents/acknow}
+\bibliographystyle{abbrv}
+% argument is your BibTeX string definitions and bibliography database(s)
+\bibliography{references}
+
+%\include{Contents/appendix}
+
+\backmatter%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\include{Contents/glossary}
+%\include{Contents/solutions}
+\printindex
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}

@@ -1,0 +1,8 @@
+*.aux
+*.log
+*.toc
+*.idx
+*.swp
+*.bbl
+*.blg
+veg_white.pdf

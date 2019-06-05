@@ -1,0 +1,4 @@
+include ':app', ':vegvisirCore', ':vegvisirGossip', ':vegvisirDatatype'
+project(':vegvisirCore').projectDir = new File('deps/Vegvisir-Core/vegvisirCore')
+project(':vegvisirGossip').projectDir = new File('deps/Vegvisir-Core/deps/Vegvisir-Gossip/vegvisirGossip')
+project(':vegvisirDatatype').projectDir = new File('deps/Vegvisir-Core/deps/Vegvisir-Gossip/deps/VegvisirDatatype/vegvisirDatatype')
