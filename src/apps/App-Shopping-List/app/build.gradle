@@ -35,4 +35,5 @@ dependencies {
     implementation 'org.bouncycastle:bcpkix-jdk15on:1.60'
     implementation project(':vegvisirCore')
     implementation project(':vegvisirDatatype')
+    implementation project(':vegvisirPubSub')
 }

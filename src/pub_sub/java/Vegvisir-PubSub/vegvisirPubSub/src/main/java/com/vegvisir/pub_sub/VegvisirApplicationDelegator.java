@@ -1,43 +1,33 @@
-package com.vegvisir.app.shoppinglist;
+package com.vegvisir.pub_sub;
 
-import com.vegvisir.pub_sub.VegvisirApplicationDelegator;
-import com.vegvisir.pub_sub.VegvisirInstance;
 import com.vegvisir.core.datatype.proto.Block;
 
-public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDelegator {
+
+/**
+ * Ideally, all applications should implement this interface.
+ */
+public interface VegvisirApplicationDelegator {
 
 
     /**
      * Vegvisir will call this function to init and run application.
-     *
      * @param instance a underlying Vegvisir instance for application use.
      */
-    @Override
-    public void init(VegvisirInstance instance) {
-        /* TODO: Implement this */
-    }
+    public void init(VegvisirInstance instance);
 
 
     /**
      * An application implemented function. This function will get called whenever a new transaction
      * subscribed by this application arrives.
-     *
      * @param tx the new transaction that this application may interest.
      */
-    @Override
-    public void applyTransaction(Block.Transaction tx) {
-        /* TODO: Implement this */
-    }
+    public void applyTransaction(com.vegvisir.core.datatype.proto.Block.Transaction tx);
 
 
     /**
      * Similar to above function except this function passes transactions in a batch for performance
      * optimization.
-     *
      * @param txs a list of transactions to be applied.
      */
-    @Override
-    public void applyTransactions(Iterable<Block.Transaction> txs) {
-        /* TODO: Implement this */
-    }
+    public void applyTransactions(Iterable<Block.Transaction> txs);
 }
