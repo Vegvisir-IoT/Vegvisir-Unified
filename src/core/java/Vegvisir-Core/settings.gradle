@@ -11,5 +11,5 @@
 
 rootProject.name = 'Vegvisir-Core'
 
-project(':vegvisirGossip').projectDir = new File('deps/Vegvisir-Gossip/vegvisirGossip')
-project(':vegvisirDatatype').projectDir = new File('deps/Vegvisir-Gossip/deps/VegvisirDatatype/vegvisirDatatype')
+project(':vegvisirGossip').projectDir = new File('deps/vegvisirGossip')
+project(':vegvisirDatatype').projectDir = new File('deps/vegvisirDatatype')

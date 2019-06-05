@@ -1,2 +1,2 @@
 include ':vegvisirAndroid', ':vegvisirDatatype'
-project(':vegvisirDatatype').projectDir = new File('deps/VegvisirDatatype/vegvisirDatatype')
+project(':vegvisirDatatype').projectDir = new File('deps/vegvisirDatatype')
