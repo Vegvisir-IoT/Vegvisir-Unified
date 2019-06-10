@@ -1,5 +1,6 @@
 syntax = "proto3";
 
+
 package vegvisir.network.datatype;
 
 option java_multiple_files = true;
@@ -7,14 +8,15 @@ option java_package = "com.vegvisir.network.datatype.proto";
 option java_outer_classname = "VegvisirNetworkDatatypeProto";
 option objc_class_prefix = "VEGVISIR";
 
+import "vegvisir.proto";
 import "vegvisirCommon.proto";
-import "charlotte.proto";
-
 
 message VegvisirProtocolMessage {
-    vegvisir.common.datatype.ControlSignal cmd = 1;
-    repeated charlotte.Block blocks = 2;
-    vegvisir.common.datatype.ProtocolVersion version = 3;
+    oneof message_types {
+        vegvisir.common.datatype.PeerRequest request = 1;
+        vegvisir.common.datatype.PeerResponse response = 2;
+        vegvisir.common.datatype.Update update = 3;
+    }
 }
 
 message Payload {
@@ -41,13 +43,11 @@ message PeerView {
   repeated Peer connected_peers = 2;
 }
 
-
-
 // EndPointConnection
 message Connection {
   Identifier remote_id = 1;
-  vegvisir.common.datatype.Timestamp connected_time = 2;
-  vegvisir.common.datatype.Timestamp wakeup_time = 3;
+  vegvisir.core.datatype.Timestamp connected_time = 2;
+  vegvisir.core.datatype.Timestamp wakeup_time = 3;
 }
 
 message ConnectionCloseResponse {
