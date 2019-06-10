@@ -2,6 +2,8 @@ package com.vegvisir.pub_sub;
 
 import com.vegvisir.core.datatype.proto.Block;
 
+import java.util.Set;
+
 
 /**
  * Ideally, all applications should implement this interface.
@@ -19,15 +21,14 @@ public interface VegvisirApplicationDelegator {
     /**
      * An application implemented function. This function will get called whenever a new transaction
      * subscribed by this application arrives.
-     * @param tx the new transaction that this application may interest.
+     * @param topics topics that this transaction is created for.
+     * @param payload application specific data.
+     * @param tx_id A unique identifier for the transaction.
+     * @param deps which transactions this transaction depends on.
      */
-    public void applyTransaction(com.vegvisir.core.datatype.proto.Block.Transaction tx);
-
-
-    /**
-     * Similar to above function except this function passes transactions in a batch for performance
-     * optimization.
-     * @param txs a list of transactions to be applied.
-     */
-    public void applyTransactions(Iterable<Block.Transaction> txs);
+    public void applyTransaction(
+            Set<String> topics,
+            byte[] payload,
+            TransactionID tx_id,
+            Set<TransactionID> deps);
 }

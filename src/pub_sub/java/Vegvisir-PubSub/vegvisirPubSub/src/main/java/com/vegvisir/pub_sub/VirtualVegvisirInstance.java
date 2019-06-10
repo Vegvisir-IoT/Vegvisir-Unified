@@ -3,9 +3,12 @@ package com.vegvisir.pub_sub;
 import com.google.protobuf.ByteString;
 import com.vegvisir.core.datatype.proto.Block;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingDeque;
 
 
@@ -34,6 +37,8 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
 
     private static VirtualVegvisirInstance instance = null;
 
+    private static final Object instanceLock = new Object();
+
     private static Thread pollingThread;
 
 
@@ -45,11 +50,15 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
     public static VirtualVegvisirInstance getInstance()
     {
         if (instance == null) {
-            instance = new VirtualVegvisirInstance();
-            instance.deviceToTransactionHeight = new HashMap<>();
-            instance.txQueue = new LinkedBlockingDeque<>();
-            pollingThread = new Thread(() -> instance.poll());
-            pollingThread.start();
+            synchronized (instanceLock) {
+                if (instance == null) {
+                    instance = new VirtualVegvisirInstance();
+                    instance.deviceToTransactionHeight = new HashMap<>();
+                    instance.txQueue = new LinkedBlockingDeque<>();
+                    pollingThread = new Thread(instance::poll);
+                    pollingThread.start();
+                }
+            }
         }
         return instance;
     }
@@ -93,7 +102,18 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
                             this.wait();
                     }
                 }
-                delegator.applyTransaction(txQueue.take());
+                Block.Transaction tx = txQueue.take();
+
+                Set<TransactionID> deps = new HashSet<>();
+                for (Block.Transaction.TransactionId id : tx.getDependenciesList()) {
+                    deps.add(new TransactionID(id.getDeviceId(), id.getTransactionHeight()));
+                }
+                List<String> topics = tx.getTopicsList();
+                delegator.applyTransaction(
+                        new HashSet<String>(tx.getTopicsList()),
+                        tx.getPayload().toByteArray(),
+                        new TransactionID(tx.getTransactionId().getDeviceId(), tx.getTransactionId().getTransactionHeight()),
+                        deps);
             } catch (InterruptedException ex) {
                 System.err.println("Interrupted transaction polling thread! Will exit.");
                 break;
@@ -109,51 +129,51 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
      * update its states.
      *
      * @param context      a context object of the application.
-     * @param topic        a pub/sub topic that unique identify who are interested in this transaction.
+     * @param topics        a pub/sub topic that unique identify who are interested in this transaction.
      * @param payload      a application defined data payload in byte array format.
      * @param dependencies a list of transactionIds that this transaction depends on.
      * @return true, if the transaction is valid.
      */
     @Override
     public boolean addTransaction(VegvisirApplicationContext context,
-                                  String topic,
+                                  Set<String> topics,
                                   byte[] payload,
-                                  List<Block.Transaction.TransactionId> dependencies)
+                                  Set<TransactionID> dependencies)
     {
-        return _addTransaction(this.deviceId, topic, payload, dependencies);
+        return _addTransaction(this.deviceId, topics, payload, dependencies);
     }
 
 
     public boolean addTransactionByDevice(String deviceId,
-                                          String topic,
+                                          Set<String> topics,
                                           byte[] payload,
-                                          List<Block.Transaction.TransactionId> dependencies)
+                                          Set<TransactionID> dependencies)
     {
-        return _addTransaction(deviceId, topic, payload, dependencies);
+        return _addTransaction(deviceId, topics, payload, dependencies);
     }
 
 
     public boolean addTransactionByDeviceAndHeight(String deviceId,
                                                    long height,
-                                                   String topic,
+                                                   Set<String> topics,
                                                    byte[] payload,
-                                                   List<Block.Transaction.TransactionId> dependencies)
+                                                   Set<TransactionID> dependencies)
     {
         if (!deviceToTransactionHeight.containsKey(deviceId)) {
             deviceToTransactionHeight.put(deviceId, height);
         }
-        return _addTransaction(deviceId, height, topic, payload, dependencies);
+        return _addTransaction(deviceId, height, topics, payload, dependencies);
     }
 
 
     private boolean _addTransaction(String deviceId,
-                                    String topic,
+                                    Set<String> topics,
                                     byte[] payload,
-                                    List<Block.Transaction.TransactionId> dependencies)
+                                    Set<TransactionID> dependencies)
     {
         return _addTransaction(deviceId,
                 deviceToTransactionHeight.get(deviceId),
-                topic,
+                topics,
                 payload,
                 dependencies
         );
@@ -166,20 +186,24 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
      * @param deviceId      a identifier for a device.
      * @param height        a natural number identifying the number of transaction has been created by that
      *                      device.
-     * @param topic         a pub/sub topic that unique identify who are interested in this transaction.
+     * @param topics         a pub/sub topic that unique identify who are interested in this transaction.
      * @param payload       a application defined data payload in byte array format.
      * @param dependencies  a list of transactionIds that this transaction depends on.
      * @return true, if the transaction is valid.
      */
     private boolean _addTransaction(String deviceId,
                                     long height,
-                                    String topic,
+                                    Set<String> topics,
                                     byte[] payload,
-                                    List<Block.Transaction.TransactionId> dependencies)
+                                    Set<TransactionID> dependencies)
     {
+        List<Block.Transaction.TransactionId> deps = new ArrayList<>();
+        for (TransactionID id : dependencies) {
+            deps.add(Block.Transaction.TransactionId.newBuilder().setTransactionHeight(id.getTransactionHeight()).setDeviceId(id.getDeviceID()).build());
+        }
         com.vegvisir.core.datatype.proto.Block.Transaction.Builder builder = com.vegvisir.core.datatype.proto.Block.Transaction.newBuilder();
-        builder.addAllDependencies(dependencies)
-                .setTopic(topic)
+        builder.addAllDependencies(deps)
+                .addAllTopics(topics)
                 .setPayload(ByteString.copyFrom(payload));
         com.vegvisir.core.datatype.proto.Block.Transaction.TransactionId id = com.vegvisir.core.datatype.proto.Block.Transaction.TransactionId.newBuilder()
                 .setDeviceId(deviceId)

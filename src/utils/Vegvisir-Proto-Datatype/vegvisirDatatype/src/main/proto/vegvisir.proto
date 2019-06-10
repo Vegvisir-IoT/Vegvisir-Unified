@@ -30,7 +30,7 @@ message Block {
             string deviceId = 1;
             int64 transactionHeight = 2;
         }
-        string topic = 1;
+        repeated string topics = 1;
         TransactionId transactionId = 2;
         repeated TransactionId dependencies = 3;
         bytes payload = 4;

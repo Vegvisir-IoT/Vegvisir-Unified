@@ -3,6 +3,7 @@ package com.vegvisir.pub_sub;
 import com.vegvisir.core.datatype.proto.Block;
 
 import java.util.List;
+import java.util.Set;
 
 public interface VegvisirInstance {
 
@@ -27,13 +28,13 @@ public interface VegvisirInstance {
      * is valid, then this transaction will be pass to applyTransaction immediately to let application
      * update its states.
      * @param context a context object of the application.
-     * @param topic a pub/sub topic that unique identify who are interested in this transaction.
+     * @param topics a set of pub/sub topic that unique identify who are interested in this transaction.
      * @param payload a application defined data payload in byte array format.
-     * @param dependencies a list of transactionIds that this transaction depends on.
+     * @param dependencies a set of transactionIds that this transaction depends on.
      * @return true, if the transaction is valid.
      */
     public boolean addTransaction(VegvisirApplicationContext context,
-                                  String topic,
+                                  Set<String> topics,
                                   byte[] payload,
-                                  List<Block.Transaction.TransactionId> dependencies);
+                                  Set<TransactionID> dependencies);
 }
