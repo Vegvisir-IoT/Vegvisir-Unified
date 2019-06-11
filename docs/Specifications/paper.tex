@@ -1,0 +1,175 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{comment}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+\title{Vegvisir Blockchain Formalized}
+\author{Robbert van Renesse}
+\date{Department of Computer Science, Cornell University}
+
+\widowpenalty 10000
+\clubpenalty 10000
+\renewcommand{\topfraction}{.99}
+\renewcommand{\bottomfraction}{.99}
+\renewcommand{\textfraction}{.01}
+\renewcommand{\floatpagefraction}{.9}
+\renewcommand{\dbltopfraction}{.99}
+\renewcommand{\dblfloatpagefraction}{.9}
+
+\begin{document}
+
+\maketitle
+
+\section*{Vegvisir Block Graph}
+
+The system is comprised of a set of devices $\mathcal{D} = \{ d_0, ... \}$.
+Some devices are correct and follow the specification below,
+but others may be \emph{Byzantine} and depart from the specification.  We denote by
+$\mathcal{D}^o \subseteq \mathcal{D}$ the set of correct devices.
+
+A \emph{block} $b \in \mathcal{B}$ is an immutable object with the following fields:
+\begin{itemize}
+\item $b.\mathit{owner} \in \mathcal{D}$: the creator of the block;
+\item $b.\mathit{txs}$: a set of transactions;
+\item $b.\mathit{parents} \in 2^\mathcal{H}$: a set of hashes of parent blocks.
+\item $b.\mathit{signature}$: an unforgeable digital signature from the owner of this block.
+\end{itemize}
+
+A hash function $\mathit{hash}: \mathcal{B} \rightarrow \mathcal{H}$ maps a block to a unique
+identifier in $\mathcal{H}$.  It has the usual properties of cryptographic hash functions:
+\begin{itemize}
+\item it is straightforward to compute $\mathit{hash}(b)$ for any $b \in \mathcal{B}$;
+\item given a $h \in \mathcal{H}$, it is computationally infeasible to find an $b$ such that $h = \mathit{hash}(b)$ (i.e., \textit{hash} is hard to invert);
+\item given $h = \mathit{hash}(b)$, it is computationally infeasible to find an $b'$ such that $h = \mathit{hash}(b')$ (i.e., \textit{hash} is \emph{collision-free});
+\end{itemize}
+
+Let $B \subseteq \mathcal{B}$ be a set of blocks.  We call $B$ \emph{complete} iff
+\begin{itemize}
+\item $\forall b \in B: \forall h \in b.\mathit{parents}: \exists b' \in B: \mathit{hash}(b') = h$
+\end{itemize}
+
+Note that a complete set of blocks and their parent relationships induce a \emph{block graph}.
+We postulate that by the cryptographic properties of the hash function,
+a finite block graph cannot have cycles in it and therefore forms a Directed Acyclic Graph (DAG).
+We also observe that the union of two complete sets is a complete set (but not the intersection).
+We say that $b \leq b'$ if there is a path from $b'$ to $b$.
+We also say that $b'$ \emph{depends on} $b$.
+
+We call a device $d$ \emph{well-behaved} in $B$ iff
+\begin{itemize}
+\item $\forall b, b' \in B: b.\mathit{owner} = b'.\mathit{owner} = d \implies b \leq b' \vee b' \leq b$
+\end{itemize}
+
+A \emph{Vegvisir Block Graph} (VBG) $B$ has the following properties:
+\begin{enumerate}
+\item $B$ is a complete set of blocks;
+\item There is a unique block $g \in B$ such that for all $b \in B: g \leq b$.  We call $g$ the \emph{genesis block} of $B$;
+\item $\forall d \in \mathcal{D}^o$: $d$ is well-behaved in $B$.
+\end{enumerate}
+We denote by $\mathcal{VBG}$, $\mathcal{VBG} \subset \mathcal{B}$, the set of of all VBGs.
+
+We call two VBGs with the same genesis block \emph{related}.
+Note that the union $B_1 \cup B_2$ of two related VBGs $B_1$ and $B_2$ is also a VBG and
+related to both $B_1$ and $B_2$.
+
+Given a block $b$ in a VBG, we define $\mathit{ancestry}(b)$
+to be the set of blocks consisting of $b$ and its ancestors all the way to the genesis block, that is:
+\begin{equation*}
+\mathit{ancestry}(b) \triangleq \{ b' \in B ~|~ b' \leq b \}
+\end{equation*}
+Ancestry is the transitive closure of the parent relationship.
+Note that $\mathit{ancestry}(b)$ is a VBG that is related to $B$, and
+$\mathit{ancestry}(g) = \{ g \}$.  Also,
+\begin{equation*}
+\forall b' \in \mathit{ancestry}(b): \mathit{ancestry}(b') \subseteq \mathit{ancestry}(b)
+\end{equation*}
+Note that $\mathit{hash}(b)$ uniquely identifies $\mathit{ancestry}(b)$.
+
+We define a function $\mathit{height} : 2^\mathcal{VBG} \rightarrow \mathcal{D} \rightarrow \mathbb{N} \cup \{ \bot \}$
+as follows:
+\begin{itemize}
+\item if $d$ is well-behaved in VBG B, then $\mathit{height}(B, d) = |\{ b \in B ~|~ b.\textit{owner} = d \}|$, that is, the number of blocks that $d$ owns in B.
+\item if $d$ is not well-behaved in $B$, then $\mathit{height}(B, d)$ is $\bot$.
+\end{itemize}
+
+We will call $\mathit{height}(B)$ the \emph{vector timestamp} of $B$.
+Also, for each well-behaved device, we will call the most recent block added by $d$ in $B$ the
+\emph{leader block} of $d$.
+
+\section*{Authorization}
+
+We are now going to constrain which devices are allowed to add blocks to a VBG $B$ by constraining
+the set of parents a block signed by a particular device is allowed to have.
+We define two special transactions $\mathtt{delegate(d)}$ and $\mathtt{revoke}(d)$.
+We say that a device $d$ is authorized in block $b$ iff both the following
+conditions hold:
+\begin{itemize}
+\item $\exists b': b' \leq b \wedge \mathtt{delegate}(d) \in b'.\mathit{txs} \wedge (b'.\mathit{owner} \ne d \vee b'.\mathit{parents} = \emptyset)$
+\item $\forall b': b' \leq b \implies \mathtt{revoke}(d) \notin b.\mathit{txs}$
+\end{itemize}
+(Note that only a genesis block can, and should, delegate to its owner.)
+We call a block \emph{legal} if its owner is authorized by the block.
+A VBG $B$ then has the additional constraint that all blocks owned by correct devices be legal and
+only depend on legal blocks.
+
+A block $b$ that is not legal is proof-of-misbehavior of $b.\mathit{owner}$,
+as are blocks that depend on $b$.
+We modify the \textit{height} function so
+that $\mathit{height}(B, d) = \bot$ if $B$ contains a block owned by $d$ that is not legal
+or depends on a block that is not legal.
+
+\section*{Reconciliation}
+
+Each correct device $d \in \mathcal{D}^o$ maintains a set of blocks $d.\mathit{blocks}$.
+The Vegvisir system maintains the following invariants:
+
+\begin{itemize}
+\item For each correct device $d \in \mathcal{D}^o$, $d.\mathit{blocks}$ is a VBG;
+\item For each correct device $d \in \mathcal{D}^o$, $d.\mathit{blocks}$ can only grow over time;
+\item For any two correct devices $d_1$ and $d_2$, $d_1.\mathit{blocks}$ and $d_2.\mathit{blocks}$ are related (i.e., they have the same genesis block).
+\end{itemize}
+
+The object of reconciliation is for some group of correct devices $D \subseteq \mathcal{D}^o$
+and each device $d \in D$, 
+to replace $d.\mathit{blocks}$ with $\bigcup_{d' \in D} d'.\mathit{blocks}$.
+
+Usually the cardinality of $D$ will be two.  A simple reconciliation protocol,
+when there are two devices $d$ and $d'$ could be as follows:
+
+\begin{enumerate}
+\item $d$ sends vector timestamp $H = \mathit{height}(d.\mathit{blocks})$ to $d'$.  Optionally $d$ can include the maximum number of blocks that $d$ is willing to receive in return.
+\item $d'$ uses $H$ to determine $d'.\mathit{blocks} \backslash d.\mathit{blocks}$ (the blocks that $d'$ has but $d$ does not).  If this is the empty set, the remainder of this protocol is skipped.
+\item $d'$ streams the blocks to $d$.  $d'$ sends the blocks in an order so that, upon arrival of a block, $d$ can add the block to $d.\mathit{blocks}$ while maintaining the invariant that $d.\mathit{blocks}$ be complete.  (TODO: we should prove that such an order always exists.)
+\item $d$ adds each block to $d.\mathit{blocks}$, after checking that adding the block does not violate
+the invariant that $d.\mathit{blocks}$ is a VBG.
+\item After receiving the last block, $d$ determines the set $D^o$ of devices that are well-behaved in $d.\mathit{blocks}$.  $d$ then creates a new block $b$ (with possibly an empty set of transactions if none are pending) with the last blocks of the devices in $D^o$ as its parents.  $d$ adds $b$ to $d.\mathit{blocks}$ and sends $b$ to $d'$.
+\item After receiving $b$, $d'$ checks to make sure that adding $b$ to $d'.\mathit{blocks}$ maintains the VBG invariant and, if so, adds the block to $d'.\mathit{blocks}$.
+\end{enumerate}
+
+This protocol can be executed in the opposite direction concurrently.
+It can also safely be terminated at any time, for example if a network connection breaks.
+TODO: we have to prove that this protocol satisfies the invariants listed above and results in
+the VBGs of all devices converging to the same set.
+
+\section*{Witnesses}
+
+Let $b$ be a block.  A correct device $d$ is said to \emph{witness} a block $b$ if $b \in d.\mathit{blocks}$.
+Given a set of correct devices $D$, the set of blocks that are witnessed by all devices in $D$ are
+characterized by $\min_d \mathit{height}(d.\mathit{blocks})$.
+
+The concept of witness is important in determining which blocks are durable in Vegvisir.
+Therefore, devices collect signed vector timestamps from the other devices.  Note that in Step~1
+of the reconciliation protocol described above, the devices already send timestamps to one another.
+We now require that these be signed.  In addition, the signed vector timestamps may be gossiped
+between devices, that is, the sets of signed vector timestamps should be reconciled as well.
+
+Each device keeps track of the set of vector timestamps received from its peers.  For any two
+vector timestamps issued by a correct device, one will dominate the other, so peers only need to
+keep the maximum.  If a device receives timestamps from the same peer that do not dominate one
+another, that is a proof-of-misbehavior, and the device can simply mark the peer as faulty.
+The set of vector timestamps form a square matrix with a row and column for each device.
+
+\end{document}
+
