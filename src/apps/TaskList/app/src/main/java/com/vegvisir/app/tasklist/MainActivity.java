@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+
 import java.util.HashMap;
 import java.util.Set;
 
@@ -24,8 +25,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText mItemEdit;
     private Button mAddButton;
     private ArrayAdapter<String> mAdapter;
-    public HashMap<String, TransactionID> latestTransactions;
-    public HashMap<String, Set<TransactionID>> dependencySets;
+    //public HashMap<String, TransactionID> latestTransactions;
+    //public HashMap<String, Set<TransactionTuple>> dependencySets;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
