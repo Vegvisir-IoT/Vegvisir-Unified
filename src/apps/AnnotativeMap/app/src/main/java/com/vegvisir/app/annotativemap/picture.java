@@ -110,6 +110,20 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
         try {
             JSONObject info = new JSONObject(stringBuilder.toString());
             JSONObject anno_array = info.getJSONObject("ANNOTATION");
+            JSONArray cur_pic_anno_array = anno_array.getJSONArray(cur_pic_number+"");
+            if (cur_pic_anno_array.length()==0);
+            else {
+                for (int i = 0;i < cur_pic_anno_array.length(); i++) {
+                    JSONObject temp = cur_pic_anno_array.getJSONObject(i);
+                    int x = temp.getInt("x");
+                    int y = temp.getInt("y");
+                    String a = temp.getString("anno");
+
+                    PictureTagLayout image = (PictureTagLayout) findViewById(R.id.image);
+                    View view = image.addItem(x,y);
+                    ((PictureTagView)view).setAnnotation(a);
+                }
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

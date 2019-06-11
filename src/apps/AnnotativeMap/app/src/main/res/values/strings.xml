@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Annotative Map</string>
+    <string name="remove_button_text">Remove</string>
+    <string name="item_editText_hint">Write the name of the item you want to add/remove</string>
+</resources>

@@ -44,15 +44,13 @@ public class send extends AppCompatActivity implements View.OnClickListener{
 
         Intent intent = getIntent();
         message = intent.getStringExtra("CONTENT");
-        String cur_pic_num = intent.getStringExtra("CUR_NUM");
-//        message = cur_pic_num + " " + message;
 
-        listening = (TextView) findViewById(R.id.listening);
-        send_content = (Button) findViewById(R.id.send_content);
-        done1 = (Button) findViewById(R.id.done1);
-        from_port = (EditText) findViewById(R.id.from_port);
-        to_ip_address = (EditText) findViewById(R.id.to_ip_address);
-        to_port = (EditText) findViewById(R.id.to_port);
+        listening = findViewById(R.id.listening);
+        send_content = findViewById(R.id.send_content);
+        done1 = findViewById(R.id.done1);
+        from_port = findViewById(R.id.from_port);
+        to_ip_address = findViewById(R.id.to_ip_address);
+        to_port = findViewById(R.id.to_port);
 
 //        from_ip_address.setText(getHostAddress());
 
