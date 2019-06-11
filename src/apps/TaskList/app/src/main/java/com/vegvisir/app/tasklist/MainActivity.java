@@ -13,6 +13,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.HashMap;
+import java.util.Set;
+
 //import com.vegvisir.app.VirtualVegvisirInstance;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText mItemEdit;
     private Button mAddButton;
     private ArrayAdapter<String> mAdapter;
+    public HashMap<String, TransactionID> latestTransactions;
+    public HashMap<String, Set<TransactionID>> dependencySets;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
