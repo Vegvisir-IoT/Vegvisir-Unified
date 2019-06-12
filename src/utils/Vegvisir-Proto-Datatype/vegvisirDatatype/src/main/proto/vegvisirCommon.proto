@@ -7,87 +7,10 @@ option java_package = "com.vegvisir.common.datatype.proto";
 option java_outer_classname = "VegvisirCommonDatatypeProto";
 option objc_class_prefix = "VEGVISIR";
 
-import "vegvisir.proto";
+import "charlotte.proto";
 
-enum ProtocolVersion {
-    VERSION = 0;
-    SEND_ALL = 1;
-    FRONTIER = 2;
-    VECTOR = 3;
+message AddBlocks {
+    repeated charlotte.Block blocksToAdd = 1;
 }
 
-message ProtocolVersions {
-    repeated ProtocolVersion protocols = 1;
-}
-
-message BlockHash {
-    bytes hash = 1;
-}
-
-
-// Types of requests that can be received from peer.
-message PeerRequest{
-    
-    enum RequestType {
-        DUMMY_REQUEST = 0;
-        SEND_FRONTIER_SET = 1;
-        SEND_BCHASHES = 2;
-        SEND_BLOCK = 3;
-        ADD_BLOCKS = 4;
-        CREATE_POW = 5;
-        SELF_RECONCILIATION_NEEDED = 6;
-        PEER_RECONCILIATION_NEEDED = 7;
-        READY_FOR_PROTOCOL = 8;
-        END_PROTOCOL = 9;
-    }
-
-    RequestType type = 1;
-    repeated ProtocolVersion protocol_list = 2;
-    repeated BlockHash target_hashes = 3;
-    repeated vegvisir.core.datatype.Block blocks_to_add = 4;
-}
-
-
-// Types of responses that can be sent to peer.
-message FrontierSet {
-    repeated BlockHash block_hashes = 1;
-}
-
-message SendBlockchainHashes {
-    repeated BlockHash hash_set = 1;
-}
-
-message SendBlock {
-    repeated vegvisir.core.datatype.Block blocks = 1;
-}
-
-// Types of responses that can be sent to peer.
-message PeerResponse {
-    oneof peer_response_types {
-        FrontierSet frontier_set_response = 1;
-        SendBlockchainHashes bc_hashes_response = 2;
-        SendBlock send_block_response = 3;
-        ProtocolVersions protocol_version_response = 4;
-    }
-}
-
-// Maps each user's name to their leading block on a device.
-message ClockMap {
-    string name = 1;
-    int32 leader = 2;
-}
-
-message VectorClock {
-    repeated ClockMap vector_clocks = 1;
-    // The number of blocks the peer can send during a vector
-    // protocol reconciliation round.
-    int32 send_limit = 2;
-}
-
-message Update {
-    oneof peer_updates {
-        VectorClock current_view = 1;
-        // TO:DO; Add more things that may count as updates
-    }
-}
 

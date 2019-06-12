@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package vegvisir.protocol.datatype;
+
+import "vegvisirCommon.proto";
+
+// Map of each peer's name to their leading block on a device.
+message ClockMap {
+    map<string, int32> clock = 1;
+}
+
+message VectorClock {
+    repeated ClockMap vectorClocks = 1;
+    // The number of blocks the peer can send during a vector
+    // protocol reconciliation round.
+    int32 sendLimit = 2;
+}
+
+message VectorMessage {
+    oneof vector_message_type {
+        VectorClock worldView = 1;
+        vegvisir.common.datatype.AddBlocks add = 2;
+    }
+}
+
