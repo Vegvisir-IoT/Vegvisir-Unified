@@ -64,6 +64,9 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
                 // remove item from array in MainActivity
                 MainActivity.mAdapter.remove(item);
                 MainActivity.mAdapter.notifyDataSetChanged();
+                Set<TransactionTuple>  newSet = Collections.emptySet();
+                newSet.add(x);
+                MainActivity.dependencySets.put(item, newSet);
                 flag = true;
                 break;
             }
@@ -71,7 +74,6 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 
         if (!flag){
             //add item to array in MainActivity
-
             if (MainActivity.mAdapter.getPosition(item) == -1){
                 MainActivity.mAdapter.add(item);
                 MainActivity.mAdapter.notifyDataSetChanged();
