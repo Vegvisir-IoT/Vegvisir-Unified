@@ -12,12 +12,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-
+import com.vegvisir.pub_sub.*;
 
 import java.util.HashMap;
 import java.util.Set;
 
-//import com.vegvisir.app.VirtualVegvisirInstance;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,8 +24,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText mItemEdit;
     private Button mAddButton;
     private ArrayAdapter<String> mAdapter;
-    //public HashMap<String, TransactionID> latestTransactions;
-    //public HashMap<String, Set<TransactionTuple>> dependencySets;
+    public static HashMap<String, TransactionID> latestTransactions;
+    public static HashMap<String, Set<TransactionTuple>> dependencySets;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,9 +86,5 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-//    private VirtualVegvisirInstance loadVirtualVegvisirInstance() {
-//        return VirtualVegvisirInstance.getInstance();
-//    }
 
 }
