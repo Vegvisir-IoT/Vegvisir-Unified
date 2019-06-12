@@ -3,7 +3,6 @@ package com.vegvisir.app.tasklist;
 import com.vegvisir.pub_sub.*;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -64,6 +63,8 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
                 TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
                 if (x.transactionType == 0) { //0 = remove
                     // remove item from array in MainActivity
+                    MainActivity.mAdapter.remove(item);
+                    MainActivity.mAdapter.notifyDataSetChanged();
                     flag = true;
                     break;
                 }
@@ -71,8 +72,9 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 
             if (!flag){
                 //add item to array in MainActivity
+                MainActivity.mAdapter.add(item);
+                MainActivity.mAdapter.notifyDataSetChanged();
             }
-
 
         }
 

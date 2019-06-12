@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView mTaskList;
     private EditText mItemEdit;
     private Button mAddButton;
-    private ArrayAdapter<String> mAdapter;
+    public static ArrayAdapter<String> mAdapter;
     public static HashMap<String, TransactionID> latestTransactions;
     public static HashMap<String, Set<TransactionTuple>> dependencySets;
 
