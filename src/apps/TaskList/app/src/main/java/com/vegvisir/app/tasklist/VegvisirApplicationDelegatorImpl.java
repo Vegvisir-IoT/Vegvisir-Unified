@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import android.util.Log;
-import android.app.Activity;
 
 /**
  * Ideally, all applications should implement this interface.

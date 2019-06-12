@@ -15,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.vegvisir.pub_sub.*;
 import java.util.Timer;
 import java.util.TimerTask;
-import android.os.AsyncTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,8 +22,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import android.util.Log;
-//import android.app.Activity.;
-
 
 public class MainActivity extends AppCompatActivity {
 
@@ -156,6 +153,8 @@ public class MainActivity extends AppCompatActivity {
                                                    View viewItem, int pos, long id) {
                         // Remove the item within array at position
                         String item = mAdapter.getItem(pos);
+//                        mAdapter.remove(item);
+//                        mAdapter.notifyDataSetChanged();
                         String payloadString = "0" + item;
                         byte[] payload = payloadString.getBytes();
                         Set<String> topics = new HashSet<>();
@@ -181,11 +180,6 @@ public class MainActivity extends AppCompatActivity {
                                 mAdapter.notifyDataSetChanged();
                             }
                         });
-
-                        //mAdapter.remove(mAdapter.getItem(pos));
-                        //mAdapter.notifyDataSetChanged();
-
-                        // Return true consumes the long click event (marks it handled)
 
                     }
 
