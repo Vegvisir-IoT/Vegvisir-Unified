@@ -43,7 +43,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 
         Set<TransactionTuple> updatedSet = new HashSet<>();
         Set<TransactionTuple> prevSets = MainActivity.dependencySets.get(item);
-        Log.i("item",item);
+//        Log.i("item",item);
         if (prevSets != null) {
             Iterator<TransactionTuple> itr = prevSets.iterator();
             while (itr.hasNext()) {
@@ -59,25 +59,40 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 
         MainActivity.latestTransactions.put(tx_id.getDeviceID(), tx_id);
 
-        Iterator<TransactionTuple> it = updatedSet.iterator();
-        boolean flag = false;
-        while(it.hasNext()){
-            TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-            if (x.transactionType == 0) { //0 = remove
-                // remove item from array in MainActivity
+        if (tx_id.getDeviceID() == MainActivity.deviceId) {
+            if (transactionType == 0) {
                 MainActivity.items.remove(item);
-                Set<TransactionTuple>  newSet = new HashSet<>();
-                newSet.add(x);
+                Set<TransactionTuple> newSet = new HashSet<>();
+                newSet.add(new TransactionTuple(tx_id,transactionType));
                 MainActivity.dependencySets.put(item, newSet);
-                flag = true;
-                break;
+            }
+            else {
+                if (!MainActivity.items.contains(item)) {
+                    MainActivity.items.add(item);
+                }
             }
         }
+        else {
+            Iterator<TransactionTuple> it = updatedSet.iterator();
+            boolean flag = false;
+            while (it.hasNext()) {
+                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+                if (x.transactionType == 0) { //0 = remove
+                    // remove item from array in MainActivity
+                    MainActivity.items.remove(item);
+                    Set<TransactionTuple> newSet = new HashSet<>();
+                    newSet.add(x);
+                    MainActivity.dependencySets.put(item, newSet);
+                    flag = true;
+                    break;
+                }
+            }
 
-        if (!flag){
-            //add item to array in MainActivity
-            if (!MainActivity.items.contains(item)){
-                MainActivity.items.add(item);
+            if (!flag) {
+                //add item to array in MainActivity
+                if (!MainActivity.items.contains(item)) {
+                    MainActivity.items.add(item);
+                }
             }
         }
 
