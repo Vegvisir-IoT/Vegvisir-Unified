@@ -14,8 +14,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.vegvisir.pub_sub.*;
 
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -27,12 +27,15 @@ public class MainActivity extends AppCompatActivity {
     private Button mAddButton;
     public static ArrayAdapter<String> mAdapter;
     // mapping from device ID to Transaction ID
-    public static HashMap<String, TransactionID> latestTransactions;
+    public static HashMap<String, TransactionID> latestTransactions = new HashMap<>();
     // mapping from an item to dependencies
-    public static HashMap<String, Set<TransactionTuple>> dependencySets;
-    private VegvisirApplicationContext context = null;
+    public static HashMap<String, Set<TransactionTuple>> dependencySets = new HashMap<>();
+    private VegvisirApplicationContext context = new VegvisirApplicationContext();
     private VegvisirApplicationDelegatorImpl delegator = new VegvisirApplicationDelegatorImpl();
     private String topic = "Red team";
+    private String appID = "123";
+    private  String desc = "task list";
+    private Set<String> channels = new HashSet<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,11 @@ public class MainActivity extends AppCompatActivity {
         mTaskList = (ListView) findViewById(R.id.task_listView);
         mItemEdit = (EditText) findViewById(R.id.item_editText);
         mAddButton = (Button) findViewById(R.id.add_button);
+
+        context.setAppID(appID);
+        context.setDesc(desc);
+        channels.add(topic);
+        context.setChannels(channels);
 
         VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
         virtual.registerApplicationDelegator(context, delegator);
@@ -67,9 +75,9 @@ public class MainActivity extends AppCompatActivity {
                 mItemEdit.setText("");
                 String payloadString = "1" + item ;
                 byte[] payload = payloadString.getBytes();
-                Set<String> topics = Collections.emptySet();
+                Set<String> topics = new HashSet<String>();
                 topics.add(topic);
-                Set<TransactionID> dependencies = Collections.emptySet();
+                Set<TransactionID> dependencies = new HashSet<>();
 
                 if (dependencySets.containsKey(item)){
                     Iterator<TransactionTuple> it = dependencySets.get(item).iterator();
@@ -103,9 +111,9 @@ public class MainActivity extends AppCompatActivity {
                         // Remove the item within array at position
                         String payloadString = "0" + item ;
                         byte[] payload = payloadString.getBytes();
-                        Set<String> topics = Collections.emptySet();
+                        Set<String> topics = new HashSet<>();
                         topics.add(topic);
-                        Set<TransactionID> dependencies = Collections.emptySet();
+                        Set<TransactionID> dependencies = new HashSet<>();
 
                         if (dependencySets.containsKey(item)){
                             Iterator<TransactionTuple> it = dependencySets.get(item).iterator();
