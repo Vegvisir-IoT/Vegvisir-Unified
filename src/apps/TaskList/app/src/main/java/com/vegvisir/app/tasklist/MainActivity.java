@@ -14,7 +14,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.vegvisir.pub_sub.*;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Set;
 
 
@@ -24,8 +26,13 @@ public class MainActivity extends AppCompatActivity {
     private EditText mItemEdit;
     private Button mAddButton;
     public static ArrayAdapter<String> mAdapter;
+    // mapping from device ID to Transaction ID
     public static HashMap<String, TransactionID> latestTransactions;
+    // mapping from an item to dependencies
     public static HashMap<String, Set<TransactionTuple>> dependencySets;
+    private VegvisirApplicationContext context = null;
+    private VegvisirApplicationDelegatorImpl delegator = new VegvisirApplicationDelegatorImpl();
+    private String topic = "Red team";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
         mTaskList = (ListView) findViewById(R.id.task_listView);
         mItemEdit = (EditText) findViewById(R.id.item_editText);
         mAddButton = (Button) findViewById(R.id.add_button);
+
+        VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
+        virtual.registerApplicationDelegator(context, delegator);
 
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1){
             @Override
@@ -52,9 +62,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String item = mItemEdit.getText().toString();
-                mAdapter.add(item);
-                mAdapter.notifyDataSetChanged();
+//                mAdapter.add(item);
+//                mAdapter.notifyDataSetChanged();
                 mItemEdit.setText("");
+                String payloadString = "1" + item ;
+                byte[] payload = payloadString.getBytes();
+                Set<String> topics = Collections.emptySet();
+                topics.add(topic);
+                Set<TransactionID> dependencies = Collections.emptySet();
+
+                if (dependencySets.containsKey(item)){
+                    Iterator<TransactionTuple> it = dependencySets.get(item).iterator();
+
+                    while(it.hasNext()){
+                        TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+                        dependencies.add(x.transaction);
+                    }
+                }
+                virtual.addTransaction(context, topics, payload, dependencies);
+
             }
         });
 
@@ -75,9 +101,25 @@ public class MainActivity extends AppCompatActivity {
                     public boolean onItemLongClick(AdapterView<?> adapter,
                                                    View item, int pos, long id) {
                         // Remove the item within array at position
-                        mAdapter.remove(mAdapter.getItem(pos));
-                        // Refresh the adapter
-                        mAdapter.notifyDataSetChanged();
+                        String payloadString = "0" + item ;
+                        byte[] payload = payloadString.getBytes();
+                        Set<String> topics = Collections.emptySet();
+                        topics.add(topic);
+                        Set<TransactionID> dependencies = Collections.emptySet();
+
+                        if (dependencySets.containsKey(item)){
+                            Iterator<TransactionTuple> it = dependencySets.get(item).iterator();
+
+                            while(it.hasNext()){
+                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+                                dependencies.add(x.transaction);
+                            }
+                        }
+                        virtual.addTransaction(context, topics, payload, dependencies);
+
+                        //mAdapter.remove(mAdapter.getItem(pos));
+                        //mAdapter.notifyDataSetChanged();
+
                         // Return true consumes the long click event (marks it handled)
                         return true;
                     }
