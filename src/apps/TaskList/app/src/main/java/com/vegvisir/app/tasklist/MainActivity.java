@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import android.util.Log;
+//import android.app.Activity.;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private String topic = "Red team";
     private String appID = "123";
     private  String desc = "task list";
+    public static String deviceId = "DeviceA";
     private Set<String> channels = new HashSet<String>();
 
     @Override
@@ -76,16 +78,15 @@ public class MainActivity extends AppCompatActivity {
 //                mAdapter.add(item);
 //                mAdapter.notifyDataSetChanged();
                 mItemEdit.setText("");
-                String payloadString = "1" + item ;
+                String payloadString = "1" + item;
                 byte[] payload = payloadString.getBytes();
                 Set<String> topics = new HashSet<String>();
                 topics.add(topic);
                 Set<TransactionID> dependencies = new HashSet<>();
 
-                if (dependencySets.containsKey(item)){
+                if (dependencySets.containsKey(item)) {
                     Iterator<TransactionTuple> it = dependencySets.get(item).iterator();
-
-                    while(it.hasNext()){
+                    while (it.hasNext()) {
                         TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
                         dependencies.add(x.transaction);
                     }
@@ -93,11 +94,17 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     virtual.addTransaction(context, topics, payload, dependencies);
                 } catch (NullPointerException e) {
-                    virtual.addTransactionByDeviceAndHeight("DeviceA",0,topics,payload,dependencies);
+                    virtual.addTransactionByDeviceAndHeight(deviceId, 0, topics, payload, dependencies);
                 }
-                mAdapter.clear();
-                mAdapter.addAll(items);
-                mAdapter.notifyDataSetChanged();
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAdapter.clear();
+                        mAdapter.addAll(items);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+
             }
         });
 
@@ -125,20 +132,25 @@ public class MainActivity extends AppCompatActivity {
                         topics.add(topic);
                         Set<TransactionID> dependencies = new HashSet<>();
 
-                        if (dependencySets.containsKey(item)){
+//                        if (dependencySets.containsKey(item)){
                             Iterator<TransactionTuple> it = dependencySets.get(item).iterator();
 
                             while(it.hasNext()){
                                 TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
                                 dependencies.add(x.transaction);
                             }
-                        }
-                        Log.i("before addtx","1");
+//                        }
+//                        Log.i("before addtx","1");
                         virtual.addTransaction(context, topics, payload, dependencies);
-                        Log.i("after addtx","1");
-                        mAdapter.clear();
-                        mAdapter.addAll(items);
-                        mAdapter.notifyDataSetChanged();
+//                        Log.i("after addtx","1");
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mAdapter.clear();
+                                mAdapter.addAll(items);
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        });
 
                         //mAdapter.remove(mAdapter.getItem(pos));
                         //mAdapter.notifyDataSetChanged();
