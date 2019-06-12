@@ -9,7 +9,6 @@ package charlotte;
 
 import "common.proto";
 import "hetcons.proto";
-import "vegvisir.proto";
 
 message SignedGitSimCommit {
   message GitSimCommit {

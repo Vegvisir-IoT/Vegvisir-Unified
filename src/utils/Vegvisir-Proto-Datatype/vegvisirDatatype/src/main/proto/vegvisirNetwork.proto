@@ -8,6 +8,7 @@ option java_package = "com.vegvisir.network.datatype.proto";
 option java_outer_classname = "VegvisirNetworkDatatypeProto";
 option objc_class_prefix = "VEGVISIR";
 
+import "vegvisir.proto";
 import "vector.proto";
 import "handshake.proto";
 import "frontier.proto";
@@ -16,10 +17,10 @@ import "sendall.proto";
 message VegvisirProtocolMessage {
     bool endProtocol = 1;
     oneof message_types {
-        vegvisir.protocol.datatype.SendallMessage sendall = 1;
-        vegvisir.protocol.datatype.VectorMessage vector = 2;
-        vegvisir.protocol.datatype.FrontierMessage frontier = 3;
-        vegvisir.protocol.datatype.Handshake handshake  = 4;
+        vegvisir.protocol.datatype.SendallMessage sendall = 2;
+        vegvisir.protocol.datatype.VectorMessage vector = 3;
+        vegvisir.protocol.datatype.FrontierMessage frontier = 4;
+        vegvisir.protocol.datatype.HandshakeMessage handshake  = 5;
     }
 }
 

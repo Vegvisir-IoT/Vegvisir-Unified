@@ -2,14 +2,10 @@ syntax = "proto3";
 
 package vegvisir.protocol.datatype;
 
-import "vegvisir.proto";
+import "vegvisirCommon.proto";
 
 message HashSet {
     repeated bytes hashes = 1;
-}
-
-message AddBlocks {
-    repeated vegvisir.core.datatype.Block blocks = 1;
 }
 
 message Request {
@@ -26,15 +22,15 @@ message Request {
     Type type = 1;
    
     oneof targets_type {
-        HashSet targetHash = 1;
-        vegvisir.common.datatype.AddBlocks add = 2;
+        HashSet targetHash = 2;
+        vegvisir.common.datatype.AddBlocks add = 3;
     }
 } 
 
 message Response {
     oneof response_types {
         HashSet hashResponse = 1;
-        AddBlocks blockResponse = 2;
+        vegvisir.common.datatype.AddBlocks blockResponse = 2;
     }
 }
 
