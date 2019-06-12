@@ -34,7 +34,7 @@ public class VegvisirApplicationContext {
       this.desc = newDesc;
     }
 
-    public void setChannels(newChannels){
+    public void setChannels(Set<String> newChannels){
       this.channels = newChannels;
     }
 

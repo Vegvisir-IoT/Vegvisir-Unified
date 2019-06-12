@@ -2,7 +2,7 @@ package com.vegvisir.app.tasklist;
 
 import com.vegvisir.pub_sub.*;
 
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -40,7 +40,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
         int transactionType = Integer.parseInt(payloadString.substring(0,1));
         String item = payloadString.substring(1);
 
-        Set<TransactionTuple> updatedSet = Collections.emptySet();
+        Set<TransactionTuple> updatedSet = new HashSet<>();
         Set<TransactionTuple> prevSets = MainActivity.dependencySets.get(item);
 
         Iterator<TransactionTuple> itr = prevSets.iterator();
@@ -64,7 +64,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
                 // remove item from array in MainActivity
                 MainActivity.mAdapter.remove(item);
                 MainActivity.mAdapter.notifyDataSetChanged();
-                Set<TransactionTuple>  newSet = Collections.emptySet();
+                Set<TransactionTuple>  newSet = new HashSet<>();
                 newSet.add(x);
                 MainActivity.dependencySets.put(item, newSet);
                 flag = true;
