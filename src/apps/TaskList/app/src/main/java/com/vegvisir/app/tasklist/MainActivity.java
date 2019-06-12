@@ -14,10 +14,12 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.vegvisir.pub_sub.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import android.util.Log;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -25,7 +27,8 @@ public class MainActivity extends AppCompatActivity {
     private ListView mTaskList;
     private EditText mItemEdit;
     private Button mAddButton;
-    public static ArrayAdapter<String> mAdapter;
+    public static ArrayList<String> items = new ArrayList<>();
+    private ArrayAdapter<String> mAdapter;
     // mapping from device ID to Transaction ID
     public static HashMap<String, TransactionID> latestTransactions = new HashMap<>();
     // mapping from an item to dependencies
@@ -87,8 +90,14 @@ public class MainActivity extends AppCompatActivity {
                         dependencies.add(x.transaction);
                     }
                 }
-                virtual.addTransaction(context, topics, payload, dependencies);
-
+                try {
+                    virtual.addTransaction(context, topics, payload, dependencies);
+                } catch (NullPointerException e) {
+                    virtual.addTransactionByDeviceAndHeight("DeviceA",0,topics,payload,dependencies);
+                }
+                mAdapter.clear();
+                mAdapter.addAll(items);
+                mAdapter.notifyDataSetChanged();
             }
         });
 
@@ -103,13 +112,14 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-        mTaskList.setOnItemLongClickListener(
-                new AdapterView.OnItemLongClickListener() {
+        mTaskList.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
                     @Override
-                    public boolean onItemLongClick(AdapterView<?> adapter,
-                                                   View item, int pos, long id) {
+                    public void onItemClick(AdapterView<?> adapter,
+                                                   View viewItem, int pos, long id) {
                         // Remove the item within array at position
-                        String payloadString = "0" + item ;
+                        String item = mAdapter.getItem(pos);
+                        String payloadString = "0" + item;
                         byte[] payload = payloadString.getBytes();
                         Set<String> topics = new HashSet<>();
                         topics.add(topic);
@@ -123,13 +133,18 @@ public class MainActivity extends AppCompatActivity {
                                 dependencies.add(x.transaction);
                             }
                         }
+                        Log.i("before addtx","1");
                         virtual.addTransaction(context, topics, payload, dependencies);
+                        Log.i("after addtx","1");
+                        mAdapter.clear();
+                        mAdapter.addAll(items);
+                        mAdapter.notifyDataSetChanged();
 
                         //mAdapter.remove(mAdapter.getItem(pos));
                         //mAdapter.notifyDataSetChanged();
 
                         // Return true consumes the long click event (marks it handled)
-                        return true;
+
                     }
 
                 });

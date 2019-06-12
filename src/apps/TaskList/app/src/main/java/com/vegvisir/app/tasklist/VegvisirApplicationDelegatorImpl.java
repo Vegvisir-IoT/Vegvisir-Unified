@@ -5,7 +5,8 @@ import com.vegvisir.pub_sub.*;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
+import android.util.Log;
+import android.app.Activity;
 
 /**
  * Ideally, all applications should implement this interface.
@@ -42,12 +43,14 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 
         Set<TransactionTuple> updatedSet = new HashSet<>();
         Set<TransactionTuple> prevSets = MainActivity.dependencySets.get(item);
-
-        Iterator<TransactionTuple> itr = prevSets.iterator();
-        while(itr.hasNext()){
-            TransactionTuple x =  (TransactionTuple) ((Iterator) itr).next();
-            if (!deps.contains(x.transaction)) {
-                updatedSet.add(x);
+        Log.i("item",item);
+        if (prevSets != null) {
+            Iterator<TransactionTuple> itr = prevSets.iterator();
+            while (itr.hasNext()) {
+                TransactionTuple x = (TransactionTuple) ((Iterator) itr).next();
+                if (!deps.contains(x.transaction)) {
+                    updatedSet.add(x);
+                }
             }
         }
         TransactionTuple t = new TransactionTuple(tx_id, transactionType);
@@ -62,8 +65,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
             TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
             if (x.transactionType == 0) { //0 = remove
                 // remove item from array in MainActivity
-                MainActivity.mAdapter.remove(item);
-                MainActivity.mAdapter.notifyDataSetChanged();
+                MainActivity.items.remove(item);
                 Set<TransactionTuple>  newSet = new HashSet<>();
                 newSet.add(x);
                 MainActivity.dependencySets.put(item, newSet);
@@ -74,13 +76,11 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 
         if (!flag){
             //add item to array in MainActivity
-            if (MainActivity.mAdapter.getPosition(item) == -1){
-                MainActivity.mAdapter.add(item);
-                MainActivity.mAdapter.notifyDataSetChanged();
+            if (!MainActivity.items.contains(item)){
+                MainActivity.items.add(item);
             }
-
         }
 
-
     }
+
 }
