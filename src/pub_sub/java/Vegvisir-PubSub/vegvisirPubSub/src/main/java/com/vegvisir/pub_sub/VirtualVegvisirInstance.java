@@ -174,7 +174,7 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
                                     byte[] payload,
                                     Set<TransactionID> dependencies)
     {
-        return _addTransaction(deviceId,
+        return addTransactionByDeviceAndHeight(deviceId,
                 deviceToTransactionHeight.get(deviceId),
                 topics,
                 payload,
