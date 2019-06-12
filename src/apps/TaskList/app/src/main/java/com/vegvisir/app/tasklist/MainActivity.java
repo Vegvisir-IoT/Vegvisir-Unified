@@ -13,6 +13,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import com.vegvisir.pub_sub.*;
+import java.util.Timer;
+import java.util.TimerTask;
+import android.os.AsyncTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,6 +44,15 @@ public class MainActivity extends AppCompatActivity {
     private  String desc = "task list";
     public static String deviceId = "DeviceA";
     private Set<String> channels = new HashSet<String>();
+    private Timer timer;
+
+//    class Refresh extends AsyncTask<Void,Void,Boolean> {
+//
+//        @Override
+//        protected Boolean doInBackground(Void... v) {
+//            return new Boolean(true);
+//        }
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +82,24 @@ public class MainActivity extends AppCompatActivity {
         };
 
         mTaskList.setAdapter(mAdapter);
+
+        timer = new Timer();
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAdapter.clear();
+                        mAdapter.addAll(items);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        },0,10000);
+
+
 
         mAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
