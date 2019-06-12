@@ -40,3 +40,16 @@ dependencies {
 In regards to import for the Test Class, the import statement for general test
 should be as follows: ```import org.junit.jupiter.api.Test;```, rather than the
 ```import org.junit.Test``` which is JUnit 4.
+
+## Importing Libraries into a Project
+In order to build upon another library in the project, one again has to modify
+the build.gradle sript that is associated with the module (NOT the project).
+Update the dependency section with implemntation project (":<module name>").
+This will allow for one to import classes from that module. More concretely, in
+the case of Vegvisir Pub Sub layer found:
+```Vegvisir-Unified/src/pub_sub/java/Vegvisir-PubSub/vegvisirPubSub/``` can be
+added to the project by adding the following annotation to the dependencies
+section in the build.gradle file:
+```
+implementation project (":vegvisirPubSub")
+```
