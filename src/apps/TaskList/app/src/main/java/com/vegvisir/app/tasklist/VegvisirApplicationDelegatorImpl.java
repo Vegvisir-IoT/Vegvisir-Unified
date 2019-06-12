@@ -36,42 +36,43 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
             TransactionID tx_id,
             Set<TransactionID> deps) {
 
-        String item = "haircut";
-        int transactionType = 0;
+        String payloadString = new String(payload);
+        int transactionType = Integer.parseInt(payloadString.substring(0,1));
+        String item = payloadString.substring(1);
 
-        if (Integer.parseInt(tx_id.getDeviceID()) > Integer.parseInt(MainActivity.latestTransactions.get(item).getDeviceID()) ){
+        Set<TransactionTuple> updatedSet = Collections.emptySet();
+        Set<TransactionTuple> prevSets = MainActivity.dependencySets.get(item);
 
-            Set<TransactionTuple> updatedSet = Collections.emptySet();
-            Set<TransactionTuple> prevSets = MainActivity.dependencySets.get(item);
-
-            Iterator<TransactionTuple> itr = prevSets.iterator();
-            while(itr.hasNext()){
-                TransactionTuple x =  (TransactionTuple) ((Iterator) itr).next();
-                if (!deps.contains(x.transaction)) {
-                    updatedSet.add(x);
-                }
+        Iterator<TransactionTuple> itr = prevSets.iterator();
+        while(itr.hasNext()){
+            TransactionTuple x =  (TransactionTuple) ((Iterator) itr).next();
+            if (!deps.contains(x.transaction)) {
+                updatedSet.add(x);
             }
-            TransactionTuple t = new TransactionTuple(tx_id, transactionType);
-            updatedSet.add(t);
-            MainActivity.dependencySets.put(item, updatedSet);
+        }
+        TransactionTuple t = new TransactionTuple(tx_id, transactionType);
+        updatedSet.add(t);
+        MainActivity.dependencySets.put(item, updatedSet);
 
-            MainActivity.latestTransactions.put(tx_id.getDeviceID(), tx_id);
+        MainActivity.latestTransactions.put(tx_id.getDeviceID(), tx_id);
 
-            Iterator<TransactionTuple> it = updatedSet.iterator();
-            boolean flag = false;
-            while(it.hasNext()){
-                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-                if (x.transactionType == 0) { //0 = remove
-                    // remove item from array in MainActivity
-                    MainActivity.mAdapter.remove(item);
-                    MainActivity.mAdapter.notifyDataSetChanged();
-                    flag = true;
-                    break;
-                }
+        Iterator<TransactionTuple> it = updatedSet.iterator();
+        boolean flag = false;
+        while(it.hasNext()){
+            TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+            if (x.transactionType == 0) { //0 = remove
+                // remove item from array in MainActivity
+                MainActivity.mAdapter.remove(item);
+                MainActivity.mAdapter.notifyDataSetChanged();
+                flag = true;
+                break;
             }
+        }
 
-            if (!flag){
-                //add item to array in MainActivity
+        if (!flag){
+            //add item to array in MainActivity
+
+            if (MainActivity.mAdapter.getPosition(item) == -1){
                 MainActivity.mAdapter.add(item);
                 MainActivity.mAdapter.notifyDataSetChanged();
             }
