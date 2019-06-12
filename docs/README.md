@@ -37,3 +37,6 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.4.2'
 }
 ```
+In regards to import for the Test Class, the import statement for general test
+should be as follows: ```import org.junit.jupiter.api.Test;```, rather than the
+```import org.junit.Test``` which is JUnit 4.
