@@ -110,7 +110,7 @@ conditions hold:
 \item $\forall b': b' \leq b \implies \mathtt{revoke}(d) \notin b.\mathit{txs}$
 \end{itemize}
 (Note that only a genesis block can, and should, delegate to its owner.)
-We call a block \emph{legal} if its owner is authorized by the block.
+We call a block \emph{legal} if its owner is authorized by an ancestor block.
 A VBG $B$ then has the additional constraint that all blocks owned by correct devices be legal and
 only depend on legal blocks.
 
