@@ -81,13 +81,33 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.i("From refresh",MainActivity.items.toString());
+                        //Log.i("From refresh",MainActivity.items.toString());
                         mAdapter.clear();
                         mAdapter.addAll(items);
                         mAdapter.notifyDataSetChanged();
+//                        String payloadString = "0" + "a";
+//                        byte[] payload = payloadString.getBytes();
+//                        Set<String> topics = new HashSet<String>();
+//                        topics.add(topic);
+//                        Set<TransactionID> dependencies = new HashSet<>();
+//
+//                        if (dependencySets.containsKey("a")) {
+//                            Iterator<TransactionTuple> it = dependencySets.get("a").iterator();
+//                            while (it.hasNext()) {
+//                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+//                                dependencies.add(x.transaction);
+//                            }
+//                        }
+//                        try {
+//                            virtual.addTransaction(context, topics, payload, dependencies);
+//                        } catch (NullPointerException e) {
+//                            virtual.addTransactionByDeviceAndHeight("DeviceB", 0, topics, payload, dependencies);
+//                        }
+
                     }
                 });
             }
+
         },0,5000);
 
 
@@ -175,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Log.i("From main remove",MainActivity.items.toString());
+                                //Log.i("From main remove",MainActivity.items.toString());
                                 mAdapter.clear();
                                 mAdapter.addAll(items);
                                 mAdapter.notifyDataSetChanged();
