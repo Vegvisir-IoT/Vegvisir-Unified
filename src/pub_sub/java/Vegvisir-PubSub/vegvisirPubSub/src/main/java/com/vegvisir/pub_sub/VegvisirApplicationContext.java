@@ -41,7 +41,7 @@ public class VegvisirApplicationContext {
     /*##############################
      *  Getters & Setters         3
      ############################*/
-    public String getAppID(){          return this.appId; }
+    public String getAppID(){ return this.appId; }
 
     public String getDesc(){           return this.desc;  }
 
