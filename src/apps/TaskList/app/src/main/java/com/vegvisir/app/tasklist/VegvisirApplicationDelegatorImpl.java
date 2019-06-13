@@ -58,7 +58,8 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 
         MainActivity.latestTransactions.put(tx_id.getDeviceID(), tx_id);
 
-        if (tx_id.getDeviceID() == MainActivity.deviceId) {
+        if (tx_id.getDeviceID().equals(MainActivity.deviceId)) {
+            Log.i("enters if",MainActivity.items.toString());
             if (transactionType == 0) {
                 MainActivity.items.remove(item);
                 Set<TransactionTuple> newSet = new HashSet<>();
@@ -72,6 +73,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
             }
         }
         else {
+            Log.i("enters else",MainActivity.items.toString());
             Iterator<TransactionTuple> it = updatedSet.iterator();
             boolean flag = false;
             while (it.hasNext()) {
@@ -94,6 +96,8 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
                 }
             }
         }
+
+        Log.i("From app del",MainActivity.items.toString());
 
     }
 

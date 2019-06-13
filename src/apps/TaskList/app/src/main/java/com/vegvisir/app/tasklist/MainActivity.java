@@ -43,13 +43,6 @@ public class MainActivity extends AppCompatActivity {
     private Set<String> channels = new HashSet<String>();
     private Timer timer;
 
-//    class Refresh extends AsyncTask<Void,Void,Boolean> {
-//
-//        @Override
-//        protected Boolean doInBackground(Void... v) {
-//            return new Boolean(true);
-//        }
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,13 +81,14 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Log.i("From refresh",MainActivity.items.toString());
                         mAdapter.clear();
                         mAdapter.addAll(items);
                         mAdapter.notifyDataSetChanged();
                     }
                 });
             }
-        },0,10000);
+        },0,5000);
 
 
 
@@ -123,12 +117,15 @@ public class MainActivity extends AppCompatActivity {
                 } catch (NullPointerException e) {
                     virtual.addTransactionByDeviceAndHeight(deviceId, 0, topics, payload, dependencies);
                 }
+
+
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         mAdapter.clear();
                         mAdapter.addAll(items);
                         mAdapter.notifyDataSetChanged();
+
                     }
                 });
 
@@ -169,15 +166,20 @@ public class MainActivity extends AppCompatActivity {
                                 dependencies.add(x.transaction);
                             }
 //                        }
-//                        Log.i("before addtx","1");
-                        virtual.addTransaction(context, topics, payload, dependencies);
-//                        Log.i("after addtx","1");
+                        try {
+                            virtual.addTransaction(context, topics, payload, dependencies);
+                        } catch (NullPointerException e) {
+                            virtual.addTransactionByDeviceAndHeight(deviceId, 0, topics, payload, dependencies);
+                        }
+
                         MainActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                Log.i("From main remove",MainActivity.items.toString());
                                 mAdapter.clear();
                                 mAdapter.addAll(items);
                                 mAdapter.notifyDataSetChanged();
+
                             }
                         });
 
