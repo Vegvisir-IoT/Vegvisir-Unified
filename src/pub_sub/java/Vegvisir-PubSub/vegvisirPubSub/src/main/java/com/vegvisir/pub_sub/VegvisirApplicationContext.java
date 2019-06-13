@@ -14,4 +14,33 @@ public class VegvisirApplicationContext {
 
     private Set<String> channels;
 
+    /**
+     * Public Constructor
+     * @param appId : String representation that reflects the application name
+     * @param desc  : String
+     * @param channels : Set of Strings pertaining to topics the application
+     *                 wants updates from the Vegvisir blockchain.
+     */
+    public VegvisirApplicationContext(String appId, String desc, Set<String> channels) {
+        this.appId = appId;
+        this.desc = desc;
+        this.channels = channels;
+    }
+
+
+    /*##############################
+     *  Getters & Setters         3
+     ############################*/
+    public String getAppID(){          return this.appId; }
+
+    public String getDesc(){           return this.desc;  }
+
+    public Set<String> getChannels(){  return this.channels; }
+
+    public void setAppID(String newAppID){    this.appId = newAppID; }
+
+    public void setDesc(String newDesc){      this.desc = newDesc;   }
+
+    public void setChannels(Set<String> newChannels){  this.channels = newChannels; }
+
 }
