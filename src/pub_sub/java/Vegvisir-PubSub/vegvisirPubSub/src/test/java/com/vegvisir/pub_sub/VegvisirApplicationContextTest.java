@@ -22,6 +22,7 @@ class VegvisirApplicationContextTest {
        under_test = new VegvisirApplicationContext("testApp",
                "description", Stream.of("Pepsi", "Coke").collect(Collectors.toSet()));
     }
+    
     @Test
     void getAppID() {
         assertEquals("testApp", under_test.getAppID());
