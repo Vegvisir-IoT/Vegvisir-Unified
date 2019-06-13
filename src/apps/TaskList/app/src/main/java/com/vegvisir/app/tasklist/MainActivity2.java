@@ -12,20 +12,21 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import com.vegvisir.pub_sub.*;
-import java.util.Timer;
-import java.util.TimerTask;
+
+import com.vegvisir.pub_sub.TransactionID;
+import com.vegvisir.pub_sub.VegvisirApplicationContext;
+import com.vegvisir.pub_sub.VirtualVegvisirInstance;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import android.util.Log;
+import java.util.Timer;
+import java.util.TimerTask;
 import android.content.Intent;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity2 extends AppCompatActivity {
 
     private ListView mTaskList;
     private EditText mItemEdit;
@@ -42,35 +43,32 @@ public class MainActivity extends AppCompatActivity {
     private String topic = "Red team";
     private String appID = "123";
     private  String desc = "task list";
-    public static String deviceId = "DeviceA";
+    public static String deviceId = "DeviceB";
     private Set<String> channels = new HashSet<String>();
     private Timer timer;
     private long seq = 0;
     private long seq2 = 0;
-    public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
+//    public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_2);
 
-        mTaskList = (ListView) findViewById(R.id.task_listView);
-        mItemEdit = (EditText) findViewById(R.id.item_editText);
-        mAddButton = (Button) findViewById(R.id.add_button);
-        mSwitchButton = findViewById(R.id.switch_button);
+        mTaskList = (ListView) findViewById(R.id.task_listView2);
+        mItemEdit = (EditText) findViewById(R.id.item_editText2);
+        mAddButton = (Button) findViewById(R.id.add_button2);
+        mSwitchButton = findViewById(R.id.switch_button2);
 
         context.setAppID(appID);
         context.setDesc(desc);
         channels.add(topic);
         context.setChannels(channels);
 
-
         VirtualVegvisirInstance virtual2 = VirtualVegvisirInstance.getInstance();
         virtual2.setDeviceId("DeviceB");
-
-        virtual.registerApplicationDelegator(context, delegator);
-
+        virtual2.registerApplicationDelegator(context, delegator);
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -88,12 +86,12 @@ public class MainActivity extends AppCompatActivity {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                MainActivity.this.runOnUiThread(new Runnable() {
+                MainActivity2.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         //Log.i("From refresh",MainActivity.items.toString());
 
-//                        String payloadString2 = "01" + "a";
+//                        String payloadString2 = "1" + "a";
 //                        byte[] payload2 = payloadString2.getBytes();
 //                        Set<String> topics2 = new HashSet<String>();
 //                        topics2.add(topic);
@@ -113,8 +111,8 @@ public class MainActivity extends AppCompatActivity {
 ////                        }
 //                        virtual.addTransactionByDeviceAndHeight("DeviceB", seq2, topics2, payload2, dependencies2);
 //                        seq2 = seq2 + 1;
-
-//                        String payloadString = "00" + "a";
+//
+//                        String payloadString = "0" + "a";
 //                        byte[] payload = payloadString.getBytes();
 //                        Set<String> topics = new HashSet<String>();
 //                        topics.add(topic);
@@ -156,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
 //                mAdapter.add(item);
 //                mAdapter.notifyDataSetChanged();
                 mItemEdit.setText("");
-                String payloadString = "01" + item;
+                String payloadString = "11" + item;
                 byte[] payload = payloadString.getBytes();
                 Set<String> topics = new HashSet<String>();
                 topics.add(topic);
@@ -174,10 +172,10 @@ public class MainActivity extends AppCompatActivity {
 //                } catch (NullPointerException e) {
 //                    virtual.addTransactionByDeviceAndHeight(deviceId, 0, topics, payload, dependencies);
 //                }
-                virtual.addTransactionByDeviceAndHeight(deviceId, seq, topics, payload, dependencies);
+                virtual2.addTransactionByDeviceAndHeight(deviceId, seq, topics, payload, dependencies);
                 seq = seq + 1;
 
-                MainActivity.this.runOnUiThread(new Runnable() {
+                MainActivity2.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         mAdapter.clear();
@@ -210,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                         String item = mAdapter.getItem(pos);
 //                        mAdapter.remove(item);
 //                        mAdapter.notifyDataSetChanged();
-                        String payloadString = "00" + item;
+                        String payloadString = "10" + item;
                         byte[] payload = payloadString.getBytes();
                         Set<String> topics = new HashSet<>();
                         topics.add(topic);
@@ -230,10 +228,10 @@ public class MainActivity extends AppCompatActivity {
 //                            virtual.addTransactionByDeviceAndHeight(deviceId, 0, topics, payload, dependencies);
 //                        }
 
-                        virtual.addTransactionByDeviceAndHeight(deviceId, seq, topics, payload, dependencies);
+                        virtual2.addTransactionByDeviceAndHeight(deviceId, seq, topics, payload, dependencies);
                         seq = seq + 1;
 
-                        MainActivity.this.runOnUiThread(new Runnable() {
+                        MainActivity2.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 //Log.i("From main remove",MainActivity.items.toString());
@@ -251,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
         mSwitchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this,MainActivity2.class);
+                Intent i = new Intent(MainActivity2.this,MainActivity.class);
                 startActivity(i);
             }
 
