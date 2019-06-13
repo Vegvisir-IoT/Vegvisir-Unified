@@ -47,7 +47,7 @@ public class VegvisirApplicationContext {
 
     public Set<String> getChannels(){  return this.channels; }
 
-    public void setAppID(String newAppID){    this.appId = newAppID; }
+    public void setAppID(String newAppID){ this.appId = newAppID; }
 
     public void setDesc(String newDesc){      this.desc = newDesc;   }
 
