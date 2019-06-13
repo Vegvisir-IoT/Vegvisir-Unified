@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <ListView
-        android:id="@+id/task_listView"
+        android:id="@+id/task_listView2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -20,19 +20,19 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/item_editText"
+            android:id="@+id/item_editText2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="@string/item_editText_hint"/>
 
         <Button
-            android:id="@+id/add_button"
+            android:id="@+id/add_button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add_button_text"/>
         <Button
-            android:id="@+id/switch_button"
+            android:id="@+id/switch_button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/switch_button_text"/>
