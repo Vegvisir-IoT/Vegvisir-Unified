@@ -37,7 +37,6 @@ class VegvisirApplicationContextTest {
     void getChannels() {
         assertTrue(under_test.getChannels().contains("Coke"));
         assertTrue(under_test.getChannels().contains("Pepsi"));
-
     }
 
     @Test
