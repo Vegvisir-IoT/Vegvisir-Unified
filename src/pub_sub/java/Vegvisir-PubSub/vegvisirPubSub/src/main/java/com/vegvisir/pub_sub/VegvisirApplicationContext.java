@@ -43,7 +43,7 @@ public class VegvisirApplicationContext {
      ############################*/
     public String getAppID(){ return this.appId; }
 
-    public String getDesc(){           return this.desc;  }
+    public String getDesc(){ return this.desc;  }
 
     public Set<String> getChannels(){ return this.channels; }
 
