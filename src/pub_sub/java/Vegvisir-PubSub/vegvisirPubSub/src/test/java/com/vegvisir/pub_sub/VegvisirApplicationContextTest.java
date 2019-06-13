@@ -57,5 +57,9 @@ class VegvisirApplicationContextTest {
 
     @Test
     void setChannels() {
+        under_test.setChannels( Stream.of("S", "S", "F").collect(Collectors.toSet()));
+        assertEquals( 2, under_test.getChannels().size() );
+        assertTrue( under_test.getChannels().contains("S") &&
+                under_test.getChannels().contains("F"));
     }
 }
