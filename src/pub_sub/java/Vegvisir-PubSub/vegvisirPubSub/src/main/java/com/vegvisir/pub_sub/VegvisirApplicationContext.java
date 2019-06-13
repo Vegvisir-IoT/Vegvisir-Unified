@@ -27,6 +27,16 @@ public class VegvisirApplicationContext {
         this.channels = channels;
     }
 
+    /**
+     * updateChannels
+     * @param topic String representation
+     * @return True iff string was added to channel set
+     */
+    public boolean updateChannels( String topic){
+        int previous = this.channels.size();
+        this.channels.add( topic );
+        return previous != this.channels.size();
+    }
 
     /*##############################
      *  Getters & Setters         3

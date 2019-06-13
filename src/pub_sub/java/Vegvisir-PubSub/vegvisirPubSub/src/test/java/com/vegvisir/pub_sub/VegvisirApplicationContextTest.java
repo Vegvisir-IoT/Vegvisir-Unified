@@ -55,6 +55,14 @@ class VegvisirApplicationContextTest {
 
     }
 
+    @ParameterizedTest
+    @ValueSource ( strings = {"Pepsi, Mountain Dew"})
+    void updateChannels( String argument){
+        boolean expected = !(under_test.getChannels().contains( argument ) );
+        assertEquals( expected, under_test.updateChannels( argument ));
+
+    }
+
     @Test
     void setChannels() {
         under_test.setChannels( Stream.of("S", "S", "F").collect(Collectors.toSet()));
