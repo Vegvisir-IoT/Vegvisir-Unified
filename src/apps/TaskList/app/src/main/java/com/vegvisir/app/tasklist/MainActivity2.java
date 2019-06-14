@@ -46,8 +46,7 @@ public class MainActivity2 extends AppCompatActivity {
     public static String deviceId = "DeviceB";
     private Set<String> channels = new HashSet<String>();
     private Timer timer;
-    private long seq = 0;
-    private long seq2 = 0;
+
 //    public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
 
 
@@ -66,9 +65,9 @@ public class MainActivity2 extends AppCompatActivity {
         channels.add(topic);
         context.setChannels(channels);
 
-        VirtualVegvisirInstance virtual2 = VirtualVegvisirInstance.getInstance();
-        virtual2.setDeviceId("DeviceB");
-        virtual2.registerApplicationDelegator(context, delegator);
+//        VirtualVegvisirInstance virtual2 = VirtualVegvisirInstance.getInstance();
+//        virtual2.setDeviceId("DeviceB");
+//        virtual2.registerApplicationDelegator(context, delegator);
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -104,13 +103,12 @@ public class MainActivity2 extends AppCompatActivity {
 //                                dependencies2.add(x.transaction);
 //                            }
 //                        }
-////                        try {
-////                            virtual.addTransaction(context, topics2, payload2, dependencies2);
-////                        } catch (NullPointerException e) {
-////                            virtual.addTransactionByDeviceAndHeight("DeviceB", 0, topics2, payload2, dependencies2);
-////                        }
-//                        virtual.addTransactionByDeviceAndHeight("DeviceB", seq2, topics2, payload2, dependencies2);
-//                        seq2 = seq2 + 1;
+//                        try {
+//                            virtual.addTransaction(context, topics2, payload2, dependencies2);
+//                        } catch (NullPointerException e) {
+//                            virtual.addTransactionByDeviceAndHeight("DeviceB", 0, topics2, payload2, dependencies2);
+//                        }
+
 //
 //                        String payloadString = "0" + "a";
 //                        byte[] payload = payloadString.getBytes();
@@ -125,14 +123,13 @@ public class MainActivity2 extends AppCompatActivity {
 //                                dependencies.add(x.transaction);
 //                            }
 //                        }
-////                        try {
-////                            virtual.addTransaction(context, topics, payload, dependencies);
-////                        } catch (NullPointerException e) {
-////                            virtual.addTransactionByDeviceAndHeight("DeviceB", 0, topics, payload, dependencies);
-////                        }
+//                        try {
+//                            virtual.addTransaction(context, topics, payload, dependencies);
+//                        } catch (NullPointerException e) {
+//                            virtual.addTransactionByDeviceAndHeight("DeviceB", 0, topics, payload, dependencies);
+//                        }
 //
-//                        virtual.addTransactionByDeviceAndHeight("DeviceB", seq2, topics, payload, dependencies);
-//                        seq2 = seq2 + 1;
+
 
                         mAdapter.clear();
                         mAdapter.addAll(items);
@@ -172,8 +169,7 @@ public class MainActivity2 extends AppCompatActivity {
 //                } catch (NullPointerException e) {
 //                    virtual.addTransactionByDeviceAndHeight(deviceId, 0, topics, payload, dependencies);
 //                }
-                virtual2.addTransactionByDeviceAndHeight(deviceId, seq, topics, payload, dependencies);
-                seq = seq + 1;
+
 
                 MainActivity2.this.runOnUiThread(new Runnable() {
                     @Override
@@ -228,8 +224,6 @@ public class MainActivity2 extends AppCompatActivity {
 //                            virtual.addTransactionByDeviceAndHeight(deviceId, 0, topics, payload, dependencies);
 //                        }
 
-                        virtual2.addTransactionByDeviceAndHeight(deviceId, seq, topics, payload, dependencies);
-                        seq = seq + 1;
 
                         MainActivity2.this.runOnUiThread(new Runnable() {
                             @Override

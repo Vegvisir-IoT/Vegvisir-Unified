@@ -47,14 +47,18 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
             Set<TransactionTuple> updatedSet = new HashSet<>();
             Set<TransactionTuple> prevSets = MainActivity.dependencySets.get(item);
 
-
+            for(TransactionID dep: deps){
+                Log.i("dep ID",dep.getDeviceID());
+                Log.i("dep height",Long.toString(dep.getTransactionHeight()));
+            }
             if (prevSets != null) {
                 Iterator<TransactionTuple> itr = prevSets.iterator();
                 while (itr.hasNext()) {
                     TransactionTuple x = (TransactionTuple) ((Iterator) itr).next();
 
 
-                    if (!this.containsX(deps,x.transaction)) {
+                    //if (!this.containsX(deps,x.transaction)) {
+                    if (!deps.contains(x.transaction)) {
                         Log.i("x ID",x.transaction.getDeviceID());
                         Log.i("x height",Long.toString(x.transaction.getTransactionHeight()));
                         Log.i("enters if not depen",deps.toString());
@@ -112,75 +116,76 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
                 Log.i("exits else",MainActivity.items.toString());
             }
         }
-        else {
-            Set<TransactionTuple> updatedSet = new HashSet<>();
-            Set<TransactionTuple> prevSets = MainActivity2.dependencySets.get(item);
-
-
-            if (prevSets != null) {
-                Iterator<TransactionTuple> itr = prevSets.iterator();
-                while (itr.hasNext()) {
-                    TransactionTuple x = (TransactionTuple) ((Iterator) itr).next();
-
-
-                    if (!this.containsX(deps,x.transaction)) {
-//                        Log.i("x ID",x.transaction.getDeviceID());
-//                        Log.i("x height",Long.toString(x.transaction.getTransactionHeight()));
-//                        Log.i("enters if not depen",deps.toString());
-                        updatedSet.add(x);
-                    }
-                }
-            }
-            //updatedSet.clear();
-            TransactionTuple t = new TransactionTuple(tx_id, transactionType);
-            updatedSet.add(t);
-            MainActivity2.dependencySets.put(item, updatedSet);
-
-            MainActivity2.latestTransactions.put(tx_id.getDeviceID(), tx_id);
-
-
-            if (tx_id.getDeviceID().equals(MainActivity2.deviceId)) {
-//                Log.i("enters if",MainActivity2.items.toString());
-                if (transactionType == 0) {
-                    MainActivity2.items.remove(item);
-                    Set<TransactionTuple> newSet = new HashSet<>();
-                    newSet.add(new TransactionTuple(tx_id,transactionType));
-                    MainActivity2.dependencySets.put(item, newSet);
-                }
-                else {
-                    if (!MainActivity2.items.contains(item)) {
-                        MainActivity2.items.add(item);
-                    }
-                }
-            }
-            else {
-                Log.i("enters else",MainActivity2.items.toString());
-                Iterator<TransactionTuple> it = updatedSet.iterator();
-                boolean flag = false;
-                while (it.hasNext()) {
-                    TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-                    if (x.transactionType == 0) { //0 = remove
-                        // remove item from array in MainActivity
-                        MainActivity2.items.remove(item);
-                        Set<TransactionTuple> newSet = new HashSet<>();
-                        newSet.add(x);
-                        MainActivity2.dependencySets.put(item, newSet);
-                        flag = true;
-                        break;
-                    }
-                }
-                Log.i("flag check", Boolean.toString(flag));
-
-                if (!flag) {
-                    Log.i("enters flag",MainActivity2.items.toString());
-                    //add item to array in MainActivity
-                    if (!MainActivity2.items.contains(item)) {
-                        MainActivity2.items.add(item);
-                    }
-                }
-//                Log.i("exits else",MainActivity2.items.toString());
-            }
-        }
+//        else {
+//            Set<TransactionTuple> updatedSet = new HashSet<>();
+//            Set<TransactionTuple> prevSets = MainActivity2.dependencySets.get(item);
+//
+//
+//            if (prevSets != null) {
+//                Iterator<TransactionTuple> itr = prevSets.iterator();
+//                while (itr.hasNext()) {
+//                    TransactionTuple x = (TransactionTuple) ((Iterator) itr).next();
+//
+//
+//                    //if (!this.containsX(deps,x.transaction)) {
+//                    if (!deps.contains(x.transaction)) {
+////                        Log.i("x ID",x.transaction.getDeviceID());
+////                        Log.i("x height",Long.toString(x.transaction.getTransactionHeight()));
+////                        Log.i("enters if not depen",deps.toString());
+//                        updatedSet.add(x);
+//                    }
+//                }
+//            }
+//            //updatedSet.clear();
+//            TransactionTuple t = new TransactionTuple(tx_id, transactionType);
+//            updatedSet.add(t);
+//            MainActivity2.dependencySets.put(item, updatedSet);
+//
+//            MainActivity2.latestTransactions.put(tx_id.getDeviceID(), tx_id);
+//
+//
+//            if (tx_id.getDeviceID().equals(MainActivity2.deviceId)) {
+////                Log.i("enters if",MainActivity2.items.toString());
+//                if (transactionType == 0) {
+//                    MainActivity2.items.remove(item);
+//                    Set<TransactionTuple> newSet = new HashSet<>();
+//                    newSet.add(new TransactionTuple(tx_id,transactionType));
+//                    MainActivity2.dependencySets.put(item, newSet);
+//                }
+//                else {
+//                    if (!MainActivity2.items.contains(item)) {
+//                        MainActivity2.items.add(item);
+//                    }
+//                }
+//            }
+//            else {
+//                Log.i("enters else",MainActivity2.items.toString());
+//                Iterator<TransactionTuple> it = updatedSet.iterator();
+//                boolean flag = false;
+//                while (it.hasNext()) {
+//                    TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+//                    if (x.transactionType == 0) { //0 = remove
+//                        // remove item from array in MainActivity
+//                        MainActivity2.items.remove(item);
+//                        Set<TransactionTuple> newSet = new HashSet<>();
+//                        newSet.add(x);
+//                        MainActivity2.dependencySets.put(item, newSet);
+//                        flag = true;
+//                        break;
+//                    }
+//                }
+//                Log.i("flag check", Boolean.toString(flag));
+//
+//                if (!flag) {
+//                    Log.i("enters flag",MainActivity2.items.toString());
+//                    //add item to array in MainActivity
+//                    if (!MainActivity2.items.contains(item)) {
+//                        MainActivity2.items.add(item);
+//                    }
+//                }
+////                Log.i("exits else",MainActivity2.items.toString());
+//            }
+//        }
 
 //        Log.i("test", MainActivity.dependencySets.toString());
 
