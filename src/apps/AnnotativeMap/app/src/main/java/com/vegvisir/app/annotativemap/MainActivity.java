@@ -15,13 +15,18 @@ import android.graphics.BitmapFactory;
 import java.io.IOException;
 import android.os.ParcelFileDescriptor;
 import java.io.FileDescriptor;
-import java.util.HashMap;
+import java.util.*;
 import android.util.Log;
+
+import com.vegvisir.pub_sub.TransactionID;
 
 public class MainActivity extends AppCompatActivity {
 
     private Button editButton = null;
     public static HashMap<Coordinates,String> annotations = new HashMap<>();
+    public static HashMap<Coordinates,Set<TransactionTuple>> dependencySets = new HashMap<>();
+    public static HashMap<String, TransactionID> latestTransactions = new HashMap<>();
+    public static String deviceId = "deviceA";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
