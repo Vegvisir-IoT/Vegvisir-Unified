@@ -5,6 +5,8 @@ import com.isaacsheff.charlotte.proto.Reference;
 import com.vegvisir.core.config.Config;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -149,6 +151,23 @@ public abstract class BlockDAG {
      * @return a vector clock represented the frontier set of current node.
      */
     public com.vegvisir.core.datatype.proto.Block.VectorClock computeFrontierSet() {
+        return null;
+    }
+
+    /**
+     * [V2 Feature]
+     * @param remoteVC
+     * @return
+     */
+    public Iterable<Block> findMissedBlocksByVectorClock(com.vegvisir.core.datatype.proto.Block.VectorClock remoteVC) {
+        return null;
+    }
+
+    public void addLeadingBlock() {}
+
+    public Set<Reference> getLeadingBlocks() {return Collections.emptySet();}
+
+    public Reference  createBlock(String cryptoID, Iterable<com.vegvisir.core.datatype.proto.Block.Transaction> transactions, Iterable<Reference> parents) {
         return null;
     }
 }
