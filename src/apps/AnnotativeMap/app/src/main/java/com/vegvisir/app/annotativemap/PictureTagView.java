@@ -61,6 +61,16 @@ public class PictureTagView extends RelativeLayout{
 //                tvPictureTagLabel.setText(etPictureTagLabel.getText());
                 //隐藏键盘
 //                imm.hideSoftInputFromWindow(etPictureTagLabel.getWindowToken() , 0);
+//                tvPictureTagLabel.setVisibility(View.GONE);
+//
+//                Intent intent = new Intent();
+//                intent.setClass(context,add_annotation.class);
+//                intent.putExtra("CUR_ANNO",tvPictureTagLabel.getText());
+//                // 把已经添加的tag发送给add_annotation
+//                time = getTime();
+//                intent.putExtra("TIME",time);
+//                ((Activity)context).startActivityForResult(intent,0);
+
                 break;
             case Edit:
                 tvPictureTagLabel.setVisibility(View.GONE);

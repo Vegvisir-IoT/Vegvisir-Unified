@@ -23,6 +23,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import android.util.Log;
+
+import java.util.*;
+
 
 public class picture extends AppCompatActivity implements View.OnClickListener{
     private Button send = null;
@@ -36,15 +40,15 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i("Before click","2.25");
+//        Log.i("Before click","2.25");
         super.onCreate(savedInstanceState);
-        Log.i("Before click","2.5");
+//        Log.i("Before click","2.5");
         setContentView(R.layout.pic);
-        Log.i("Before click","3");
+//        Log.i("Before click","3");
         PictureTagLayout image = findViewById(R.id.image);
-        Log.i("Before click","4");
+//        Log.i("Before click","4");
         image.setBackgroundResource(R.drawable.example_map);
-        Log.i("Before click","5");
+//        Log.i("Before click","5");
         image.load(); //read /sdcard/info.txt and init the subviews(annotations)
 //        image.write();
 
@@ -76,7 +80,11 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
             cur_time = annotation.getStringExtra(TIME);
             if (!TextUtils.isEmpty(anno)) {
                 PictureTagLayout image = findViewById(R.id.image);
+//                Log.i("before anno",MainActivity.annotations.toString());
+                MainActivity.annotations.put(new Coordinates(image.startX,image.startY),anno);
+//                Log.i("after anno",MainActivity.annotations.toString());
                 image.setStatus(Status.Normal,anno);
+
             }
             super.onActivityResult(requestCode,resultCode,annotation);
         }

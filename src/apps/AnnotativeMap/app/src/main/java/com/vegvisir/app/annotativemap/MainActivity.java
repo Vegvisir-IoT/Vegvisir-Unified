@@ -21,6 +21,7 @@ import android.util.Log;
 public class MainActivity extends AppCompatActivity {
 
     private Button editButton = null;
+    public static HashMap<Coordinates,String> annotations = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -28,12 +28,14 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import android.util.Log;
+
 @SuppressLint("NewApi")
 
 public class PictureTagLayout extends RelativeLayout implements OnTouchListener {
     private static final int CLICKRANGE = 5;
-    int startX = 0;
-    int startY = 0;
+    public int startX = 0;
+    public int startY = 0;
     int startTouchViewLeft = 0;
     int startTouchViewTop = 0;
     private int cur_pic_num = 0;
@@ -79,6 +81,7 @@ public class PictureTagLayout extends RelativeLayout implements OnTouchListener 
                 touchView = null;
                 if(clickView!=null){
                     ((PictureTagView)clickView).setStatus(Status.Normal);
+
                     clickView = null;
                 }
                 startX = (int) event.getX();
@@ -88,7 +91,15 @@ public class PictureTagLayout extends RelativeLayout implements OnTouchListener 
                     startTouchViewTop = touchView.getTop();
                 }
                 else{
-                    addItem(startX,startY);
+//                      hasView(startX, startY);
+                    touchView = addItem(startX,startY);
+                    ((PictureTagView) touchView).setStatus(Status.Edit);
+                    clickView = touchView;
+                    touchView = null;
+
+//                    Log.i("Before adding item",MainActivity.annotations.toString());
+//                    MainActivity.annotations.put(new Coordinates(startX,startY),"");
+//                    Log.i("After adding item",MainActivity.annotations.toString());
 
                 }
                 break;
@@ -203,7 +214,6 @@ public class PictureTagLayout extends RelativeLayout implements OnTouchListener 
                     int x = temp.getInt("x");
                     int y = temp.getInt("y");
                     String a = temp.getString("anno");
-
                     View view = addItem(x,y);
                     ((PictureTagView)view).setAnnotation(a);
 
