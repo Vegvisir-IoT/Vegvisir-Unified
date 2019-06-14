@@ -45,8 +45,7 @@ public class MainActivity extends AppCompatActivity {
     public static String deviceId = "DeviceA";
     private Set<String> channels = new HashSet<String>();
     private Timer timer;
-    private long seq = 0;
-    private long seq2 = 0;
+
     public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
 
 
@@ -64,10 +63,6 @@ public class MainActivity extends AppCompatActivity {
         context.setDesc(desc);
         channels.add(topic);
         context.setChannels(channels);
-
-
-        VirtualVegvisirInstance virtual2 = VirtualVegvisirInstance.getInstance();
-        virtual2.setDeviceId("DeviceB");
 
         virtual.registerApplicationDelegator(context, delegator);
 
@@ -93,46 +88,46 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         //Log.i("From refresh",MainActivity.items.toString());
 
-//                        String payloadString2 = "01" + "a";
-//                        byte[] payload2 = payloadString2.getBytes();
-//                        Set<String> topics2 = new HashSet<String>();
-//                        topics2.add(topic);
-//                        Set<TransactionID> dependencies2 = new HashSet<>();
-//
-//                        if (dependencySets.containsKey("a")) {
-//                            Iterator<TransactionTuple> it = dependencySets.get("a").iterator();
-//                            while (it.hasNext()) {
-//                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-//                                dependencies2.add(x.transaction);
-//                            }
-//                        }
-////                        try {
-////                            virtual.addTransaction(context, topics2, payload2, dependencies2);
-////                        } catch (NullPointerException e) {
-////                            virtual.addTransactionByDeviceAndHeight("DeviceB", 0, topics2, payload2, dependencies2);
-////                        }
+                        String payloadString2 = "00" + "a";
+                        byte[] payload2 = payloadString2.getBytes();
+                        Set<String> topics2 = new HashSet<String>();
+                        topics2.add(topic);
+                        Set<TransactionID> dependencies2 = new HashSet<>();
+
+                        if (dependencySets.containsKey("a")) {
+                            Iterator<TransactionTuple> it = dependencySets.get("a").iterator();
+                            while (it.hasNext()) {
+                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+                                dependencies2.add(x.transaction);
+                            }
+                        }
+                        try {
+                            virtual.addTransaction(context, topics2, payload2, dependencies2);
+                        } catch (NullPointerException e) {
+                            virtual.addTransactionByDeviceAndHeight("DeviceB", 0, topics2, payload2, dependencies2);
+                        }
 //                        virtual.addTransactionByDeviceAndHeight("DeviceB", seq2, topics2, payload2, dependencies2);
 //                        seq2 = seq2 + 1;
 
-//                        String payloadString = "00" + "a";
-//                        byte[] payload = payloadString.getBytes();
-//                        Set<String> topics = new HashSet<String>();
-//                        topics.add(topic);
-//                        Set<TransactionID> dependencies = new HashSet<>();
-//
-//                        if (dependencySets.containsKey("a")) {
-//                            Iterator<TransactionTuple> it = dependencySets.get("a").iterator();
-//                            while (it.hasNext()) {
-//                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-//                                dependencies.add(x.transaction);
-//                            }
-//                        }
-////                        try {
-////                            virtual.addTransaction(context, topics, payload, dependencies);
-////                        } catch (NullPointerException e) {
-////                            virtual.addTransactionByDeviceAndHeight("DeviceB", 0, topics, payload, dependencies);
-////                        }
-//
+                        String payloadString = "01" + "a";
+                        byte[] payload = payloadString.getBytes();
+                        Set<String> topics = new HashSet<String>();
+                        topics.add(topic);
+                        Set<TransactionID> dependencies = new HashSet<>();
+
+                        if (dependencySets.containsKey("a")) {
+                            Iterator<TransactionTuple> it = dependencySets.get("a").iterator();
+                            while (it.hasNext()) {
+                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+                                dependencies.add(x.transaction);
+                            }
+                        }
+                        try {
+                            virtual.addTransaction(context, topics, payload, dependencies);
+                        } catch (NullPointerException e) {
+                            virtual.addTransactionByDeviceAndHeight("DeviceB", 0, topics, payload, dependencies);
+                        }
+
 //                        virtual.addTransactionByDeviceAndHeight("DeviceB", seq2, topics, payload, dependencies);
 //                        seq2 = seq2 + 1;
 
@@ -143,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
 
-        },0,2000);
+        },0,5000);
 
 
 
@@ -169,13 +164,12 @@ public class MainActivity extends AppCompatActivity {
                         dependencies.add(x.transaction);
                     }
                 }
-//                try {
-//                    virtual.addTransaction(context, topics, payload, dependencies);
-//                } catch (NullPointerException e) {
-//                    virtual.addTransactionByDeviceAndHeight(deviceId, 0, topics, payload, dependencies);
-//                }
-                virtual.addTransactionByDeviceAndHeight(deviceId, seq, topics, payload, dependencies);
-                seq = seq + 1;
+                try {
+                    virtual.addTransaction(context, topics, payload, dependencies);
+                } catch (NullPointerException e) {
+                    virtual.addTransactionByDeviceAndHeight(deviceId, 0, topics, payload, dependencies);
+                }
+
 
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
@@ -224,14 +218,13 @@ public class MainActivity extends AppCompatActivity {
                                 dependencies.add(x.transaction);
                             }
 //                        }
-//                        try {
-//                            virtual.addTransaction(context, topics, payload, dependencies);
-//                        } catch (NullPointerException e) {
-//                            virtual.addTransactionByDeviceAndHeight(deviceId, 0, topics, payload, dependencies);
-//                        }
+                        try {
+                            virtual.addTransaction(context, topics, payload, dependencies);
+                        } catch (NullPointerException e) {
+                            virtual.addTransactionByDeviceAndHeight(deviceId, 0, topics, payload, dependencies);
+                        }
 
-                        virtual.addTransactionByDeviceAndHeight(deviceId, seq, topics, payload, dependencies);
-                        seq = seq + 1;
+
 
                         MainActivity.this.runOnUiThread(new Runnable() {
                             @Override

@@ -41,10 +41,6 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
 
     private static Thread pollingThread;
 
-    public void setDeviceId(String newID){
-      this.deviceId = newID;
-    }
-
 
     /**
      * We only need one instance of this class, i.e. singleton.
