@@ -22,7 +22,7 @@ message Request {
     Type type = 1;
    
     oneof targets_type {
-        HashSet targetHash = 2;
+        HashSet send = 2;
         vegvisir.common.datatype.AddBlocks add = 3;
     }
 } 
@@ -32,6 +32,9 @@ message Response {
         HashSet hashResponse = 1;
         vegvisir.common.datatype.AddBlocks blockResponse = 2;
     }
+    // To be used for telling whether the receiver is behind
+   // in terms of their view of the world.
+    bool is_subset = 3;
 }
 
 message FrontierMessage {

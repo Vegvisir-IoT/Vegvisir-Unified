@@ -6,10 +6,14 @@ import "vegvisirCommon.proto";
 
 // Map of each peer's name to their leading block on a device.
 message VectorClock {
-    map<string, int32> clocks = 1;
+    map<string, int64> clocks = 1;
     // The number of blocks the peer can send during a vector
     // protocol reconciliation round.
     int32 sendLimit = 2;
+    // Signature of the above using the device's private key.
+    bytes signature = 3;
+    // The public key that was used to sign the data.
+    bytes publicKey = 4;
 }
 
 message VectorMessage {

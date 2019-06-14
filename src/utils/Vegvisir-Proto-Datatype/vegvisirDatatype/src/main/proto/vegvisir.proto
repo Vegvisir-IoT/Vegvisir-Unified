@@ -51,7 +51,7 @@ message Block {
         int32 recordid = 6;
         bytes payload = 7;
     }
-  
+
     message UserBlock {
         string userid = 1;
         Timestamp timestamp = 2;

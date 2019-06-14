@@ -11,5 +11,12 @@ message HandshakeMessage {
         VECTOR = 3;
     }
 
-    ProtocolVersion spokenVersion = 1;
+    enum Type {
+        DUMMY_STATUS = 0;
+        REQUEST = 1;
+        RESPONSE = 2;
+    }
+
+    repeated ProtocolVersion spokenVersions = 1;
+    repeated Type type = 2;
 }
