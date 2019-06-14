@@ -36,5 +36,6 @@ public interface VegvisirInstance {
     public boolean addTransaction(VegvisirApplicationContext context,
                                   Set<String> topics,
                                   byte[] payload,
+                                  TransactionID transactionID,
                                   Set<TransactionID> dependencies);
 }

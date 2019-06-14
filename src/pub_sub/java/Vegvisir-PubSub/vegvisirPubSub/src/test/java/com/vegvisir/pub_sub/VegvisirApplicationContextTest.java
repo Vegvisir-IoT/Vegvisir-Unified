@@ -70,4 +70,17 @@ class VegvisirApplicationContextTest {
         assertTrue( under_test.getChannels().contains("S") &&
                 under_test.getChannels().contains("F"));
     }
+
+    @Test
+    void updateChannels( ){
+        assertEquals( 2, under_test.getChannels().size());
+        Boolean result = under_test.updateChannels("Dr. Pepper" );
+        assertTrue( result );
+        assertEquals( 3, under_test.getChannels().size());
+        result = under_test.updateChannels( "Coke");
+        assertFalse( result );
+        assertEquals( 3, under_test.getChannels().size());
+
+    }
 }
+
