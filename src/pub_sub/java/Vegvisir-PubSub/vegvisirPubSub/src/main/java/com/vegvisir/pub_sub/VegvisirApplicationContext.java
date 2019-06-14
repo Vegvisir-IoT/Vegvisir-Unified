@@ -41,13 +41,13 @@ public class VegvisirApplicationContext {
     /*##############################
      *  Getters & Setters         3
      ############################*/
-    public String getAppID(){          return this.appId; }
+    public String getAppID(){ return this.appId; }
 
-    public String getDesc(){           return this.desc;  }
+    public String getDesc(){ return this.desc;  }
 
-    public Set<String> getChannels(){  return this.channels; }
+    public Set<String> getChannels(){ return this.channels; }
 
-    public void setAppID(String newAppID){    this.appId = newAppID; }
+    public void setAppID(String newAppID){ this.appId = newAppID; }
 
     public void setDesc(String newDesc){      this.desc = newDesc;   }
 
