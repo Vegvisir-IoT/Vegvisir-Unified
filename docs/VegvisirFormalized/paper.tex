@@ -42,6 +42,9 @@ Two elements $s$ and $s'$ of $S$ are called \emph{comparable} if either
 $s \preceq s'$ or $s' \preceq s$, and \emph{incomparable} otherwise.
 A subset $S' \subseteq S$ forms a \emph{cut} of $(S, \preceq)$ if
 any two elements of $S'$ are incomparable.
+We define the \emph{frontier} of $S$ to be the subset $S' \subseteq S$ that
+consists of all transactions in $S$ that no other transactions in $S$ depend
+on.  The frontier is a cut.
 If $s \prec s'$ (shorthand for $s \preceq s' \wedge s \neq s'$),
 we will say that $s$ \emph{precedes} $s'$.
 We say that $s$ is a \emph{parent} of $s'$ if $s \prec s'$ and
@@ -190,6 +193,34 @@ or one risks that $d$ is no longer truly generic.
 define a recursive \emph{Value} data type, but this makes programming
 with those data types awkward and inefficient.)
 
+\section{Vegvisir Transaction Graph}
+
+As mentioned above, transactions form a poset.  One problem is that
+devices may be Byzantine and try to form circular transaction dependencies.
+To prevernt this, a transaction is identified by a cryptographic hash function.
+
+A hash function $\mathit{hash}: \mathcal{O} \rightarrow \mathcal{H}$ maps an object in $\mathcal{O}$ to a unique identifier in $\mathcal{H}$.
+It has the usual properties of cryptographic hash functions:
+\begin{itemize}
+\item it is straightforward to compute $\mathit{hash}(o)$ for any $o \in \mathcal{O}$;
+\item given a $h \in \mathcal{H}$, it is computationally infeasible to find an $o$ such that $h = \mathit{hash}(o)$ (i.e., \textit{hash} is hard to invert);
+\item given $h = \mathit{hash}(o)$, it is computationally infeasible to find an $o'$ such that $h = \mathit{hash}(o')$ (i.e., \textit{hash} is \emph{collision-free});
+\end{itemize}
+
+In this case, $\mathcal{O}$ is the set of transactions.  A transaction
+consists of some opaque description of an operation and a set of
+transaction identifiers, that is, hashes of parent transactions.
+Because of the properties of hash functions,
+it is (computationally) impossible to create cycles in the transaction
+graph.
+
+As mentioned above, every cut in the transaction graph should uniquely
+identify a state.  But there is another important requirement:
+if one adds a single transaction to the transaction graph such that it
+depends on one of the transactions in the frontier, then it should
+have the same result as if the operation were to be applied to the
+state determined by the frontier.
+
 \section{Vegvisir Block Graph}
 
 The system is comprised of a set of devices $\mathcal{D} = \{ d_0, ... \}$.
@@ -205,13 +236,6 @@ A \emph{block} $b \in \mathcal{B}$ is an immutable object with the following fie
 \item $b.\mathit{signature}$: an unforgeable digital signature from the owner of this block.
 \end{itemize}
 
-A hash function $\mathit{hash}: \mathcal{B} \rightarrow \mathcal{H}$ maps a block to a unique
-identifier in $\mathcal{H}$.  It has the usual properties of cryptographic hash functions:
-\begin{itemize}
-\item it is straightforward to compute $\mathit{hash}(b)$ for any $b \in \mathcal{B}$;
-\item given a $h \in \mathcal{H}$, it is computationally infeasible to find an $b$ such that $h = \mathit{hash}(b)$ (i.e., \textit{hash} is hard to invert);
-\item given $h = \mathit{hash}(b)$, it is computationally infeasible to find an $b'$ such that $h = \mathit{hash}(b')$ (i.e., \textit{hash} is \emph{collision-free});
-\end{itemize}
 
 Let $B \subseteq \mathcal{B}$ be a set of blocks.  We call $B$ \emph{complete} iff
 \begin{itemize}
