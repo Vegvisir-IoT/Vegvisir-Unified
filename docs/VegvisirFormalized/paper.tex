@@ -65,11 +65,11 @@ we only consider a single object here.)
 An operation may mutate the state of the object and return a deterministic
 result.
 Operations are immutable and form a poset.
-We require that any cut in this poset
-uniquely identifies the state of the object.  This is related to
-\emph{Conflict-Free Replicated Data Types} (CRDTs) but more general
-in that a CRDT is a special case in which no two transactions are comparable.
-A transaction is uniquely identified by its operation and its set of parents.
+In accordance with operation-based CRDTs, we require that incomparable
+operations in this poset commute.
+If so, a cut $c$ in the poset uniquely identifies a state, which we term
+$\mathit{state}(c)$.
+The state of the poset is the state of its frontier.
 
 An important feature of Vegvisir transactions is their durability.
 A Vegvisir transaction cannot become less durable over time, but its
