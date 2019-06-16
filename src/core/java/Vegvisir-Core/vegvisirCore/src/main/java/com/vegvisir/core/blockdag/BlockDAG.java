@@ -5,6 +5,8 @@ import com.isaacsheff.charlotte.proto.Reference;
 import com.vegvisir.core.config.Config;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -161,5 +163,12 @@ public abstract class BlockDAG {
 
     public void setNewBlockListener(NewBlockListener newBlockListener) {
         this.newBlockListener = newBlockListener;
+    }
+
+    public abstract void createBlock(Iterable<com.vegvisir.core.datatype.proto.Block.Transaction> transactions,
+                                     Iterable<Reference> parents);
+
+    public Set<Reference> getFrontierBlocks() {
+        return Collections.emptySet();
     }
 }

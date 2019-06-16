@@ -3,18 +3,29 @@ package com.vegvisir.core.config;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.MessageLite;
 import com.isaacsheff.charlotte.proto.CryptoId;
+import com.vegvisir.core.blockdag.BlockUtil;
 
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.spec.ECPublicKeySpec;
 
+import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.KeyFactory;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.security.Security;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.security.spec.ECGenParameterSpec;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.ServiceConfigurationError;
 import java.util.logging.Logger;
 
 /**
@@ -50,6 +61,7 @@ public class Config {
      * The crypto id for current node. Now it just contains the public key of current node.
      */
     private com.isaacsheff.charlotte.proto.CryptoId cryptoId;
+
 
     /**
      * A class-wise logger, we use this to log exceptions.
@@ -142,7 +154,7 @@ public class Config {
     /**
      * Verify the given bytes is signed correct.
      * @param signatureBytes
-     * @return true if signature match otherwise return false if anything goes wrong.
+     * @return true if the signature is match otherwise return false if anything goes wrong.
      */
     public static boolean checkSignature(byte[] signatureBytes, PublicKey publicKey) {
         try {
@@ -156,6 +168,22 @@ public class Config {
             logger.info("Signature verify failed\n"+e.getLocalizedMessage());
             return false;
         }
+    }
+
+    public static boolean checkSignature(byte[] signedBytes, com.isaacsheff.charlotte.proto.Signature signature) {
+        java.security.PublicKey publicKey = null;
+        try {
+            publicKey = KeyFactory.getInstance("EC", "BC").generatePublic(new X509EncodedKeySpec(
+                    signature.getCryptoId().getPublicKey().getEllipticCurveP256().getByteString().toByteArray()));
+        } catch(NoSuchAlgorithmException e) {
+            return false;
+        } catch(NoSuchProviderException e) {
+            return false;
+        } catch (InvalidKeySpecException e) {
+            logger.info("tried to verify a signature which had an invalid key");
+            return false; // the key was invalid
+        }
+        return checkSignature(signedBytes, publicKey);
     }
 
 
@@ -178,6 +206,17 @@ public class Config {
         return com.isaacsheff.charlotte.proto.Hash.newBuilder()
                 .setSha3(ByteString.copyFrom(sha3(message.toByteArray())))
                 .build();
+    }
+
+
+    public static KeyPair generateKeypair() {
+        try {
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", "BC");
+            keyGen.initialize(new ECGenParameterSpec("P-256"));
+            return keyGen.generateKeyPair();
+        } catch (GeneralSecurityException ex) {
+            throw new ServiceConfigurationError("Generate Key pair failed: " + ex);
+        }
     }
 
 
@@ -210,5 +249,9 @@ public class Config {
      */
     public CryptoId getCryptoId() {
         return cryptoId;
+    }
+
+    public String getDeviceID() {
+        return BlockUtil.cryptoId2Str(this.cryptoId);
     }
 }

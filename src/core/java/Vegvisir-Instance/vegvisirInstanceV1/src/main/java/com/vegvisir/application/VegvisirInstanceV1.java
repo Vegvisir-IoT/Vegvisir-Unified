@@ -1,5 +1,7 @@
 package com.vegvisir.application;
 
+import android.support.v4.util.Pair;
+
 import com.isaacsheff.charlotte.proto.Block;
 import com.vegvisir.VegvisirCore;
 import com.vegvisir.core.blockdag.NewBlockListener;
@@ -7,11 +9,15 @@ import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
 import com.vegvisir.pub_sub.VegvisirApplicationDelegator;
 import com.vegvisir.pub_sub.VegvisirInstance;
+import com.vegvisir.core.datatype.proto.Block.Transaction;
 
-import java.util.Deque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
 /**
@@ -30,7 +36,7 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
     private LinkedBlockingDeque<com.vegvisir.core.datatype.proto.Block.Transaction> transactionQueue;
 
 
-    private ConcurrentHashMap<String, String> topic2app;
+    private ConcurrentHashMap<String, Set<String>> topic2app;
 
     private ConcurrentHashMap<String, VegvisirApplicationDelegator> app2handler;
 
@@ -54,6 +60,62 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
         transactionQueue = new LinkedBlockingDeque<>();
         topic2app = new ConcurrentHashMap<>();
         app2handler = new ConcurrentHashMap<>();
+        new Thread(this::pollTransactions).start();
+    }
+
+
+    /**
+     * A thread runs forever for polling and applying new transactions.
+     */
+    private void pollTransactions() {
+        while (true) {
+            try{
+                Transaction tx = transactionQueue.take();
+
+                Set<TransactionID> deps = new HashSet<>();
+                for (Transaction.TransactionId id : tx.getDependenciesList()) {
+                    deps.add(new TransactionID(id.getDeviceId(), id.getTransactionHeight()));
+                }
+                List<String> topics = tx.getTopicsList();
+
+                /* TODO: May want run this in separate threads to avoid being blocked by application code */
+                getAppHandlers(new HashSet<>(topics)).forEach( (handler, _topics) -> {
+                    handler.applyTransaction(
+                            _topics,
+                            tx.getPayload().toByteArray(),
+                            new TransactionID(tx.getTransactionId().getDeviceId(), tx.getTransactionId().getTransactionHeight()),
+                            deps);
+
+                });
+            } catch (InterruptedException ex) {
+                System.err.println("Interrupted transaction polling thread! Will exit.");
+                break;
+            }
+        }
+    }
+
+
+    /**
+     * A helper method for gathering transaction handlers for a transaction with given topics.
+     * The method returns a map mapping from handler to a set of topics that appear in both the
+     * set of topics that the application is listening on and the set of transaction that
+     * the transaction contains.
+     * listening on.
+     * @param topics a set of topics in the given transaction.
+     * @return
+     */
+    private Map<VegvisirApplicationDelegator, Set<String>> getAppHandlers(Set<String> topics) {
+        Map<VegvisirApplicationDelegator, Set<String>> delegatorTopics = new HashMap<>();
+        for (String topic : topics) {
+            topic2app.get(topic).forEach(app -> {
+                VegvisirApplicationDelegator delegator = app2handler.get(app);
+                if (!delegatorTopics.containsKey(delegator)) {
+                    delegatorTopics.put(delegator, new HashSet<>());
+                }
+                delegatorTopics.get(delegator).add(topic);
+            });
+        }
+        return delegatorTopics;
     }
 
     /**
@@ -71,7 +133,12 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
     public boolean registerApplicationDelegator(final VegvisirApplicationContext context, VegvisirApplicationDelegator delegator) {
         if (context.getTopics() == null || context.getAppId() == null || context.getTopics().isEmpty())
             return false;
-        context.getTopics().forEach(t -> topic2app.put(t, context.getAppId()));
+        context.getTopics().forEach(t -> {
+            if (!topic2app.containsKey(t)) {
+                topic2app.putIfAbsent(t, new HashSet<>());
+            }
+            topic2app.get(t).add(context.getAppId());
+        });
         app2handler.put(context.getAppId(), delegator);
         return true;
     }
@@ -90,6 +157,11 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
      */
     @Override
     public boolean addTransaction(VegvisirApplicationContext context, Set<String> topics, byte[] payload, Set<TransactionID> dependencies) {
+        List<com.vegvisir.core.datatype.proto.Block.Transaction.TransactionId> deps = new ArrayList<>();
+        for (TransactionID id : dependencies) {
+            deps.add(com.vegvisir.core.datatype.proto.Block.Transaction.TransactionId.newBuilder().setTransactionHeight(id.getTransactionHeight()).setDeviceId(id.getDeviceID()).build());
+        }
+        core.createTransaction(deps, topics, payload);
         return false;
     }
 

@@ -1,6 +1,7 @@
 package com.vegvisir.core.blockdag;
 
 import com.isaacsheff.charlotte.proto.Block;
+import com.isaacsheff.charlotte.proto.Reference;
 
 import java.util.HashMap;
 
@@ -99,5 +100,10 @@ public class BlockDAGv2 extends BlockDAG {
     @Override
     public com.vegvisir.core.datatype.proto.Block.VectorClock computeFrontierSet() {
         return blockchains.get(this.config.getCryptoId()).getLastVectorClock();
+    }
+
+    @Override
+    public void createBlock(Iterable<com.vegvisir.core.datatype.proto.Block.Transaction> transactions, Iterable<Reference> parents) {
+
     }
 }
