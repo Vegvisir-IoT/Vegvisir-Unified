@@ -2,6 +2,7 @@ package com.vegvisir.core.blockdag;
 
 import com.isaacsheff.charlotte.proto.Block;
 import com.isaacsheff.charlotte.proto.Reference;
+import com.vegvisir.core.config.Config;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,6 +13,10 @@ public class BlockDAGv1 extends BlockDAG {
 
     public BlockDAGv1(Block genesisBlock) {
         super(genesisBlock, null);
+    }
+
+    public BlockDAGv1(Block genesisBlock, Config config) {
+        super(genesisBlock, config);
     }
 
     public BlockDAGv1() {

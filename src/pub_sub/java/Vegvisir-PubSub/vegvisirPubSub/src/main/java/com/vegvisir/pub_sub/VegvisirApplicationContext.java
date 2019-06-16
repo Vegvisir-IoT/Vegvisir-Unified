@@ -12,6 +12,17 @@ public class VegvisirApplicationContext {
 
     private String desc;
 
-    private Set<String> channels;
+    private Set<String> topics;
 
+    public Set<String> getTopics() {
+        return topics;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
 }

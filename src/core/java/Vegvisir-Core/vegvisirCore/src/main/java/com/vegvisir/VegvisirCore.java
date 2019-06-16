@@ -1,18 +1,28 @@
 package com.vegvisir;
 
+import com.google.protobuf.ByteString;
 import com.vegvisir.core.blockdag.BlockDAG;
 import com.vegvisir.core.blockdag.BlockDAGv1;
+import com.vegvisir.core.blockdag.NewBlockListener;
+import com.vegvisir.core.config.Config;
 import com.vegvisir.core.reconciliation.ReconciliationProtocol;
 import com.vegvisir.core.reconciliation.ReconciliationV1;
 import com.vegvisir.core.reconciliation.exceptions.VegvisirReconciliationException;
 import com.vegvisir.gossip.*;
 import com.vegvisir.gossip.adapter.NetworkAdapter;
 import com.isaacsheff.charlotte.proto.Block;
+import com.vegvisir.core.datatype.proto.Block.Transaction;
 
 
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
@@ -31,6 +41,8 @@ public class VegvisirCore implements Runnable {
     /* Protocol that this instance will use for reconciliation with peers */
     private Class<? extends ReconciliationProtocol> protocol;
 
+    private Config config;
+
     private ExecutorService service;
 
     private static final Logger logger = Logger.getLogger(VegvisirCore.class.getName());
@@ -43,9 +55,15 @@ public class VegvisirCore implements Runnable {
      * @param protocol a reconciliation protocol class.
      * @param genesisBlock
      */
-    public VegvisirCore(NetworkAdapter adapter, Class<? extends ReconciliationProtocol> protocol, Block genesisBlock) {
+    public VegvisirCore(NetworkAdapter adapter,
+                        Class<? extends ReconciliationProtocol> protocol,
+                        Block genesisBlock,
+                        KeyPair keyPair,
+                        String userid) {
         gossipLayer = new Gossip(adapter);
-        dag = new BlockDAGv1(genesisBlock);
+
+        config = new Config(userid, keyPair);
+        dag = new BlockDAGv1(genesisBlock, config);
         this.protocol = protocol;
         service = Executors.newCachedThreadPool();
     }
@@ -98,5 +116,27 @@ public class VegvisirCore implements Runnable {
 
     private String waitingForNewConnection() {
         return gossipLayer.randomPickAPeer();
+    }
+
+    public void registerNewBlockListener(NewBlockListener listener) {
+        dag.setNewBlockListener(listener);
+    }
+
+    public boolean createTransaction(Collection<Transaction.TransactionId> deps,
+                                     Set<String> topics,
+                                     byte[] payload) {
+        com.vegvisir.core.datatype.proto.Block.Transaction.Builder builder = com.vegvisir.core.datatype.proto.Block.Transaction.newBuilder();
+        builder.addAllDependencies(deps)
+                .addAllTopics(topics)
+                .setPayload(ByteString.copyFrom(payload));
+        com.vegvisir.core.datatype.proto.Block.Transaction.TransactionId id = com.vegvisir.core.datatype.proto.Block.Transaction.TransactionId.newBuilder()
+                .setDeviceId()
+                .setTransactionHeight(height)
+                .build();
+        builder.setTransactionId(id);
+        long nextHeight = height + 1;
+        deviceToTransactionHeight.put(deviceId, nextHeight);
+        txQueue.add(builder.build());
+        return true;
     }
 }
