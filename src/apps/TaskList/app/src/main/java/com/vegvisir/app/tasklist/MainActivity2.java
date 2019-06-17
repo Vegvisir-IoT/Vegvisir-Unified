@@ -12,18 +12,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.vegvisir.pub_sub.TransactionID;
-import com.vegvisir.pub_sub.VegvisirApplicationContext;
-import com.vegvisir.pub_sub.VirtualVegvisirInstance;
+import com.vegvisir.pub_sub.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+import android.util.Log;
 import android.content.Intent;
 
 public class MainActivity2 extends AppCompatActivity {
@@ -34,16 +33,20 @@ public class MainActivity2 extends AppCompatActivity {
     private Button mSwitchButton;
     public static ArrayList<String> items = new ArrayList<>();
     private ArrayAdapter<String> mAdapter;
+    public static String deviceId = "DeviceB";
     // mapping from device ID to Transaction ID
     public static HashMap<String, TransactionID> latestTransactions = new HashMap<>();
     // mapping from an item to dependencies
     public static HashMap<String, Set<TransactionTuple>> dependencySets = new HashMap<>();
-    //private VegvisirApplicationContext context = new VegvisirApplicationContext();
+    //mapping from transaction ID to its 2P set
+    public static HashMap<TransactionID, TwoPSet> twoPSets = new HashMap<>();
+    public static Set<TransactionID> topDeps = new HashSet<>();
+    public static TransactionID top = new TransactionID("", -1);
+    private VegvisirApplicationContext context = null;
     private VegvisirApplicationDelegatorImpl delegator = new VegvisirApplicationDelegatorImpl();
     private String topic = "Red team";
     private String appID = "123";
     private  String desc = "task list";
-    public static String deviceId = "DeviceB";
     private Set<String> channels = new HashSet<String>();
     private Timer timer;
 
@@ -53,21 +56,21 @@ public class MainActivity2 extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_2);
+        setContentView(R.layout.activity_main);
 
-        mTaskList = (ListView) findViewById(R.id.task_listView2);
-        mItemEdit = (EditText) findViewById(R.id.item_editText2);
-        mAddButton = (Button) findViewById(R.id.add_button2);
-        mSwitchButton = findViewById(R.id.switch_button2);
+        mTaskList = (ListView) findViewById(R.id.task_listView);
+        mItemEdit = (EditText) findViewById(R.id.item_editText);
+        mAddButton = (Button) findViewById(R.id.add_button);
+        mSwitchButton = findViewById(R.id.switch_button);
 
-        //context.setAppID(appID);
-        //context.setDesc(desc);
-        channels.add(topic);
+//        context.setAppID(appID);
+//        context.setDesc(desc);
 //        context.setChannels(channels);
+        channels.add(topic);
+        context = new VegvisirApplicationContext(appID, desc, channels);
 
-//        VirtualVegvisirInstance virtual2 = VirtualVegvisirInstance.getInstance();
-//        virtual2.setDeviceId("DeviceB");
-//        virtual2.registerApplicationDelegator(context, delegator);
+        MainActivity.virtual.registerApplicationDelegator(context, delegator);
+
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -90,7 +93,7 @@ public class MainActivity2 extends AppCompatActivity {
                     public void run() {
                         //Log.i("From refresh",MainActivity.items.toString());
 
-//                        String payloadString2 = "1" + "a";
+//                        String payloadString2 = "00" + "a";
 //                        byte[] payload2 = payloadString2.getBytes();
 //                        Set<String> topics2 = new HashSet<String>();
 //                        topics2.add(topic);
@@ -103,14 +106,17 @@ public class MainActivity2 extends AppCompatActivity {
 //                                dependencies2.add(x.transaction);
 //                            }
 //                        }
+//                        if (latestTransactions.containsKey("DeviceB")){
+//                            dependencies2.add(latestTransactions.get("DeviceB"));
+//                        }
 //                        try {
 //                            virtual.addTransaction(context, topics2, payload2, dependencies2);
 //                        } catch (NullPointerException e) {
 //                            virtual.addTransactionByDeviceAndHeight("DeviceB", 0, topics2, payload2, dependencies2);
 //                        }
-
 //
-//                        String payloadString = "0" + "a";
+//
+//                        String payloadString = "01" + "a";
 //                        byte[] payload = payloadString.getBytes();
 //                        Set<String> topics = new HashSet<String>();
 //                        topics.add(topic);
@@ -123,13 +129,14 @@ public class MainActivity2 extends AppCompatActivity {
 //                                dependencies.add(x.transaction);
 //                            }
 //                        }
+//                        if (latestTransactions.containsKey("DeviceB")){
+//                            dependencies2.add(latestTransactions.get("DeviceB"));
+//                        }
 //                        try {
 //                            virtual.addTransaction(context, topics, payload, dependencies);
 //                        } catch (NullPointerException e) {
 //                            virtual.addTransactionByDeviceAndHeight("DeviceB", 0, topics, payload, dependencies);
 //                        }
-//
-
 
                         mAdapter.clear();
                         mAdapter.addAll(items);
@@ -151,7 +158,7 @@ public class MainActivity2 extends AppCompatActivity {
 //                mAdapter.add(item);
 //                mAdapter.notifyDataSetChanged();
                 mItemEdit.setText("");
-                String payloadString = "11" + item;
+                String payloadString = "01" + item;
                 byte[] payload = payloadString.getBytes();
                 Set<String> topics = new HashSet<String>();
                 topics.add(topic);
@@ -164,11 +171,15 @@ public class MainActivity2 extends AppCompatActivity {
                         dependencies.add(x.transaction);
                     }
                 }
-//                try {
-//                    virtual.addTransaction(context, topics, payload, dependencies);
-//                } catch (NullPointerException e) {
-//                    virtual.addTransactionByDeviceAndHeight(deviceId, 0, topics, payload, dependencies);
-//                }
+                if (latestTransactions.containsKey(deviceId)){
+                    dependencies.add(latestTransactions.get(deviceId));
+                }
+
+                try {
+                    MainActivity.virtual.addTransaction(context, topics, payload, dependencies);
+                } catch (NullPointerException e) {
+                    MainActivity.virtual.addTransactionByDeviceAndHeight(deviceId, 1, topics, payload, dependencies);
+                }
 
 
                 MainActivity2.this.runOnUiThread(new Runnable() {
@@ -184,45 +195,40 @@ public class MainActivity2 extends AppCompatActivity {
             }
         });
 
-//        mTaskList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view,
-//                                    int position, long id) {
-//                mAdapter.remove(mAdapter.getItem(position));
-//                // Refresh the adapter
-//                mAdapter.notifyDataSetChanged();
-//
-//            }
-//        });
 
         mTaskList.setOnItemClickListener(
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapter,
-                                                   View viewItem, int pos, long id) {
+                                            View viewItem, int pos, long id) {
                         // Remove the item within array at position
                         String item = mAdapter.getItem(pos);
 //                        mAdapter.remove(item);
 //                        mAdapter.notifyDataSetChanged();
-                        String payloadString = "10" + item;
+                        String payloadString = "00" + item;
                         byte[] payload = payloadString.getBytes();
                         Set<String> topics = new HashSet<>();
                         topics.add(topic);
                         Set<TransactionID> dependencies = new HashSet<>();
 
-//                        if (dependencySets.containsKey(item)){
-                            Iterator<TransactionTuple> it = dependencySets.get(item).iterator();
+//
+                        Iterator<TransactionTuple> it = dependencySets.get(item).iterator();
 
-                            while(it.hasNext()){
-                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-                                dependencies.add(x.transaction);
-                            }
-//                        }
-//                        try {
-//                            virtual.addTransaction(context, topics, payload, dependencies);
-//                        } catch (NullPointerException e) {
-//                            virtual.addTransactionByDeviceAndHeight(deviceId, 0, topics, payload, dependencies);
-//                        }
+                        while(it.hasNext()){
+                            TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+                            dependencies.add(x.transaction);
+                        }
+
+                        if (latestTransactions.containsKey(deviceId)){
+                            dependencies.add(latestTransactions.get(deviceId));
+                        }
+//
+                        try {
+                            MainActivity.virtual.addTransaction(context, topics, payload, dependencies);
+                        } catch (NullPointerException e) {
+                            MainActivity.virtual.addTransactionByDeviceAndHeight(deviceId, 1, topics, payload, dependencies);
+                        }
+
 
 
                         MainActivity2.this.runOnUiThread(new Runnable() {
@@ -247,7 +253,7 @@ public class MainActivity2 extends AppCompatActivity {
                 startActivity(i);
             }
 
-            });
+        });
 
     }
 

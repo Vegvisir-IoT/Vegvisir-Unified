@@ -52,7 +52,6 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
                 while (itr.hasNext()) {
                     TransactionTuple x = (TransactionTuple) ((Iterator) itr).next();
 
-                    //if (!this.containsX(deps,x.transaction)) {
                     if (!deps.contains(x.transaction)) {
                         updatedSet.add(x);
                     }
@@ -103,11 +102,13 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 
             MainActivity.twoPSets.put(MainActivity.top, new TwoPSet(addSetTop, removeSetTop));
 
-            //update items, update dependency sets
             Set<String> newSet = addSet;
             newSet.removeAll(removeSetTop);
+            Log.i("new set: ", newSet.toString());
             MainActivity.items.clear();
             MainActivity.items.addAll(newSet);
+
+            MainActivity.latestTransactions.put(tx_id.getDeviceID(),tx_id);
             
         }
 

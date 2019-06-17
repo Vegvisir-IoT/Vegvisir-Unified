@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     //mapping from transaction ID to its 2P set
     public static HashMap<TransactionID, TwoPSet> twoPSets = new HashMap<>();
     public static Set<TransactionID> topDeps = new HashSet<>();
-    public static TransactionID top = new TransactionID(deviceId, -1);
+    public static TransactionID top = new TransactionID("", -1);
     private VegvisirApplicationContext context = null;
     private VegvisirApplicationDelegatorImpl delegator = new VegvisirApplicationDelegatorImpl();
     private String topic = "Red team";
@@ -93,48 +93,50 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         //Log.i("From refresh",MainActivity.items.toString());
 
-                        String payloadString2 = "00" + "a";
-                        byte[] payload2 = payloadString2.getBytes();
-                        Set<String> topics2 = new HashSet<String>();
-                        topics2.add(topic);
-                        Set<TransactionID> dependencies2 = new HashSet<>();
-
-                        if (dependencySets.containsKey("a")) {
-                            Iterator<TransactionTuple> it = dependencySets.get("a").iterator();
-                            while (it.hasNext()) {
-                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-                                dependencies2.add(x.transaction);
-                            }
-                        }
-                        try {
-                            virtual.addTransaction(context, topics2, payload2, dependencies2);
-                        } catch (NullPointerException e) {
-                            virtual.addTransactionByDeviceAndHeight("DeviceB", 0, topics2, payload2, dependencies2);
-                        }
-//                        virtual.addTransactionByDeviceAndHeight("DeviceB", seq2, topics2, payload2, dependencies2);
-//                        seq2 = seq2 + 1;
-
-                        String payloadString = "01" + "a";
-                        byte[] payload = payloadString.getBytes();
-                        Set<String> topics = new HashSet<String>();
-                        topics.add(topic);
-                        Set<TransactionID> dependencies = new HashSet<>();
-
-                        if (dependencySets.containsKey("a")) {
-                            Iterator<TransactionTuple> it = dependencySets.get("a").iterator();
-                            while (it.hasNext()) {
-                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-                                dependencies.add(x.transaction);
-                            }
-                        }
-                        try {
-                            virtual.addTransaction(context, topics, payload, dependencies);
-                        } catch (NullPointerException e) {
-                            virtual.addTransactionByDeviceAndHeight("DeviceB", 0, topics, payload, dependencies);
-                        }
-
-//                        virtual.addTransactionByDeviceAndHeight("DeviceB", seq2, topics, payload, dependencies);
-//                        seq2 = seq2 + 1;
+//                        String payloadString2 = "00" + "a";
+//                        byte[] payload2 = payloadString2.getBytes();
+//                        Set<String> topics2 = new HashSet<String>();
+//                        topics2.add(topic);
+//                        Set<TransactionID> dependencies2 = new HashSet<>();
+//
+//                        if (dependencySets.containsKey("a")) {
+//                            Iterator<TransactionTuple> it = dependencySets.get("a").iterator();
+//                            while (it.hasNext()) {
+//                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+//                                dependencies2.add(x.transaction);
+//                            }
+//                        }
+//                        if (latestTransactions.containsKey("DeviceB")){
+//                            dependencies2.add(latestTransactions.get("DeviceB"));
+//                        }
+//                        try {
+//                            virtual.addTransaction(context, topics2, payload2, dependencies2);
+//                        } catch (NullPointerException e) {
+//                            virtual.addTransactionByDeviceAndHeight("DeviceB", 0, topics2, payload2, dependencies2);
+//                        }
+//
+//
+//                        String payloadString = "01" + "a";
+//                        byte[] payload = payloadString.getBytes();
+//                        Set<String> topics = new HashSet<String>();
+//                        topics.add(topic);
+//                        Set<TransactionID> dependencies = new HashSet<>();
+//
+//                        if (dependencySets.containsKey("a")) {
+//                            Iterator<TransactionTuple> it = dependencySets.get("a").iterator();
+//                            while (it.hasNext()) {
+//                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+//                                dependencies.add(x.transaction);
+//                            }
+//                        }
+//                        if (latestTransactions.containsKey("DeviceB")){
+//                            dependencies2.add(latestTransactions.get("DeviceB"));
+//                        }
+//                        try {
+//                            virtual.addTransaction(context, topics, payload, dependencies);
+//                        } catch (NullPointerException e) {
+//                            virtual.addTransactionByDeviceAndHeight("DeviceB", 0, topics, payload, dependencies);
+//                        }
 
                         mAdapter.clear();
                         mAdapter.addAll(items);
@@ -143,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
 
-        },0,5000);
+        },0,2000);
 
 
 
@@ -169,10 +171,14 @@ public class MainActivity extends AppCompatActivity {
                         dependencies.add(x.transaction);
                     }
                 }
+                if (latestTransactions.containsKey(deviceId)){
+                    dependencies.add(latestTransactions.get(deviceId));
+                }
+
                 try {
                     virtual.addTransaction(context, topics, payload, dependencies);
                 } catch (NullPointerException e) {
-                    virtual.addTransactionByDeviceAndHeight(deviceId, 0, topics, payload, dependencies);
+                    virtual.addTransactionByDeviceAndHeight(deviceId, 1, topics, payload, dependencies);
                 }
 
 
@@ -205,18 +211,22 @@ public class MainActivity extends AppCompatActivity {
                         topics.add(topic);
                         Set<TransactionID> dependencies = new HashSet<>();
 
-//                        if (dependencySets.containsKey(item)){
-                            Iterator<TransactionTuple> it = dependencySets.get(item).iterator();
+//
+                        Iterator<TransactionTuple> it = dependencySets.get(item).iterator();
 
-                            while(it.hasNext()){
-                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-                                dependencies.add(x.transaction);
-                            }
-//                        }
+                        while(it.hasNext()){
+                            TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+                            dependencies.add(x.transaction);
+                        }
+
+                        if (latestTransactions.containsKey(deviceId)){
+                            dependencies.add(latestTransactions.get(deviceId));
+                        }
+//
                         try {
                             virtual.addTransaction(context, topics, payload, dependencies);
                         } catch (NullPointerException e) {
-                            virtual.addTransactionByDeviceAndHeight(deviceId, 0, topics, payload, dependencies);
+                            virtual.addTransactionByDeviceAndHeight(deviceId, 1, topics, payload, dependencies);
                         }
 
 
