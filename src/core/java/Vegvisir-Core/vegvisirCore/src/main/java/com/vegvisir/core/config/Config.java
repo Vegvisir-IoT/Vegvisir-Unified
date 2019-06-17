@@ -17,6 +17,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
 import java.security.Signature;
@@ -117,17 +118,7 @@ public class Config {
      * @return
      */
     public byte[] sign(byte[] data) {
-        try {
-            signature.update(data);
-        } catch (SignatureException e) {
-            logger.info("add data to signature failed\n"+e.getLocalizedMessage());
-        }
-        try {
-            return signature.sign();
-        } catch (SignatureException e) {
-            logger.info("sign data failed\n"+e.getLocalizedMessage());
-            return null;
-        }
+        return _sign_impl(signature, data);
     }
 
 
@@ -147,6 +138,50 @@ public class Config {
                 .setCryptoId(cryptoId)
                 .setSha256WithEcdsa(com.isaacsheff.charlotte.proto.Signature.SignatureAlgorithmSHA256WithECDSA.newBuilder()
                         .setByteString(ByteString.copyFrom(sign(message))).build())
+                .build();
+    }
+
+
+    public static byte[] _sign_impl(Signature signature, byte[] data) {
+        try {
+            signature.update(data);
+        } catch (SignatureException e) {
+            logger.info("add data to signature failed\n"+e.getLocalizedMessage());
+        }
+        try {
+            return signature.sign();
+        } catch (SignatureException e) {
+            logger.info("sign data failed\n"+e.getLocalizedMessage());
+            return null;
+        }
+    }
+
+    public static byte[] sign(PrivateKey privateKey, byte[] data) {
+        Signature signature = initSignature();
+        try {
+            signature.initSign(privateKey);
+            return _sign_impl(signature, data);
+        } catch (InvalidKeyException e) {
+            logger.info("Invalid private key\n"+e.getLocalizedMessage());
+            throw new RuntimeException("Invalid private key when sign");
+        }
+    }
+
+    public static com.isaacsheff.charlotte.proto.Signature signProtoObject(KeyPair keyPair, MessageLite message) {
+        CryptoId cryptoId = com.isaacsheff.charlotte.proto.CryptoId.newBuilder().setPublicKey(
+                com.isaacsheff.charlotte.proto.PublicKey.newBuilder()
+                        .setEllipticCurveP256(
+                                com.isaacsheff.charlotte.proto.PublicKey.EllipticCurveP256.newBuilder()
+                                        .setByteString(ByteString.copyFrom(keyPair.getPublic().getEncoded()))
+                                        .build()
+                        )
+                        .build()
+        ).build();
+
+        return com.isaacsheff.charlotte.proto.Signature.newBuilder()
+                .setCryptoId(cryptoId)
+                .setSha256WithEcdsa(com.isaacsheff.charlotte.proto.Signature.SignatureAlgorithmSHA256WithECDSA.newBuilder()
+                        .setByteString(ByteString.copyFrom(sign(keyPair.getPrivate(), message.toByteArray()))).build())
                 .build();
     }
 
@@ -253,5 +288,9 @@ public class Config {
 
     public String getDeviceID() {
         return BlockUtil.cryptoId2Str(this.cryptoId);
+    }
+
+    public static String pk2str(PublicKey pk) {
+        return ByteString.copyFrom(pk.getEncoded()).toStringUtf8();
     }
 }

@@ -1,13 +1,35 @@
 package com.vegvisir.application;
 
+import android.content.Context;
+import android.support.v4.util.Pair;
+
 import com.vegvisir.gossip.adapter.NetworkAdapter;
 import com.vegvisir.network.datatype.proto.Payload;
+import com.vegvisir.vegvisir_lower_level.network.Exceptions.ConnectionNotAvailableException;
+import com.vegvisir.vegvisir_lower_level.network.Network;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Deque;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class AndroidAdapter implements NetworkAdapter {
+
+    /* Android google nearby abstract interface for sending and receiving messages */
+    private Network network;
+
+    private Deque<String> connectionHistory;
+
+
+    public AndroidAdapter(Context context, String id) {
+        network = new Network(context, id);
+        connectionHistory = new ArrayDeque<>();
+    }
+
+
     /**
      * Push given @payload to the sending queue for peer with @peerId
      *
@@ -17,7 +39,12 @@ public class AndroidAdapter implements NetworkAdapter {
      */
     @Override
     public boolean sendBlock(String peerId, Payload payload) {
-        return false;
+        try {
+            network.send(peerId, payload);
+            return true;
+        } catch (ConnectionNotAvailableException ex) {
+            return false;
+        }
     }
 
     /**
@@ -27,7 +54,7 @@ public class AndroidAdapter implements NetworkAdapter {
      */
     @Override
     public void broadCast(Payload payload) {
-
+        /*TODO: Implement this in the future */
     }
 
     /**
@@ -37,17 +64,31 @@ public class AndroidAdapter implements NetworkAdapter {
      */
     @Override
     public void onReceiveBlock(BiConsumer<String, Payload> handler) {
-
+        new Thread(() -> {
+            for (;;) {
+                /* Keep running to take new data */
+                Pair<String, Payload> data = network.waitingData();
+                handler.accept(data.first, data.second);
+            }
+        }).start();
     }
 
     /**
-     * Register a handler for a lost of connection.
+     * [NEW THREAD] Register a handler for a lost of connection.
      *
      * @param handler
      */
     @Override
     public void onConnectionLost(Consumer<String> handler) {
-
+        new Thread(() -> {
+            for (;;) {
+                try {
+                    handler.accept(network.getDisconnectedId());
+                } catch (InterruptedException ex) {
+                    return;
+                }
+            }
+        });
     }
 
     /**
@@ -57,7 +98,9 @@ public class AndroidAdapter implements NetworkAdapter {
      */
     @Override
     public List<String> getAvailableConnections() {
-        return null;
+        String remoteid = network.waitingConnection();
+        connectionHistory.add(remoteid);
+        return Arrays.asList(remoteid);
     }
 
     /**
@@ -75,6 +118,11 @@ public class AndroidAdapter implements NetworkAdapter {
      */
     @Override
     public void disconnect(String endpoint) {
+        network.disconnect(endpoint);
+    }
 
+    public Deque<String> getConnectionHistory() {
+        return connectionHistory;
     }
 }
+

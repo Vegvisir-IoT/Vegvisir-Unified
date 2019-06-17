@@ -1,16 +1,21 @@
 package com.vegvisir.application;
 
+import android.app.Application;
+import android.content.Context;
 import android.support.v4.util.Pair;
 
 import com.isaacsheff.charlotte.proto.Block;
 import com.vegvisir.VegvisirCore;
 import com.vegvisir.core.blockdag.NewBlockListener;
+import com.vegvisir.core.config.Config;
+import com.vegvisir.core.reconciliation.ReconciliationV1;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
 import com.vegvisir.pub_sub.VegvisirApplicationDelegator;
 import com.vegvisir.pub_sub.VegvisirInstance;
 import com.vegvisir.core.datatype.proto.Block.Transaction;
 
+import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,15 +52,22 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
 
 
 
-    public static synchronized VegvisirInstance getInstance() {
+    public static synchronized VegvisirInstance getInstance(Context applicationContext) {
         if (instance == null) {
-            instance = new VegvisirInstanceV1();
+            instance = new VegvisirInstanceV1(applicationContext);
         }
         return instance;
     }
 
-    private VegvisirInstanceV1() {
-        core = new VegvisirCore(new AndroidAdapter());
+    private VegvisirInstanceV1(Context ctx) {
+        KeyPair keyPair = Config.generateKeypair();
+        String deviceName = Config.pk2str(keyPair.getPublic());
+        core = new VegvisirCore(new AndroidAdapter(ctx, deviceName),
+                ReconciliationV1.class,
+                createGenesisBlock(keyPair),
+                keyPair,
+                deviceName
+        );
         core.registerNewBlockListener(this);
         transactionQueue = new LinkedBlockingDeque<>();
         topic2app = new ConcurrentHashMap<>();
@@ -175,4 +187,22 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
     public void onNewBlock(Block block) {
         transactionQueue.addAll(block.getVegvisirBlock().getBlock().getTransactionsList());
     }
+
+    /**
+     * Created a genesis block signed by given keypair.
+     * @param keyPair a key pair used to sign the block.
+     * @return a genesis block with empty content.
+     */
+    private Block createGenesisBlock(KeyPair keyPair) {
+        com.vegvisir.core.datatype.proto.Block.GenesisBlock genesis =
+                                com.vegvisir.core.datatype.proto.Block.GenesisBlock.newBuilder() .build();
+        return Block.newBuilder().setVegvisirBlock(
+                com.vegvisir.core.datatype.proto.Block.newBuilder()
+                .setGenesisBlock(genesis)
+                .setSignature(Config.signProtoObject(keyPair, genesis))
+                .build()
+
+        ).build();
+    }
+
 }
