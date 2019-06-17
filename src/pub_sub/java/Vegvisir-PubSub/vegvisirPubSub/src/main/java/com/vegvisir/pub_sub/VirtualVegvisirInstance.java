@@ -149,6 +149,9 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
                                           byte[] payload,
                                           Set<TransactionID> dependencies)
     {
+        if (!deviceToTransactionHeight.containsKey(deviceId)) {
+            deviceToTransactionHeight.put(deviceId, 1L);
+        }
         return _addTransaction(deviceId, topics, payload, dependencies);
     }
 
