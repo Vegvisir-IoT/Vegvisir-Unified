@@ -19,6 +19,8 @@ import java.util.*;
 import android.util.Log;
 
 import com.vegvisir.pub_sub.TransactionID;
+import com.vegvisir.pub_sub.VegvisirApplicationContext;
+import com.vegvisir.pub_sub.VirtualVegvisirInstance;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,13 +29,24 @@ public class MainActivity extends AppCompatActivity {
     public static HashMap<Coordinates,Set<TransactionTuple>> dependencySets = new HashMap<>();
     public static HashMap<String, TransactionID> latestTransactions = new HashMap<>();
     public static String deviceId = "deviceA";
+    private VegvisirApplicationContext context = null;
+    private VegvisirApplicationDelegatorImpl delegator = new VegvisirApplicationDelegatorImpl();
+    private String topic = "Map";
+    private String appID = "456";
+    private String desc = "Annotated map";
+    private Set<String> channels = new HashSet<>();
+
+    public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // TODO: Start vegvisir instance
+        channels.add(topic);
+//        context = new VegvisirApplicationContext(appID,desc,channels);
+
+        virtual.registerApplicationDelegator(context,delegator);
 
         editButton = findViewById(R.id.editimg);
 

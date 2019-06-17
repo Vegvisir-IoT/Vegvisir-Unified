@@ -57,6 +57,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
                 }
             }
         }
+
         Coordinates item_coords = new Coordinates(xCoord,yCoord);
         TransactionTuple t = new TransactionTuple(tx_id, transactionType);
         updatedSet.add(t);
