@@ -12,7 +12,7 @@ public class VegvisirApplicationContext {
 
     private String desc;
 
-    private Set<String> channels;
+    private Set<String> topics;
 
     /**
      * Public Constructor
@@ -24,19 +24,9 @@ public class VegvisirApplicationContext {
     public VegvisirApplicationContext(String appId, String desc, Set<String> channels) {
         this.appId = appId;
         this.desc = desc;
-        this.channels = channels;
+        this.topics = channels;
     }
 
-    /**
-     * updateChannels
-     * @param topic String representation
-     * @return True iff string was added to channel set
-     */
-    public boolean updateChannels( String topic){
-        int previous = this.channels.size();
-        this.channels.add( topic );
-        return previous != this.channels.size();
-    }
 
     /*##############################
      *  Getters & Setters         3
@@ -45,12 +35,15 @@ public class VegvisirApplicationContext {
 
     public String getDesc(){ return this.desc;  }
 
-    public Set<String> getChannels(){ return this.channels; }
-
     public void setAppID(String newAppID){ this.appId = newAppID; }
 
     public void setDesc(String newDesc){      this.desc = newDesc;   }
 
-    public void setChannels(Set<String> newChannels){  this.channels = newChannels; }
+    public Set<String> getTopics() {
+        return topics;
+    }
 
+    public void setTopics(Set<String> topics) {
+        this.topics = topics;
+    }
 }
