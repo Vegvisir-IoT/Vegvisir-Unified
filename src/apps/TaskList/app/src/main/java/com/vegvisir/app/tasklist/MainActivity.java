@@ -175,11 +175,13 @@ public class MainActivity extends AppCompatActivity {
                     dependencies.add(latestTransactions.get(deviceId));
                 }
 
-                try {
-                    virtual.addTransaction(context, topics, payload, dependencies);
-                } catch (NullPointerException e) {
-                    virtual.addTransactionByDeviceAndHeight(deviceId, 1, topics, payload, dependencies);
-                }
+//                try {
+//                    virtual.addTransaction(context, topics, payload, dependencies);
+//                } catch (NullPointerException e) {
+//                    virtual.addTransactionByDeviceAndHeight(deviceId, 1, topics, payload, dependencies);
+//                }
+
+                virtual.addTransaction(context, topics, payload, dependencies);
 
 
                 MainActivity.this.runOnUiThread(new Runnable() {
@@ -223,12 +225,12 @@ public class MainActivity extends AppCompatActivity {
                             dependencies.add(latestTransactions.get(deviceId));
                         }
 //
-                        try {
-                            virtual.addTransaction(context, topics, payload, dependencies);
-                        } catch (NullPointerException e) {
-                            virtual.addTransactionByDeviceAndHeight(deviceId, 1, topics, payload, dependencies);
-                        }
-
+//                        try {
+//                            virtual.addTransaction(context, topics, payload, dependencies);
+//                        } catch (NullPointerException e) {
+//                            virtual.addTransactionByDeviceAndHeight(deviceId, 1, topics, payload, dependencies);
+//                        }
+                        virtual.addTransaction(context, topics, payload, dependencies);
 
 
                         MainActivity.this.runOnUiThread(new Runnable() {
