@@ -33,16 +33,20 @@ public class MainActivity extends AppCompatActivity {
     private Button mSwitchButton;
     public static ArrayList<String> items = new ArrayList<>();
     private ArrayAdapter<String> mAdapter;
+    public static String deviceId = "DeviceA";
     // mapping from device ID to Transaction ID
     public static HashMap<String, TransactionID> latestTransactions = new HashMap<>();
     // mapping from an item to dependencies
     public static HashMap<String, Set<TransactionTuple>> dependencySets = new HashMap<>();
-    private VegvisirApplicationContext context = new VegvisirApplicationContext();
+    //mapping from transaction ID to its 2P set
+    public static HashMap<TransactionID, TwoPSet> twoPSets = new HashMap<>();
+    public static Set<TransactionID> topDeps = new HashSet<>();
+    public static TransactionID top = new TransactionID(deviceId, -1);
+    private VegvisirApplicationContext context = null;
     private VegvisirApplicationDelegatorImpl delegator = new VegvisirApplicationDelegatorImpl();
     private String topic = "Red team";
     private String appID = "123";
     private  String desc = "task list";
-    public static String deviceId = "DeviceA";
     private Set<String> channels = new HashSet<String>();
     private Timer timer;
 
@@ -59,10 +63,11 @@ public class MainActivity extends AppCompatActivity {
         mAddButton = (Button) findViewById(R.id.add_button);
         mSwitchButton = findViewById(R.id.switch_button);
 
-        context.setAppID(appID);
-        context.setDesc(desc);
+//        context.setAppID(appID);
+//        context.setDesc(desc);
+//        context.setChannels(channels);
         channels.add(topic);
-        context.setChannels(channels);
+        context = new VegvisirApplicationContext(appID, desc, channels);
 
         virtual.registerApplicationDelegator(context, delegator);
 
@@ -184,16 +189,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        mTaskList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view,
-//                                    int position, long id) {
-//                mAdapter.remove(mAdapter.getItem(position));
-//                // Refresh the adapter
-//                mAdapter.notifyDataSetChanged();
-//
-//            }
-//        });
 
         mTaskList.setOnItemClickListener(
                 new AdapterView.OnItemClickListener() {

@@ -38,7 +38,7 @@ public class MainActivity2 extends AppCompatActivity {
     public static HashMap<String, TransactionID> latestTransactions = new HashMap<>();
     // mapping from an item to dependencies
     public static HashMap<String, Set<TransactionTuple>> dependencySets = new HashMap<>();
-    private VegvisirApplicationContext context = new VegvisirApplicationContext();
+    //private VegvisirApplicationContext context = new VegvisirApplicationContext();
     private VegvisirApplicationDelegatorImpl delegator = new VegvisirApplicationDelegatorImpl();
     private String topic = "Red team";
     private String appID = "123";
@@ -60,10 +60,10 @@ public class MainActivity2 extends AppCompatActivity {
         mAddButton = (Button) findViewById(R.id.add_button2);
         mSwitchButton = findViewById(R.id.switch_button2);
 
-        context.setAppID(appID);
-        context.setDesc(desc);
+        //context.setAppID(appID);
+        //context.setDesc(desc);
         channels.add(topic);
-        context.setChannels(channels);
+//        context.setChannels(channels);
 
 //        VirtualVegvisirInstance virtual2 = VirtualVegvisirInstance.getInstance();
 //        virtual2.setDeviceId("DeviceB");

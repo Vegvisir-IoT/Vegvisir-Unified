@@ -1,18 +1,29 @@
 package com.vegvisir;
 
+import com.google.protobuf.ByteString;
 import com.vegvisir.core.blockdag.BlockDAG;
 import com.vegvisir.core.blockdag.BlockDAGv1;
+import com.vegvisir.core.blockdag.NewBlockListener;
+import com.vegvisir.core.config.Config;
 import com.vegvisir.core.reconciliation.ReconciliationProtocol;
 import com.vegvisir.core.reconciliation.ReconciliationV1;
 import com.vegvisir.core.reconciliation.exceptions.VegvisirReconciliationException;
 import com.vegvisir.gossip.*;
 import com.vegvisir.gossip.adapter.NetworkAdapter;
 import com.isaacsheff.charlotte.proto.Block;
+import com.vegvisir.core.datatype.proto.Block.Transaction;
 
 
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
@@ -31,6 +42,20 @@ public class VegvisirCore implements Runnable {
     /* Protocol that this instance will use for reconciliation with peers */
     private Class<? extends ReconciliationProtocol> protocol;
 
+    private Config config;
+
+
+    /**
+     * A sequence counter for transactions on this device.
+     * TODO: move this to config?
+     */
+    private long transactionHeight = 1;
+    private final int BLOCK_SIZE = 1;
+
+    private Set<Transaction> transactionBuffer1;
+    private Set<Transaction> transactionBuffer2;
+
+
     private ExecutorService service;
 
     private static final Logger logger = Logger.getLogger(VegvisirCore.class.getName());
@@ -43,19 +68,33 @@ public class VegvisirCore implements Runnable {
      * @param protocol a reconciliation protocol class.
      * @param genesisBlock
      */
-    public VegvisirCore(NetworkAdapter adapter, Class<? extends ReconciliationProtocol> protocol, Block genesisBlock) {
+    public VegvisirCore(NetworkAdapter adapter,
+                        Class<? extends ReconciliationProtocol> protocol,
+                        Block genesisBlock,
+                        KeyPair keyPair,
+                        String userid) {
         gossipLayer = new Gossip(adapter);
-        dag = new BlockDAGv1(genesisBlock);
+
+        if (keyPair == null)
+            keyPair = Config.generateKeypair();
+
+        if (userid == null || userid.isEmpty())
+            userid = ByteString.copyFrom(keyPair.getPublic().getEncoded()).toString();
+
+        config = new Config(userid, keyPair);
+        dag = new BlockDAGv1(genesisBlock, config);
         this.protocol = protocol;
         service = Executors.newCachedThreadPool();
+        transactionBuffer1 = new HashSet<>();
+        transactionBuffer2 = new HashSet<>();
     }
 
     public VegvisirCore(NetworkAdapter adapter, Class<ReconciliationProtocol> protocol) {
-        this(adapter, protocol, null);
+        this(adapter, protocol, null, null, null);
     }
 
     public VegvisirCore(NetworkAdapter adapter) {
-        this(adapter, ReconciliationV1.class, null);
+        this(adapter, ReconciliationV1.class, null, null, null);
     }
 
     public void updateProtocol(Class<? extends ReconciliationProtocol> newProtocol)
@@ -98,5 +137,34 @@ public class VegvisirCore implements Runnable {
 
     private String waitingForNewConnection() {
         return gossipLayer.randomPickAPeer();
+    }
+
+
+    public void registerNewBlockListener(NewBlockListener listener) {
+        dag.setNewBlockListener(listener);
+    }
+
+    public synchronized boolean createTransaction(Collection<Transaction.TransactionId> deps,
+                                     Set<String> topics,
+                                     byte[] payload) {
+        com.vegvisir.core.datatype.proto.Block.Transaction.Builder builder = com.vegvisir.core.datatype.proto.Block.Transaction.newBuilder();
+        builder.addAllDependencies(deps)
+                .addAllTopics(topics)
+                .setPayload(ByteString.copyFrom(payload));
+        com.vegvisir.core.datatype.proto.Block.Transaction.TransactionId id = com.vegvisir.core.datatype.proto.Block.Transaction.TransactionId.newBuilder()
+                .setDeviceId(config.getDeviceID())
+                .setTransactionHeight(getNIncTransactionHeight())
+                .build();
+        builder.setTransactionId(id);
+        transactionBuffer1.add(builder.build());
+        if (transactionBuffer1.size() >= BLOCK_SIZE) {
+            dag.createBlock(transactionBuffer1, getDag().getFrontierBlocks());
+            transactionBuffer1.clear();
+        }
+        return true;
+    }
+
+    private long getNIncTransactionHeight() {
+        return transactionHeight++;
     }
 }
