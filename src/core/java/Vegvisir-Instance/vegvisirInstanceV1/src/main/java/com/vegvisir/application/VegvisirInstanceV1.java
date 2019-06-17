@@ -143,15 +143,15 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
      */
     @Override
     public boolean registerApplicationDelegator(final VegvisirApplicationContext context, VegvisirApplicationDelegator delegator) {
-        if (context.getTopics() == null || context.getAppId() == null || context.getTopics().isEmpty())
+        if (context.getChannels() == null || context.getAppID() == null || context.getChannels().isEmpty())
             return false;
-        context.getTopics().forEach(t -> {
+        context.getChannels().forEach(t -> {
             if (!topic2app.containsKey(t)) {
                 topic2app.putIfAbsent(t, new HashSet<>());
             }
-            topic2app.get(t).add(context.getAppId());
+            topic2app.get(t).add(context.getAppID());
         });
-        app2handler.put(context.getAppId(), delegator);
+        app2handler.put(context.getAppID(), delegator);
         return true;
     }
 
@@ -174,7 +174,7 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
             deps.add(com.vegvisir.core.datatype.proto.Block.Transaction.TransactionId.newBuilder().setTransactionHeight(id.getTransactionHeight()).setDeviceId(id.getDeviceID()).build());
         }
         core.createTransaction(deps, topics, payload);
-        return false;
+        return true;
     }
 
     /**
