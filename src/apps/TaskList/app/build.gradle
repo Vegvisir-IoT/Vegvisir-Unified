@@ -5,7 +5,7 @@ android {
     buildToolsVersion "29.0.0"
     defaultConfig {
         applicationId "com.vegvisir.app.tasklist"
-        minSdkVersion 21
+        minSdkVersion 28
         targetSdkVersion 29
         multiDexEnabled true
         versionCode 1
@@ -32,4 +32,8 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation project (":vegvisirPubSub")
+    implementation project (":vegvisirInstanceV1")
+    implementation project (":vegvisirCore")
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.annotation:annotation:1.0.2'
 }

@@ -1,1 +1,1 @@
-include ':app', ':vegvisirGossip', ':vegvisirCore', ':vegvisirDatatype', ':vegvisirPubSub'
+include ':app', ':vegvisirGossip', ':vegvisirCore', ':vegvisirDatatype', ':vegvisirPubSub', ':vegvisirAndroid', ':vegvisirInstanceV1'

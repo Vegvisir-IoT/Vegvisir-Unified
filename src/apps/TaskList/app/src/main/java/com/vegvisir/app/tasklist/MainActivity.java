@@ -1,4 +1,5 @@
 package com.vegvisir.app.tasklist;
+//123456 password
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -15,6 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.vegvisir.pub_sub.*;
 import java.util.Timer;
 import java.util.TimerTask;
+import com.vegvisir.application.*;
+//import com.vegvisir.core.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +27,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import android.util.Log;
 import android.content.Intent;
+import android.content.Context;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,8 +53,10 @@ public class MainActivity extends AppCompatActivity {
     private  String desc = "task list";
     private Set<String> channels = new HashSet<String>();
     private Timer timer;
+    private static VegvisirInstance instance = null;
 
     public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
+
 
 
     @Override
@@ -63,13 +69,14 @@ public class MainActivity extends AppCompatActivity {
         mAddButton = (Button) findViewById(R.id.add_button);
         mSwitchButton = findViewById(R.id.switch_button);
 
-//        context.setAppID(appID);
-//        context.setDesc(desc);
-//        context.setChannels(channels);
         channels.add(topic);
         context = new VegvisirApplicationContext(appID, desc, channels);
+        Context androidContext = getApplicationContext();
 
-        virtual.registerApplicationDelegator(context, delegator);
+        instance = VegvisirInstanceV1.getInstance(androidContext);
+        instance.registerApplicationDelegator(context, delegator);
+
+        //virtual.registerApplicationDelegator(context, delegator);
 
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1){
             @Override
@@ -97,51 +104,51 @@ public class MainActivity extends AppCompatActivity {
                         mAdapter.notifyDataSetChanged();
                         //Log.i("From refresh",MainActivity.items.toString());
 
-                        String payloadString2 = "10" + "a";
-                        byte[] payload2 = payloadString2.getBytes();
-                        Set<String> topics2 = new HashSet<String>();
-                        topics2.add(topic);
-                        Set<TransactionID> dependencies2 = new HashSet<>();
-
-                        if (dependencySets.containsKey("a")) {
-                            Iterator<TransactionTuple> it = dependencySets.get("a").iterator();
-                            while (it.hasNext()) {
-                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-                                dependencies2.add(x.transaction);
-                            }
-                        }
-                        if (latestTransactions.containsKey("DeviceB")){
-                            dependencies2.add(latestTransactions.get("DeviceB"));
-                        }
-
-                        virtual.addTransaction(context, topics2, payload2, dependencies2);
-
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        String payloadString = "11" + "a";
-                        byte[] payload = payloadString.getBytes();
-                        Set<String> topics = new HashSet<String>();
-                        topics.add(topic);
-                        Set<TransactionID> dependencies = new HashSet<>();
-
-                        Log.i("depSets",dependencySets.toString());
-                        if (dependencySets.containsKey("a")) {
-                            Log.i("Right","Place");
-                            Iterator<TransactionTuple> it = dependencySets.get("a").iterator();
-                            while (it.hasNext()) {
-                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-                                dependencies.add(x.transaction);
-                            }
-                        }
-                        if (latestTransactions.containsKey("DeviceB")){
-                            dependencies.add(latestTransactions.get("DeviceB"));
-                        }
-
-                        virtual.addTransaction(context, topics, payload, dependencies);
+//                        String payloadString2 = "10" + "a";
+//                        byte[] payload2 = payloadString2.getBytes();
+//                        Set<String> topics2 = new HashSet<String>();
+//                        topics2.add(topic);
+//                        Set<TransactionID> dependencies2 = new HashSet<>();
+//
+//                        if (dependencySets.containsKey("a")) {
+//                            Iterator<TransactionTuple> it = dependencySets.get("a").iterator();
+//                            while (it.hasNext()) {
+//                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+//                                dependencies2.add(x.transaction);
+//                            }
+//                        }
+//                        if (latestTransactions.containsKey("DeviceB")){
+//                            dependencies2.add(latestTransactions.get("DeviceB"));
+//                        }
+//
+//                        virtual.addTransaction(context, topics2, payload2, dependencies2);
+//
+//                        try {
+//                            Thread.sleep(2000);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                        String payloadString = "11" + "a";
+//                        byte[] payload = payloadString.getBytes();
+//                        Set<String> topics = new HashSet<String>();
+//                        topics.add(topic);
+//                        Set<TransactionID> dependencies = new HashSet<>();
+//
+//                        Log.i("depSets",dependencySets.toString());
+//                        if (dependencySets.containsKey("a")) {
+//                            Log.i("Right","Place");
+//                            Iterator<TransactionTuple> it = dependencySets.get("a").iterator();
+//                            while (it.hasNext()) {
+//                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+//                                dependencies.add(x.transaction);
+//                            }
+//                        }
+//                        if (latestTransactions.containsKey("DeviceB")){
+//                            dependencies.add(latestTransactions.get("DeviceB"));
+//                        }
+//
+//                        virtual.addTransaction(context, topics, payload, dependencies);
 
 //                        mAdapter.clear();
 //                        mAdapter.addAll(items);
@@ -184,7 +191,8 @@ public class MainActivity extends AppCompatActivity {
 //                    virtual.addTransactionByDeviceAndHeight(deviceId, 1, topics, payload, dependencies);
 //                }
 
-                virtual.addTransaction(context, topics, payload, dependencies);
+                //virtual.addTransaction(context, topics, payload, dependencies);
+                instance.addTransaction(context, topics, payload, dependencies);
 
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
@@ -233,7 +241,8 @@ public class MainActivity extends AppCompatActivity {
 //                        } catch (NullPointerException e) {
 //                            virtual.addTransactionByDeviceAndHeight(deviceId, 1, topics, payload, dependencies);
 //                        }
-                        virtual.addTransaction(context, topics, payload, dependencies);
+                        //virtual.addTransaction(context, topics, payload, dependencies);
+                        instance.addTransaction(context, topics, payload, dependencies);
 
 
                         MainActivity.this.runOnUiThread(new Runnable() {
