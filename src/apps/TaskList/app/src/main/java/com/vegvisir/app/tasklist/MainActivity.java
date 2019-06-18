@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mSwitchButton;
     public static ArrayList<String> items = new ArrayList<>();
     private ArrayAdapter<String> mAdapter;
-    public static String deviceId = "DeviceA";
+    public static String deviceId = "DeviceC";
     // mapping from device ID to Transaction ID
     public static HashMap<String, TransactionID> latestTransactions = new HashMap<>();
     // mapping from an item to dependencies
@@ -253,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
 
-        },0,5000);
+        },0,1000);
 
 
 

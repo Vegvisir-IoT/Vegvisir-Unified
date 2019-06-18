@@ -73,6 +73,7 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
         topic2app = new ConcurrentHashMap<>();
         app2handler = new ConcurrentHashMap<>();
         new Thread(this::pollTransactions).start();
+        new Thread(core).start();
     }
 
 
