@@ -37,15 +37,34 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
             TransactionID tx_id,
             Set<TransactionID> deps) {
 
-        Log.i("startstr","1");
+//        Log.i("startstr","1");
         String payloadString = new String(payload);
         int activityName = Integer.parseInt(payloadString.substring(0,1));
         int transactionType = Integer.parseInt(payloadString.substring(1,2));
         String item = payloadString.substring(2);
 
-        if (activityName == 0) {
+//        if (activityName == 0) {
             Set<TransactionTuple> updatedSet = new HashSet<>();
             Set<TransactionTuple> prevSets = MainActivity.dependencySets.get(item);
+            String deviceId;
+            if (activityName == 0) {
+                deviceId = "DeviceA";
+            }
+            else {
+                deviceId = "DeviceB";
+            }
+
+            Log.i("ttype", Integer.toString(transactionType));
+            Log.i("item",item);
+            if (prevSets != null) {
+                Log.i("prev sets",prevSets.toString());
+            }
+            else{
+                Log.i("prev sets","null");
+            }
+
+
+            Log.i("deps",deps.toString());
 
             if (prevSets != null) {
                 Iterator<TransactionTuple> itr = prevSets.iterator();
@@ -53,23 +72,26 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
                     TransactionTuple x = (TransactionTuple) ((Iterator) itr).next();
 
                     if (!deps.contains(x.transaction)) {
+                        Log.i("Wrong","Place");
                         updatedSet.add(x);
                     }
                 }
             }
 
-            MainActivity.dependencySets.put(item, updatedSet);
-
             TransactionTuple t = new TransactionTuple(tx_id, transactionType);
             updatedSet.add(t);
             MainActivity.dependencySets.put(item, updatedSet);
+            Log.i("updated set",updatedSet.toString());
 
-            MainActivity.latestTransactions.put(tx_id.getDeviceID(), tx_id);
+            MainActivity.latestTransactions.put(deviceId, tx_id);
+
+            Log.i("Latest",MainActivity.latestTransactions.toString());
 
             for (TransactionID d : deps) {
                 MainActivity.topDeps.remove(d);
             }
             MainActivity.topDeps.add(tx_id);
+            Log.i("topdeps",MainActivity.topDeps.toString());
             HashSet<String> addSet = new HashSet<>();
             HashSet<String> removeSet = new HashSet<>();
 
@@ -100,17 +122,18 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
                 }
             }
 
+            Log.i("addsettop",addSetTop.toString());
+            Log.i("remsettop",removeSetTop.toString());
+
             MainActivity.twoPSets.put(MainActivity.top, new TwoPSet(addSetTop, removeSetTop));
 
-            Set<String> newSet = addSet;
+            Set<String> newSet = addSetTop;
             newSet.removeAll(removeSetTop);
             Log.i("new set: ", newSet.toString());
             MainActivity.items.clear();
             MainActivity.items.addAll(newSet);
 
-            MainActivity.latestTransactions.put(tx_id.getDeviceID(),tx_id);
-            
-        }
+//        }
 
 //            if (tx_id.getDeviceID().equals(MainActivity.deviceId)) {
 //                Log.i("enters if",MainActivity.items.toString());

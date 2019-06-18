@@ -91,63 +91,66 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //Log.i("From refresh",MainActivity.items.toString());
-
-//                        String payloadString2 = "00" + "a";
-//                        byte[] payload2 = payloadString2.getBytes();
-//                        Set<String> topics2 = new HashSet<String>();
-//                        topics2.add(topic);
-//                        Set<TransactionID> dependencies2 = new HashSet<>();
-//
-//                        if (dependencySets.containsKey("a")) {
-//                            Iterator<TransactionTuple> it = dependencySets.get("a").iterator();
-//                            while (it.hasNext()) {
-//                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-//                                dependencies2.add(x.transaction);
-//                            }
-//                        }
-//                        if (latestTransactions.containsKey("DeviceB")){
-//                            dependencies2.add(latestTransactions.get("DeviceB"));
-//                        }
-//                        try {
-//                            virtual.addTransaction(context, topics2, payload2, dependencies2);
-//                        } catch (NullPointerException e) {
-//                            virtual.addTransactionByDeviceAndHeight("DeviceB", 0, topics2, payload2, dependencies2);
-//                        }
-//
-//
-//                        String payloadString = "01" + "a";
-//                        byte[] payload = payloadString.getBytes();
-//                        Set<String> topics = new HashSet<String>();
-//                        topics.add(topic);
-//                        Set<TransactionID> dependencies = new HashSet<>();
-//
-//                        if (dependencySets.containsKey("a")) {
-//                            Iterator<TransactionTuple> it = dependencySets.get("a").iterator();
-//                            while (it.hasNext()) {
-//                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-//                                dependencies.add(x.transaction);
-//                            }
-//                        }
-//                        if (latestTransactions.containsKey("DeviceB")){
-//                            dependencies2.add(latestTransactions.get("DeviceB"));
-//                        }
-//                        try {
-//                            virtual.addTransaction(context, topics, payload, dependencies);
-//                        } catch (NullPointerException e) {
-//                            virtual.addTransactionByDeviceAndHeight("DeviceB", 0, topics, payload, dependencies);
-//                        }
 
                         mAdapter.clear();
                         mAdapter.addAll(items);
                         mAdapter.notifyDataSetChanged();
+                        //Log.i("From refresh",MainActivity.items.toString());
+
+                        String payloadString2 = "10" + "a";
+                        byte[] payload2 = payloadString2.getBytes();
+                        Set<String> topics2 = new HashSet<String>();
+                        topics2.add(topic);
+                        Set<TransactionID> dependencies2 = new HashSet<>();
+
+                        if (dependencySets.containsKey("a")) {
+                            Iterator<TransactionTuple> it = dependencySets.get("a").iterator();
+                            while (it.hasNext()) {
+                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+                                dependencies2.add(x.transaction);
+                            }
+                        }
+                        if (latestTransactions.containsKey("DeviceB")){
+                            dependencies2.add(latestTransactions.get("DeviceB"));
+                        }
+
+                        virtual.addTransaction(context, topics2, payload2, dependencies2);
+
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        String payloadString = "11" + "a";
+                        byte[] payload = payloadString.getBytes();
+                        Set<String> topics = new HashSet<String>();
+                        topics.add(topic);
+                        Set<TransactionID> dependencies = new HashSet<>();
+
+                        Log.i("depSets",dependencySets.toString());
+                        if (dependencySets.containsKey("a")) {
+                            Log.i("Right","Place");
+                            Iterator<TransactionTuple> it = dependencySets.get("a").iterator();
+                            while (it.hasNext()) {
+                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+                                dependencies.add(x.transaction);
+                            }
+                        }
+                        if (latestTransactions.containsKey("DeviceB")){
+                            dependencies.add(latestTransactions.get("DeviceB"));
+                        }
+
+                        virtual.addTransaction(context, topics, payload, dependencies);
+
+//                        mAdapter.clear();
+//                        mAdapter.addAll(items);
+//                        mAdapter.notifyDataSetChanged();
                     }
                 });
             }
 
-        },0,2000);
-
-
+        },0,5000);
 
 
 
@@ -183,10 +186,10 @@ public class MainActivity extends AppCompatActivity {
 
                 virtual.addTransaction(context, topics, payload, dependencies);
 
-
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        //Log.i("From main remove",MainActivity.items.toString());
                         mAdapter.clear();
                         mAdapter.addAll(items);
                         mAdapter.notifyDataSetChanged();
