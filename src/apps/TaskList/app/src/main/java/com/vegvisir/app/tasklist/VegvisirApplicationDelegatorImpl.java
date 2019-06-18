@@ -37,101 +37,76 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
             TransactionID tx_id,
             Set<TransactionID> deps) {
 
-//        Log.i("startstr","1");
         String payloadString = new String(payload);
-        int activityName = Integer.parseInt(payloadString.substring(0,1));
-        int transactionType = Integer.parseInt(payloadString.substring(1,2));
-        String item = payloadString.substring(2);
+
+        int transactionType = Integer.parseInt(payloadString.substring(0,1));
+        String item = payloadString.substring(1);
 
 //        if (activityName == 0) {
-            Set<TransactionTuple> updatedSet = new HashSet<>();
-            Set<TransactionTuple> prevSets = MainActivity.dependencySets.get(item);
-            String deviceId;
-            if (activityName == 0) {
-                deviceId = "DeviceA";
-            }
-            else {
-                deviceId = "DeviceB";
-            }
-
-            Log.i("ttype", Integer.toString(transactionType));
-            Log.i("item",item);
-            if (prevSets != null) {
-                Log.i("prev sets",prevSets.toString());
-            }
-            else{
-                Log.i("prev sets","null");
-            }
+        Set<TransactionTuple> updatedSet = new HashSet<>();
+        Set<TransactionTuple> prevSets = MainActivity.dependencySets.get(item);
+        String deviceId = tx_id.getDeviceID();
 
 
-            Log.i("deps",deps.toString());
+        if (prevSets != null) {
+            Iterator<TransactionTuple> itr = prevSets.iterator();
+            while (itr.hasNext()) {
+                TransactionTuple x = (TransactionTuple) ((Iterator) itr).next();
 
-            if (prevSets != null) {
-                Iterator<TransactionTuple> itr = prevSets.iterator();
-                while (itr.hasNext()) {
-                    TransactionTuple x = (TransactionTuple) ((Iterator) itr).next();
+                if (!deps.contains(x.transaction)) {
 
-                    if (!deps.contains(x.transaction)) {
-                        Log.i("Wrong","Place");
-                        updatedSet.add(x);
-                    }
+                    updatedSet.add(x);
                 }
             }
+        }
 
-            TransactionTuple t = new TransactionTuple(tx_id, transactionType);
-            updatedSet.add(t);
-            MainActivity.dependencySets.put(item, updatedSet);
-            Log.i("updated set",updatedSet.toString());
+        TransactionTuple t = new TransactionTuple(tx_id, transactionType);
+        updatedSet.add(t);
+        MainActivity.dependencySets.put(item, updatedSet);
 
-            MainActivity.latestTransactions.put(deviceId, tx_id);
+        MainActivity.latestTransactions.put(deviceId, tx_id);
 
-            Log.i("Latest",MainActivity.latestTransactions.toString());
+        for (TransactionID d : deps) {
+            MainActivity.topDeps.remove(d);
+        }
+        MainActivity.topDeps.add(tx_id);
+        HashSet<String> addSet = new HashSet<>();
+        HashSet<String> removeSet = new HashSet<>();
 
-            for (TransactionID d : deps) {
-                MainActivity.topDeps.remove(d);
+        for (TransactionID d : deps) {
+            if (MainActivity.twoPSets.containsKey(d)) {
+                addSet.addAll(MainActivity.twoPSets.get(d).getAddSet());
+                removeSet.addAll(MainActivity.twoPSets.get(d).getRemoveSet());
             }
-            MainActivity.topDeps.add(tx_id);
-            Log.i("topdeps",MainActivity.topDeps.toString());
-            HashSet<String> addSet = new HashSet<>();
-            HashSet<String> removeSet = new HashSet<>();
+        }
 
-            for (TransactionID d : deps) {
-                if (MainActivity.twoPSets.containsKey(d)) {
-                    addSet.addAll(MainActivity.twoPSets.get(d).getAddSet());
-                    removeSet.addAll(MainActivity.twoPSets.get(d).getRemoveSet());
-                }
+        if (transactionType == 1) {
+            addSet.add(item);
+            removeSet.remove(item);
+        } else {
+            addSet.remove(item);
+            removeSet.add(item);
+        }
+
+        MainActivity.twoPSets.put(tx_id, new TwoPSet(addSet, removeSet));
+
+        HashSet<String> addSetTop = new HashSet<>();
+        HashSet<String> removeSetTop = new HashSet<>();
+
+        for (TransactionID d : MainActivity.topDeps) {
+            if (MainActivity.twoPSets.containsKey(d)) {
+                addSetTop.addAll(MainActivity.twoPSets.get(d).getAddSet());
+                removeSetTop.addAll(MainActivity.twoPSets.get(d).getRemoveSet());
             }
+        }
 
-            if (transactionType == 1) {
-                addSet.add(item);
-                removeSet.remove(item);
-            } else {
-                addSet.remove(item);
-                removeSet.add(item);
-            }
+        MainActivity.twoPSets.put(MainActivity.top, new TwoPSet(addSetTop, removeSetTop));
 
-            MainActivity.twoPSets.put(tx_id, new TwoPSet(addSet, removeSet));
-
-            HashSet<String> addSetTop = new HashSet<>();
-            HashSet<String> removeSetTop = new HashSet<>();
-
-            for (TransactionID d : MainActivity.topDeps) {
-                if (MainActivity.twoPSets.containsKey(d)) {
-                    addSetTop.addAll(MainActivity.twoPSets.get(d).getAddSet());
-                    removeSetTop.addAll(MainActivity.twoPSets.get(d).getRemoveSet());
-                }
-            }
-
-            Log.i("addsettop",addSetTop.toString());
-            Log.i("remsettop",removeSetTop.toString());
-
-            MainActivity.twoPSets.put(MainActivity.top, new TwoPSet(addSetTop, removeSetTop));
-
-            Set<String> newSet = addSetTop;
-            newSet.removeAll(removeSetTop);
-            Log.i("new set: ", newSet.toString());
-            MainActivity.items.clear();
-            MainActivity.items.addAll(newSet);
+        Set<String> newSet = addSetTop;
+        newSet.removeAll(removeSetTop);
+        Log.i("new set: ", newSet.toString());
+        MainActivity.items.clear();
+        MainActivity.items.addAll(newSet);
 
 //        }
 

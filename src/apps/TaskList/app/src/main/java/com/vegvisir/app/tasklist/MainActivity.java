@@ -34,6 +34,9 @@ import android.util.Log;
 import android.content.Intent;
 import android.content.Context;
 
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.*;
+
 public class MainActivity extends AppCompatActivity {
 
     private ListView mTaskList;
@@ -42,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mSwitchButton;
     public static ArrayList<String> items = new ArrayList<>();
     private ArrayAdapter<String> mAdapter;
-    public static String deviceId = "DeviceC";
+    public static String deviceId = "DeviceA";
     // mapping from device ID to Transaction ID
     public static HashMap<String, TransactionID> latestTransactions = new HashMap<>();
     // mapping from an item to dependencies
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private Set<String> channels = new HashSet<String>();
     private Timer timer;
     private static VegvisirInstance instance = null;
+    public static boolean itemsWasModified = false;
 
     public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
 
@@ -82,84 +86,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
         }
 
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-            }
-        } else {
-        }
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.BLUETOOTH)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.BLUETOOTH)) {
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.BLUETOOTH}, 0);
-            }
-        } else {
-        }
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.BLUETOOTH_ADMIN)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.BLUETOOTH_ADMIN)) {
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.BLUETOOTH_ADMIN}, 0);
-            }
-        } else {
-        }
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_WIFI_STATE)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_WIFI_STATE)) {
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_WIFI_STATE}, 0);
-            }
-        } else {
-        }
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CHANGE_WIFI_STATE)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.CHANGE_WIFI_STATE)) {
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.CHANGE_WIFI_STATE}, 0);
-            }
-        } else {
-        }
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
-            }
-        } else {
-        }
-
         mTaskList = (ListView) findViewById(R.id.task_listView);
         mItemEdit = (EditText) findViewById(R.id.item_editText);
         mAddButton = (Button) findViewById(R.id.add_button);
@@ -172,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         instance = VegvisirInstanceV1.getInstance(androidContext);
         instance.registerApplicationDelegator(context, delegator);
 
-        //virtual.registerApplicationDelegator(context, delegator);
+//        virtual.registerApplicationDelegator(context, delegator);
 
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1){
             @Override
@@ -194,13 +120,12 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-
                         mAdapter.clear();
                         mAdapter.addAll(items);
                         mAdapter.notifyDataSetChanged();
                         //Log.i("From refresh",MainActivity.items.toString());
 
-//                        String payloadString2 = "10" + "a";
+//                        String payloadString2 = "0" + "a";
 //                        byte[] payload2 = payloadString2.getBytes();
 //                        Set<String> topics2 = new HashSet<String>();
 //                        topics2.add(topic);
@@ -225,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
 //                            e.printStackTrace();
 //                        }
 //
-//                        String payloadString = "11" + "a";
+//                        String payloadString = "1" + "a";
 //                        byte[] payload = payloadString.getBytes();
 //                        Set<String> topics = new HashSet<String>();
 //                        topics.add(topic);
@@ -264,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
 //                mAdapter.add(item);
 //                mAdapter.notifyDataSetChanged();
                 mItemEdit.setText("");
-                String payloadString = "01" + item;
+                String payloadString = "1" + item;
                 byte[] payload = payloadString.getBytes();
                 Set<String> topics = new HashSet<String>();
                 topics.add(topic);
@@ -287,17 +212,18 @@ public class MainActivity extends AppCompatActivity {
 //                    virtual.addTransactionByDeviceAndHeight(deviceId, 1, topics, payload, dependencies);
 //                }
 
-                //virtual.addTransaction(context, topics, payload, dependencies);
+//                virtual.addTransaction(context, topics, payload, dependencies);
                 instance.addTransaction(context, topics, payload, dependencies);
+
 
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         //Log.i("From main remove",MainActivity.items.toString());
+
                         mAdapter.clear();
                         mAdapter.addAll(items);
                         mAdapter.notifyDataSetChanged();
-
                     }
                 });
 
@@ -314,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
                         String item = mAdapter.getItem(pos);
 //                        mAdapter.remove(item);
 //                        mAdapter.notifyDataSetChanged();
-                        String payloadString = "00" + item;
+                        String payloadString = "0" + item;
                         byte[] payload = payloadString.getBytes();
                         Set<String> topics = new HashSet<>();
                         topics.add(topic);
@@ -337,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
 //                        } catch (NullPointerException e) {
 //                            virtual.addTransactionByDeviceAndHeight(deviceId, 1, topics, payload, dependencies);
 //                        }
-                        //virtual.addTransaction(context, topics, payload, dependencies);
+//                        virtual.addTransaction(context, topics, payload, dependencies);
                         instance.addTransaction(context, topics, payload, dependencies);
 
 
