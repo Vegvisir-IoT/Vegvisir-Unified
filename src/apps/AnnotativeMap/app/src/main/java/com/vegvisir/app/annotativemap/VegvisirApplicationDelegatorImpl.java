@@ -5,6 +5,7 @@ import com.vegvisir.pub_sub.*;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import android.util.Log;
 
@@ -75,8 +76,8 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
             MainActivity.topDeps.remove(d);
         }
         MainActivity.topDeps.add(tx_id);
-        HashSet<Coordinates> addSet = new HashSet<>();
-        HashSet<Coordinates> removeSet = new HashSet<>();
+        HashSet<FullAnnotation> addSet = new HashSet<>();
+        HashSet<FullAnnotation> removeSet = new HashSet<>();
 
         for (TransactionID d : deps) {
             if (MainActivity.twoPSets.containsKey(d)) {
@@ -86,17 +87,55 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
         }
 
         if (transactionType == 1) {
-            addSet.add(coords);
-            removeSet.remove(coords);
+            for(FullAnnotation fa: addSet) {
+                Coordinates c = fa.getCoords();
+                String a = fa.getAnnotation();
+                PictureTagLayout image = MainActivity.imageAtCoords.get(c);
+
+                if (!image.justHasView(x,y)) {
+                    addSet.add(new FullAnnotation(coords,anno));
+                    break;
+                }
+            }
+
+            for(FullAnnotation fa: removeSet) {
+                Coordinates c = fa.getCoords();
+                String a = fa.getAnnotation();
+                PictureTagLayout image = MainActivity.imageAtCoords.get(c);
+
+                if (image.justHasView(x,y)) {
+                    removeSet.remove(fa);
+                    break;
+                }
+            }
         } else {
-            addSet.remove(coords);
-            removeSet.add(coords);
+            for(FullAnnotation fa: addSet) {
+                Coordinates c = fa.getCoords();
+                String a = fa.getAnnotation();
+                PictureTagLayout image = MainActivity.imageAtCoords.get(c);
+
+                if (image.justHasView(x,y)) {
+                    addSet.remove(fa);
+                    break;
+                }
+            }
+
+            for(FullAnnotation fa: removeSet) {
+                Coordinates c = fa.getCoords();
+                String a = fa.getAnnotation();
+                PictureTagLayout image = MainActivity.imageAtCoords.get(c);
+
+                if (!image.justHasView(x,y)) {
+                    removeSet.add(new FullAnnotation(coords,anno));
+                    break;
+                }
+            }
         }
 
         MainActivity.twoPSets.put(tx_id, new TwoPSet(addSet, removeSet));
 
-        HashSet<Coordinates> addSetTop = new HashSet<>();
-        HashSet<Coordinates> removeSetTop = new HashSet<>();
+        HashSet<FullAnnotation> addSetTop = new HashSet<>();
+        HashSet<FullAnnotation> removeSetTop = new HashSet<>();
 
         for (TransactionID d : MainActivity.topDeps) {
             if (MainActivity.twoPSets.containsKey(d)) {
@@ -110,15 +149,24 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 //        Set<Coordinates> newSet = addSetTop;
 //        newSet.removeAll(removeSetTop);
 
-        for (Coordinates c: addSetTop) {
+        for (FullAnnotation fa: addSetTop) {
+            Coordinates c = fa.getCoords();
             if (!MainActivity.imageAtCoords.containsKey(c)) {
                 PictureTagLayout image = MainActivity.currentPicture.findViewById(R.id.image);
                 MainActivity.imageAtCoords.put(c,image);
+                MainActivity.annotations.put(c,new Annotation(fa.getAnnotation()));
+            }
+            else {
+                MainActivity.annotations.get(c).setAnnotation(anno);
             }
         }
 
-//        MainActivity.items.clear();
-//        MainActivity.items.addAll(newSet);
+        for (FullAnnotation fa: removeSetTop) {
+            Coordinates c = fa.getCoords();
+            if (MainActivity.imageAtCoords.containsKey(c)) {
+                MainActivity.annotations.get(c).setShouldRemove(true);
+            }
+        }
 
     }
 

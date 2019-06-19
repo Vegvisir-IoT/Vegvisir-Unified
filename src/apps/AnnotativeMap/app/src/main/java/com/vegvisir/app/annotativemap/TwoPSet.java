@@ -6,24 +6,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class TwoPSet {
-    private Set<Coordinates> addSet;
-    private Set<Coordinates> removeSet;
+    private Set<FullAnnotation> addSet;
+    private Set<FullAnnotation> removeSet;
 
     public TwoPSet() {
         addSet = new HashSet<>();
         removeSet = new HashSet<>();
     }
 
-    public TwoPSet(Set<Coordinates> add, Set<Coordinates> remove) {
+    public TwoPSet(Set<FullAnnotation> add, Set<FullAnnotation> remove) {
         addSet = add;
         removeSet = remove;
     }
 
-    public Set<Coordinates> getAddSet(){
+    public Set<FullAnnotation> getAddSet(){
         return this.addSet;
     }
 
-    public Set<Coordinates> getRemoveSet(){
+    public Set<FullAnnotation> getRemoveSet(){
         return this.removeSet;
     }
 }
