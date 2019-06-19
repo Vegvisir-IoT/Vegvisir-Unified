@@ -16,8 +16,10 @@ import java.io.IOException;
 import android.os.ParcelFileDescriptor;
 import java.io.FileDescriptor;
 import java.util.*;
+
 import android.util.Log;
 
+import com.vegvisir.app.annotativemap.PictureTagView.Status;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
 import com.vegvisir.pub_sub.VirtualVegvisirInstance;
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button editButton = null;
     public static HashMap<Coordinates,String> annotations = new HashMap<>();
+    public static HashMap<Coordinates,PictureTagLayout> layoutCoords = new HashMap<>();
     public static HashMap<Coordinates,Set<TransactionTuple>> dependencySets = new HashMap<>();
     public static HashMap<String, TransactionID> latestTransactions = new HashMap<>();
     public static String deviceId = "deviceA";
@@ -35,8 +38,11 @@ public class MainActivity extends AppCompatActivity {
     private String appID = "456";
     private String desc = "Annotated map";
     private Set<String> channels = new HashSet<>();
+    private int counter = 0;
+    private String anno = "f";
 
     public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
+    private Timer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +64,60 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        timer = new Timer();
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        int counter = 0;
+
+                        for(Map.Entry<Coordinates, String> entry : annotations.entrySet()) {
+
+                            Coordinates coords = entry.getKey();
+
+//                            picture pic = layoutCoords.get(coords);
+//                            PictureTagLayout image = pic.findViewById(R.id.image);
+                            PictureTagLayout image = layoutCoords.get(coords);
+                            anno = entry.getValue();
+//                            image.startX = coords.getX();
+//                            image.startY = coords.getY();
+                            View view = image.addItem(coords.getX(),coords.getY());
+                            ((PictureTagView)view).setAnnotation(anno);
+                            //break;
+
+                        }
+
+
+//                        for(Map.Entry<Coordinates, String> entry : annotations.entrySet()) {
+//
+//                            Coordinates coords = entry.getKey();
+//
+//                            picture pic = layoutCoords.get(coords);
+//                            PictureTagLayout image = pic.findViewById(R.id.image);
+//                            anno = entry.getValue();
+//                            image.startX = coords.getX();
+//                            image.startY = coords.getY();
+//
+//                            Log.i("anno",anno);
+//                            Log.i("xcoord", Integer.toString(image.startX));
+//                            Log.i("ycoord", Integer.toString(image.startY));
+//
+//                            image.setStatus(Status.Normal,anno);
+//                            counter ++;
+//
+//                            //break;
+//
+//                        }
+                    }
+                });
+            }
+
+        },0,5000);
 
     }
 

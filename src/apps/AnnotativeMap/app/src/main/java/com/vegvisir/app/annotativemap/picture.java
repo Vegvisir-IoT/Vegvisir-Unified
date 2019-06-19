@@ -80,10 +80,14 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
             cur_time = annotation.getStringExtra(TIME);
             if (!TextUtils.isEmpty(anno)) {
                 PictureTagLayout image = findViewById(R.id.image);
-//                Log.i("before anno",MainActivity.annotations.toString());
+                //Log.i("image",image.toString());
+//                Log.i("add x", Integer.toString(image.startX));
+//                Log.i("add y", Integer.toString(image.startY));
                 MainActivity.annotations.put(new Coordinates(image.startX,image.startY),anno);
 //                Log.i("after anno",MainActivity.annotations.toString());
-                image.setStatus(Status.Normal,anno);
+                MainActivity.layoutCoords.put(new Coordinates(image.startX,image.startY),image);
+
+                //image.setStatus(Status.Normal,anno);
 
             }
             super.onActivityResult(requestCode,resultCode,annotation);
@@ -91,7 +95,21 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
         else if (resultCode == 1) { //Del
             String del = annotation.getStringExtra(DEL);
             PictureTagLayout image = findViewById(R.id.image);
-            image.setStatus(Status.Del,del);
+            //image.setStatus(Status.Del,del);
+//            Log.i("del x", Integer.toString(image.startX));
+//            Log.i("del y", Integer.toString(image.startY));
+
+            for(Map.Entry<Coordinates, PictureTagLayout> entry : MainActivity.layoutCoords.entrySet()) {
+                Coordinates coords = entry.getKey();
+                PictureTagLayout i = entry.getValue();
+
+                if (i.justHasView(image.startX,image.startY)) {
+                    MainActivity.annotations.remove(coords);
+                    MainActivity.layoutCoords.remove(coords);
+                }
+
+            }
+
             super.onActivityResult(requestCode,resultCode,annotation);
         }
         else if (resultCode == 2) { //Send Done

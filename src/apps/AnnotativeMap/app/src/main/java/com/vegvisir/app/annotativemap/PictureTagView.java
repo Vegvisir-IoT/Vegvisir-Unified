@@ -73,7 +73,7 @@ public class PictureTagView extends RelativeLayout{
 
                 break;
             case Edit:
-                tvPictureTagLabel.setVisibility(View.GONE);
+                //tvPictureTagLabel.setVisibility(View.GONE);
 
                 Intent intent = new Intent();
                 intent.setClass(context,add_annotation.class);

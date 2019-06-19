@@ -91,7 +91,7 @@ public class PictureTagLayout extends RelativeLayout implements OnTouchListener 
                     startTouchViewTop = touchView.getTop();
                 }
                 else{
-//                      hasView(startX, startY);
+                    //hasView(startX, startY);
                     touchView = addItem(startX,startY);
                     ((PictureTagView) touchView).setStatus(Status.Edit);
                     clickView = touchView;
@@ -176,6 +176,7 @@ public class PictureTagLayout extends RelativeLayout implements OnTouchListener 
             int bottom = view.getBottom();
             Rect rect = new Rect(left, top, right, bottom);
             boolean contains = rect.contains(x, y);
+
             //如果是与子view重叠则返回真,表示已经有了view不需要添加新view了
             if(contains){
                 touchView = view;
@@ -184,6 +185,23 @@ public class PictureTagLayout extends RelativeLayout implements OnTouchListener 
             }
         }
         touchView = null;
+        return false;
+    }
+
+    public boolean justHasView(int x,int y){
+        for(int index = 0; index < this.getChildCount(); index ++){
+            View view = this.getChildAt(index);
+            int left = (int) view.getX();
+            int top = (int) view.getY();
+            int right = view.getRight();
+            int bottom = view.getBottom();
+            Rect rect = new Rect(left, top, right, bottom);
+            boolean contains = rect.contains(x, y);
+
+            if(contains){
+                return true;
+            }
+        }
         return false;
     }
 
