@@ -41,9 +41,9 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
         String payloadString = new String(payload);
 
         int transactionType = Integer.parseInt(payloadString.substring(0,1));
-        int first = payloadString.indexOf("is");
+        int first = payloadString.indexOf(",");
         int x = Integer.parseInt(payloadString.substring(1,first));
-        int second = payloadString.indexOf("is", first + 1);
+        int second = payloadString.indexOf(",", first + 1);
         int y = Integer.parseInt(payloadString.substring(first+1,second));
         String anno = payloadString.substring(second+1);
 
@@ -87,15 +87,25 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
         }
 
         if (transactionType == 1) {
-            for(FullAnnotation fa: addSet) {
-                Coordinates c = fa.getCoords();
-                String a = fa.getAnnotation();
-                PictureTagLayout image = MainActivity.imageAtCoords.get(c);
+            if (addSet.isEmpty()) {
+                addSet.add(new FullAnnotation(coords,anno));
+            }
+            else{
+                boolean doesExist = false;
+                for(FullAnnotation fa: addSet) {
+                    Coordinates c = fa.getCoords();
+                    String a = fa.getAnnotation();
+                    PictureTagLayout image = MainActivity.imageAtCoords.get(c);
 
-                if (!image.justHasView(x,y)) {
-                    addSet.add(new FullAnnotation(coords,anno));
-                    break;
+                    if (!image.justHasView(x, y)) {
+                        doesExist = true;
+                        break;
+                    }
                 }
+                if (!doesExist) {
+                    addSet.add(new FullAnnotation(coords, anno));
+                }
+
             }
 
             for(FullAnnotation fa: removeSet) {
@@ -120,31 +130,52 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
                 }
             }
 
-            for(FullAnnotation fa: removeSet) {
-                Coordinates c = fa.getCoords();
-                String a = fa.getAnnotation();
-                PictureTagLayout image = MainActivity.imageAtCoords.get(c);
+            if (removeSet.isEmpty()){
+                removeSet.add(new FullAnnotation(coords,anno));
+            }
+            else{
+                boolean doesExist = false;
+                for(FullAnnotation fa: removeSet) {
+                    Coordinates c = fa.getCoords();
+                    String a = fa.getAnnotation();
+                    PictureTagLayout image = MainActivity.imageAtCoords.get(c);
 
-                if (!image.justHasView(x,y)) {
+                    if (image.justHasView(x,y)) {
+                        doesExist = true;
+                        break;
+                    }
+                }
+                if (!doesExist) {
                     removeSet.add(new FullAnnotation(coords,anno));
-                    break;
                 }
             }
+
         }
+
+        Log.i("addset",addSet.toString());
+        Log.i("remset",removeSet.toString());
 
         MainActivity.twoPSets.put(tx_id, new TwoPSet(addSet, removeSet));
 
         HashSet<FullAnnotation> addSetTop = new HashSet<>();
         HashSet<FullAnnotation> removeSetTop = new HashSet<>();
 
+        Log.i("txid",tx_id.toString());
+        Log.i("topdeps",MainActivity.topDeps.toString());
+        Log.i("TwoPSets",MainActivity.twoPSets.toString());
+
         for (TransactionID d : MainActivity.topDeps) {
+            Log.i("d",d.toString());
             if (MainActivity.twoPSets.containsKey(d)) {
+                Log.i("gets here","");
                 addSetTop.addAll(MainActivity.twoPSets.get(d).getAddSet());
                 removeSetTop.addAll(MainActivity.twoPSets.get(d).getRemoveSet());
             }
         }
 
         MainActivity.twoPSets.put(MainActivity.top, new TwoPSet(addSetTop, removeSetTop));
+
+//        Log.i("addsettop",addSetTop.toString());
 
 //        Set<Coordinates> newSet = addSetTop;
 //        newSet.removeAll(removeSetTop);

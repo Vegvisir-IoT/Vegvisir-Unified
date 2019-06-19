@@ -5,6 +5,8 @@ package com.vegvisir.app.annotativemap;
  */
 
 import com.vegvisir.app.annotativemap.PictureTagView.Status;
+//import com.vegvisir.core.datatype.proto.Block;
+import com.vegvisir.pub_sub.TransactionID;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -82,8 +84,26 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
                 //Log.i("image",image.toString());
 //                Log.i("add x", Integer.toString(image.startX));
 //                Log.i("add y", Integer.toString(image.startY));
-                MainActivity.annotations.put(new Coordinates(image.startX,image.startY),new Annotation(anno));
-                MainActivity.imageAtCoords.put(new Coordinates(image.startX,image.startY),image);
+                Coordinates coords = new Coordinates(image.startX,image.startY);
+                Set<String> topics = new HashSet<>();
+                topics.add(MainActivity.topic);
+                Set<TransactionID> dependencies = new HashSet<>();
+
+                if (MainActivity.dependencySets.containsKey(coords)) {
+                    Iterator<TransactionTuple> it = MainActivity.dependencySets.get(coords).iterator();
+                    while (it.hasNext()) {
+                        TransactionTuple tt = (TransactionTuple) ((Iterator) it).next();
+                        dependencies.add(tt.transaction);
+                    }
+                }
+                if (MainActivity.latestTransactions.containsKey(MainActivity.deviceId)) {
+                    dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
+                }
+                String payloadString = "1" + image.startX + "," + image.startY + "," + anno;
+                byte[] payload = payloadString.getBytes();
+                MainActivity.virtual.addTransaction(MainActivity.context,topics,payload,dependencies);
+//                MainActivity.annotations.put(coords,new Annotation(anno));
+//                MainActivity.imageAtCoords.put(coords,image);
                 //image.setStatus(Status.Normal,anno);
 
             }
@@ -96,18 +116,39 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 //            Log.i("del x", Integer.toString(image.startX));
 //            Log.i("del y", Integer.toString(image.startY));
 
+            Coordinates coords = new Coordinates(image.startX,image.startY);
+            Set<String> topics = new HashSet<>();
+            topics.add(MainActivity.topic);
+            Set<TransactionID> dependencies = new HashSet<>();
+
+            if (MainActivity.dependencySets.containsKey(coords)) {
+                Iterator<TransactionTuple> it = MainActivity.dependencySets.get(coords).iterator();
+                while (it.hasNext()) {
+                    TransactionTuple tt = (TransactionTuple) ((Iterator) it).next();
+                    dependencies.add(tt.transaction);
+                }
+            }
+            if (MainActivity.latestTransactions.containsKey(MainActivity.deviceId)) {
+                dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
+            }
+
             for(Map.Entry<Coordinates, Annotation> entry : MainActivity.annotations.entrySet()) {
-                Coordinates coords = entry.getKey();
+                Coordinates c = entry.getKey();
                 Annotation annoObj = entry.getValue();
-                PictureTagLayout i = MainActivity.imageAtCoords.get(coords);
+                PictureTagLayout i = MainActivity.imageAtCoords.get(c);
 
                 if (i.justHasView(image.startX,image.startY)) {
-                    annoObj.setShouldRemove(true);
-                    MainActivity.annotations.put(coords,annoObj);
+                    anno = MainActivity.annotations.get(c).getAnnotation();
                     break;
                 }
 
             }
+
+            String payloadString = "0" + image.startX + "," + image.startY + "," + anno;
+            byte[] payload = payloadString.getBytes();
+            MainActivity.virtual.addTransaction(MainActivity.context,topics,payload,dependencies);
+
+            //hjlg
 
             super.onActivityResult(requestCode,resultCode,annotation);
         }

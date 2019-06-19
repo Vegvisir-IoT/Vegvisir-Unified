@@ -37,14 +37,14 @@ public class MainActivity extends AppCompatActivity {
     public static picture currentPicture = null;
 
     public static String deviceId = "deviceA";
-    private VegvisirApplicationContext context = null;
-    private VegvisirApplicationDelegatorImpl delegator = new VegvisirApplicationDelegatorImpl();
-    private String topic = "Map";
-    private String appID = "456";
-    private String desc = "Annotated map";
-    private Set<String> channels = new HashSet<>();
+    public static VegvisirApplicationContext context = null;
+    private static VegvisirApplicationDelegatorImpl delegator = new VegvisirApplicationDelegatorImpl();
+    public static String topic = "Map";
+    private static String appID = "456";
+    private static String desc = "Annotated map";
+    private static Set<String> channels = new HashSet<>();
     private int counter = 0;
-    private String anno = "f";
+    private String anno;
 
     public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
     private Timer timer;
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         channels.add(topic);
-//        context = new VegvisirApplicationContext(appID,desc,channels);
+        context = new VegvisirApplicationContext(appID,desc,channels);
 
         virtual.registerApplicationDelegator(context,delegator);
 
