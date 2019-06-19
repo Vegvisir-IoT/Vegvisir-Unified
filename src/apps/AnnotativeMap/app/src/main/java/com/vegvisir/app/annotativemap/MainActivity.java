@@ -27,8 +27,7 @@ import com.vegvisir.pub_sub.VirtualVegvisirInstance;
 public class MainActivity extends AppCompatActivity {
 
     private Button editButton = null;
-    public static HashMap<Coordinates,String> annotations = new HashMap<>();
-    public static HashMap<Coordinates,PictureTagLayout> layoutCoords = new HashMap<>();
+    public static HashMap<Coordinates,Annotation> annotations = new HashMap<>();
     public static HashMap<Coordinates,Set<TransactionTuple>> dependencySets = new HashMap<>();
     public static HashMap<String, TransactionID> latestTransactions = new HashMap<>();
     public static String deviceId = "deviceA";
@@ -76,21 +75,41 @@ public class MainActivity extends AppCompatActivity {
 
                         int counter = 0;
 
-                        for(Map.Entry<Coordinates, String> entry : annotations.entrySet()) {
+                        Set<Coordinates> entriesToRemove = new HashSet<>();
+
+                        Log.i("before",annotations.toString());
+                        for(Map.Entry<Coordinates, Annotation> entry : annotations.entrySet()) {
 
                             Coordinates coords = entry.getKey();
 
 //                            picture pic = layoutCoords.get(coords);
 //                            PictureTagLayout image = pic.findViewById(R.id.image);
-                            PictureTagLayout image = layoutCoords.get(coords);
-                            anno = entry.getValue();
-//                            image.startX = coords.getX();
-//                            image.startY = coords.getY();
-                            View view = image.addItem(coords.getX(),coords.getY());
-                            ((PictureTagView)view).setAnnotation(anno);
-                            //break;
+
+                            Annotation annoObj = entry.getValue();
+                            PictureTagLayout image = annoObj.getLayout();
+                            anno = annoObj.getAnnotation();
+                            View v = image.clickView;
+                            image.clickView = null;
+                            image.removeView(v);
+                            if (annoObj.getShouldRemove()) {
+                                entriesToRemove.add(coords);
+                            }
+                            else {
+                                if (!annoObj.getAlreadyAdded()){
+                                    View view = image.addItem(coords.getX(), coords.getY());
+                                    ((PictureTagView) view).setAnnotation(anno);
+                                    annoObj.setAlreadyAdded(true);
+                                }
+
+                            }
 
                         }
+
+                        for (Coordinates coords: entriesToRemove) {
+                            annotations.remove(coords);
+                        }
+
+                        Log.i("after",annotations.toString());
 
 
 //                        for(Map.Entry<Coordinates, String> entry : annotations.entrySet()) {
@@ -117,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
 
-        },0,5000);
+        },0,2000);
 
     }
 

@@ -54,8 +54,6 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 
         send = findViewById(R.id.send);
         send.setOnClickListener(this);
-        Log.i("Before click","2");
-
     }
 
     @Override
@@ -83,10 +81,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
                 //Log.i("image",image.toString());
 //                Log.i("add x", Integer.toString(image.startX));
 //                Log.i("add y", Integer.toString(image.startY));
-                MainActivity.annotations.put(new Coordinates(image.startX,image.startY),anno);
-//                Log.i("after anno",MainActivity.annotations.toString());
-                MainActivity.layoutCoords.put(new Coordinates(image.startX,image.startY),image);
-
+                MainActivity.annotations.put(new Coordinates(image.startX,image.startY),new Annotation(anno,image));
                 //image.setStatus(Status.Normal,anno);
 
             }
@@ -99,13 +94,15 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 //            Log.i("del x", Integer.toString(image.startX));
 //            Log.i("del y", Integer.toString(image.startY));
 
-            for(Map.Entry<Coordinates, PictureTagLayout> entry : MainActivity.layoutCoords.entrySet()) {
+            for(Map.Entry<Coordinates, Annotation> entry : MainActivity.annotations.entrySet()) {
                 Coordinates coords = entry.getKey();
-                PictureTagLayout i = entry.getValue();
+                Annotation annoObj = entry.getValue();
+                PictureTagLayout i = annoObj.getLayout();
 
                 if (i.justHasView(image.startX,image.startY)) {
-                    MainActivity.annotations.remove(coords);
-                    MainActivity.layoutCoords.remove(coords);
+                    annoObj.setShouldRemove(true);
+                    MainActivity.annotations.put(coords,annoObj);
+                    break;
                 }
 
             }

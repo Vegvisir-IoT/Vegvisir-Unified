@@ -42,7 +42,7 @@ public class PictureTagLayout extends RelativeLayout implements OnTouchListener 
     private String fileName = "/sdcard/info.txt";
     private JSONObject info;
 
-    private View touchView,clickView;
+    public View touchView,clickView;
 
     public PictureTagLayout(Context context) {
         super(context, null);
