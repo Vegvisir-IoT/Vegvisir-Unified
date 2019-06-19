@@ -2,21 +2,15 @@ package com.vegvisir.app.annotativemap;
 
 public class Annotation {
     private String annotation = "";
-    private PictureTagLayout layout = null;
     private Boolean shouldRemove = false;
     private Boolean alreadyAdded = false;
 
-    public Annotation (String anno, PictureTagLayout l) {
+    public Annotation (String anno) {
         annotation = anno;
-        layout = l;
     }
 
     public String getAnnotation() {
         return annotation;
-    }
-
-    public PictureTagLayout getLayout() {
-        return layout;
     }
 
     public Boolean getShouldRemove() {

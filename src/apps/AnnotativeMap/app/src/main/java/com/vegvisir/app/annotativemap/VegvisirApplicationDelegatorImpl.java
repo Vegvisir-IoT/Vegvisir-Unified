@@ -37,66 +37,90 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
             TransactionID tx_id,
             Set<TransactionID> deps) {
 
-//        String payloadString = new String(payload);
-//        int transactionType = Integer.parseInt(payloadString.substring(0,1));
-//        int firstOccurence = payloadString.indexOf(",");
-//        int xCoord = Integer.parseInt(payloadString.substring(1,firstOccurence));
-//        int secondOccurence = payloadString.indexOf(",",firstOccurence+1);
-//        int yCoord = Integer.parseInt(payloadString.substring(firstOccurence+1,secondOccurence));
-//        String item = payloadString.substring(secondOccurence+1);
-//
-//        Set<TransactionTuple> updatedSet = new HashSet<>();
-//        Set<TransactionTuple> prevSets = MainActivity.dependencySets.get(item);
-////        Log.i("item",item);
-//        if (prevSets != null) {
-//            Iterator<TransactionTuple> itr = prevSets.iterator();
-//            while (itr.hasNext()) {
-//                TransactionTuple x = (TransactionTuple) ((Iterator) itr).next();
-//                if (!deps.contains(x.transaction)) {
-//                    updatedSet.add(x);
-//                }
-//            }
-//        }
-//
-//        Coordinates item_coords = new Coordinates(xCoord,yCoord);
-//        TransactionTuple t = new TransactionTuple(tx_id, transactionType);
-//        updatedSet.add(t);
-//        MainActivity.dependencySets.put(item_coords, updatedSet);
-//
-//        MainActivity.latestTransactions.put(tx_id.getDeviceID(), tx_id);
-//
-//        if (tx_id.getDeviceID() == MainActivity.deviceId) {
-//            if (transactionType == 0) {
-//                MainActivity.annotations.remove(item_coords);
-//                Set<TransactionTuple> newSet = new HashSet<>();
-//                newSet.add(new TransactionTuple(tx_id,transactionType));
-//                MainActivity.dependencySets.put(item_coords, newSet);
-//            }
-//            else {
-//                MainActivity.annotations.put(item_coords,item);
-//            }
-//        }
-//        else {
-//            Iterator<TransactionTuple> it = updatedSet.iterator();
-//            boolean flag = false;
-//            while (it.hasNext()) {
-//                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-//                if (x.transactionType == 0) { //0 = remove
-//                    // remove item from array in MainActivity
-//                    MainActivity.annotations.remove(item_coords);
-//                    Set<TransactionTuple> newSet = new HashSet<>();
-//                    newSet.add(x);
-//                    MainActivity.dependencySets.put(item_coords, newSet);
-//                    flag = true;
-//                    break;
-//                }
-//            }
-//
-//            if (!flag) {
-//                MainActivity.annotations.put(item_coords,item);
-//            }
-//        }
+        String payloadString = new String(payload);
+
+        int transactionType = Integer.parseInt(payloadString.substring(0,1));
+        int first = payloadString.indexOf("is");
+        int x = Integer.parseInt(payloadString.substring(1,first));
+        int second = payloadString.indexOf("is", first + 1);
+        int y = Integer.parseInt(payloadString.substring(first+1,second));
+        String anno = payloadString.substring(second+1);
+
+        Coordinates coords = new Coordinates(x,y);
+
+        Set<TransactionTuple> updatedSet = new HashSet<>();
+        Set<TransactionTuple> prevSets = MainActivity.dependencySets.get(coords);
+        String deviceId = tx_id.getDeviceID();
+
+
+        if (prevSets != null) {
+            Iterator<TransactionTuple> itr = prevSets.iterator();
+            while (itr.hasNext()) {
+                TransactionTuple tt = (TransactionTuple) ((Iterator) itr).next();
+
+                if (!deps.contains(tt.transaction)) {
+
+                    updatedSet.add(tt);
+                }
+            }
+        }
+
+        TransactionTuple t = new TransactionTuple(tx_id, transactionType);
+        updatedSet.add(t);
+        MainActivity.dependencySets.put(coords, updatedSet);
+
+        MainActivity.latestTransactions.put(deviceId, tx_id);
+
+        for (TransactionID d : deps) {
+            MainActivity.topDeps.remove(d);
+        }
+        MainActivity.topDeps.add(tx_id);
+        HashSet<Coordinates> addSet = new HashSet<>();
+        HashSet<Coordinates> removeSet = new HashSet<>();
+
+        for (TransactionID d : deps) {
+            if (MainActivity.twoPSets.containsKey(d)) {
+                addSet.addAll(MainActivity.twoPSets.get(d).getAddSet());
+                removeSet.addAll(MainActivity.twoPSets.get(d).getRemoveSet());
+            }
+        }
+
+        if (transactionType == 1) {
+            addSet.add(coords);
+            removeSet.remove(coords);
+        } else {
+            addSet.remove(coords);
+            removeSet.add(coords);
+        }
+
+        MainActivity.twoPSets.put(tx_id, new TwoPSet(addSet, removeSet));
+
+        HashSet<Coordinates> addSetTop = new HashSet<>();
+        HashSet<Coordinates> removeSetTop = new HashSet<>();
+
+        for (TransactionID d : MainActivity.topDeps) {
+            if (MainActivity.twoPSets.containsKey(d)) {
+                addSetTop.addAll(MainActivity.twoPSets.get(d).getAddSet());
+                removeSetTop.addAll(MainActivity.twoPSets.get(d).getRemoveSet());
+            }
+        }
+
+        MainActivity.twoPSets.put(MainActivity.top, new TwoPSet(addSetTop, removeSetTop));
+
+//        Set<Coordinates> newSet = addSetTop;
+//        newSet.removeAll(removeSetTop);
+
+        for (Coordinates c: addSetTop) {
+            if (!MainActivity.imageAtCoords.containsKey(c)) {
+                PictureTagLayout image = MainActivity.currentPicture.findViewById(R.id.image);
+                MainActivity.imageAtCoords.put(c,image);
+            }
+        }
+
+//        MainActivity.items.clear();
+//        MainActivity.items.addAll(newSet);
 
     }
+
 
 }

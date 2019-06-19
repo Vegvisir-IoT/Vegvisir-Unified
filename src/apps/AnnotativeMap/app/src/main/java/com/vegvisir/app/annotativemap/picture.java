@@ -51,6 +51,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 //        Log.i("Before click","5");
         image.load(); //read /sdcard/info.txt and init the subviews(annotations)
 //        image.write();
+        MainActivity.currentPicture = this;
 
         send = findViewById(R.id.send);
         send.setOnClickListener(this);
@@ -81,7 +82,8 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
                 //Log.i("image",image.toString());
 //                Log.i("add x", Integer.toString(image.startX));
 //                Log.i("add y", Integer.toString(image.startY));
-                MainActivity.annotations.put(new Coordinates(image.startX,image.startY),new Annotation(anno,image));
+                MainActivity.annotations.put(new Coordinates(image.startX,image.startY),new Annotation(anno));
+                MainActivity.imageAtCoords.put(new Coordinates(image.startX,image.startY),image);
                 //image.setStatus(Status.Normal,anno);
 
             }
@@ -97,7 +99,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
             for(Map.Entry<Coordinates, Annotation> entry : MainActivity.annotations.entrySet()) {
                 Coordinates coords = entry.getKey();
                 Annotation annoObj = entry.getValue();
-                PictureTagLayout i = annoObj.getLayout();
+                PictureTagLayout i = MainActivity.imageAtCoords.get(coords);
 
                 if (i.justHasView(image.startX,image.startY)) {
                     annoObj.setShouldRemove(true);

@@ -28,8 +28,14 @@ public class MainActivity extends AppCompatActivity {
 
     private Button editButton = null;
     public static HashMap<Coordinates,Annotation> annotations = new HashMap<>();
+    public static HashMap<Coordinates,PictureTagLayout> imageAtCoords = new HashMap<>();
     public static HashMap<Coordinates,Set<TransactionTuple>> dependencySets = new HashMap<>();
     public static HashMap<String, TransactionID> latestTransactions = new HashMap<>();
+    public static HashMap<TransactionID,TwoPSet> twoPSets = new HashMap<>();
+    public static Set<TransactionID> topDeps = new HashSet<>();
+    public static TransactionID top = new TransactionID("",-1);
+    public static picture currentPicture = null;
+
     public static String deviceId = "deviceA";
     private VegvisirApplicationContext context = null;
     private VegvisirApplicationDelegatorImpl delegator = new VegvisirApplicationDelegatorImpl();
@@ -86,7 +92,8 @@ public class MainActivity extends AppCompatActivity {
 //                            PictureTagLayout image = pic.findViewById(R.id.image);
 
                             Annotation annoObj = entry.getValue();
-                            PictureTagLayout image = annoObj.getLayout();
+                            PictureTagLayout image = imageAtCoords.get(coords);
+//                            PictureTagLayout image = annoObj.getLayout();
                             anno = annoObj.getAnnotation();
                             View v = image.clickView;
                             image.clickView = null;
@@ -107,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
                         for (Coordinates coords: entriesToRemove) {
                             annotations.remove(coords);
+                            imageAtCoords.remove(coords);
                         }
 
                         Log.i("after",annotations.toString());
