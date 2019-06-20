@@ -6,9 +6,10 @@ import com.vegvisir.core.datatype.proto.Block;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,13 +27,16 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
     /* Map device to its transaction height */
     private Map<String, Long> deviceToTransactionHeight;
 
-    private Map<String, List<String>> subscriptionList = new HashMap<>();
-
     /* a transaction queue, this will simulate a new transaction arrives from the wire */
     private LinkedBlockingDeque<Block.Transaction> txQueue;
 
     /* The id of current device */
     private String deviceId = "DeviceA";
+
+    /* The height of current device */
+    private long height = 1;
+
+    private Map<String, Set<String>> subscriptionList = new HashMap<>();
 
     /* delegator from upper application */
     private VegvisirApplicationDelegator delegator;
@@ -57,7 +61,6 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
                 if (instance == null) {
                     instance = new VirtualVegvisirInstance();
                     instance.deviceToTransactionHeight = new HashMap<>();
-                    instance.deviceToTransactionHeight.put(instance.deviceId, 0L);
                     instance.txQueue = new LinkedBlockingDeque<>();
                     pollingThread = new Thread(instance::poll);
                     pollingThread.start();
@@ -78,7 +81,7 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
             synchronized (instanceLock){
                 if (alternate == null){
                     alternate = new VirtualVegvisirInstance( deviceName );
-                    alternate.deviceToTransactionHeight = new IdentityHashMap<>();
+                    alternate.deviceToTransactionHeight = new HashMap<>();
                     alternate.txQueue = new LinkedBlockingDeque<>();
                     pollingThread = new Thread( alternate :: poll );
                     pollingThread.start();
@@ -88,10 +91,9 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
         return alternate;
     }
 
-    /**
-     * Public Constructor
-     */
+
     private VirtualVegvisirInstance() {}
+
 
     /**
      * Public Constructor Overloaded
@@ -99,7 +101,6 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
     private VirtualVegvisirInstance( String aDevice ){
         this.deviceId = aDevice;
     }
-
 
     public void updateSubscriptionList( String deviceId, Set<String> applicableChannels){
         for (String topic : applicableChannels)
@@ -115,11 +116,12 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
             }
             else{
                 System.out.format("%s not present \n", topic);
-                subscriptionList.put(topic, new ArrayList<>(Arrays.asList(deviceId)));
+                subscriptionList.put(topic, new HashSet<>(Arrays.asList(deviceId))) ;
             }
         }
         System.out.println(Arrays.asList( subscriptionList));
     }
+
     /**
      * Register a delegator, which will handle new transactions for that application.
      * After the registration, new transactions will be forward to the delegator at most once.
@@ -191,20 +193,24 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
     public boolean addTransaction(VegvisirApplicationContext context,
                                   Set<String> topics,
                                   byte[] payload,
-                                  TransactionID transactionID,
                                   Set<TransactionID> dependencies)
     {
-        return _addTransaction(this.deviceId, topics, payload, transactionID, dependencies);
+        if (!deviceToTransactionHeight.containsKey(deviceId)) {
+            deviceToTransactionHeight.put(deviceId, height);
+        }
+        return _addTransaction(this.deviceId, topics, payload, dependencies);
     }
 
 
     public boolean addTransactionByDevice(String deviceId,
                                           Set<String> topics,
                                           byte[] payload,
-                                          TransactionID transactionID,
                                           Set<TransactionID> dependencies)
     {
-        return _addTransaction(deviceId, topics, payload, transactionID, dependencies);
+        if (!deviceToTransactionHeight.containsKey(deviceId)) {
+            deviceToTransactionHeight.put(deviceId, 1L);
+        }
+        return _addTransaction(deviceId, topics, payload, dependencies);
     }
 
 
@@ -212,28 +218,24 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
                                                    long height,
                                                    Set<String> topics,
                                                    byte[] payload,
-                                                   TransactionID transactionID,
                                                    Set<TransactionID> dependencies)
     {
         if (!deviceToTransactionHeight.containsKey(deviceId)) {
             deviceToTransactionHeight.put(deviceId, height);
         }
-        return _addTransaction(deviceId, height, topics, payload, transactionID, dependencies);
+        return _addTransaction(deviceId, height, topics, payload, dependencies);
     }
-
 
 
     private boolean _addTransaction(String deviceId,
                                     Set<String> topics,
                                     byte[] payload,
-                                    TransactionID transactionID,
                                     Set<TransactionID> dependencies)
     {
         return _addTransaction(deviceId,
                 deviceToTransactionHeight.get(deviceId),
                 topics,
                 payload,
-                transactionID,
                 dependencies
         );
     }
@@ -254,7 +256,6 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
                                     long height,
                                     Set<String> topics,
                                     byte[] payload,
-                                    TransactionID transactionID,
                                     Set<TransactionID> dependencies)
     {
         List<Block.Transaction.TransactionId> deps = new ArrayList<>();
@@ -281,7 +282,7 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
         return deviceId;
     }
 
-    public Map<String, List<String>> getSubscriptionList() {
+    public Map<String, Set<String>> getSubscriptionList() {
         return subscriptionList;
     }
 

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,7 +36,7 @@ class VirtualVegvisirInstanceTest {
     @Test
     void getSubscriptionList(){
         VirtualVegvisirInstance a = VirtualVegvisirInstance.getInstance();
-        Map<String, List<String>> result = a.getSubscriptionList();
+        Map<String, Set<String>> result = a.getSubscriptionList();
         assertEquals(0, result.size());
     }
 
