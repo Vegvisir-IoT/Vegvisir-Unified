@@ -30,7 +30,7 @@ public class VirtualVegvisirApplicationDelegator implements VegvisirApplicationD
                                  Set<TransactionID> deps) {
     // For Now Apply transaction called for Topics Should be announced
         for( String channel : topics){
-            System.out.println("Tx: Broadcast to this channel: ");
+            System.out.format("Tx: Broadcast to this channel: %s ", channel);
         }
     }
 }
