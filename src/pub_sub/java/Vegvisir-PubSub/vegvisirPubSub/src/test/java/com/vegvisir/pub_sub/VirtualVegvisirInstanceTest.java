@@ -4,6 +4,8 @@ package com.vegvisir.pub_sub;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,6 +33,13 @@ class VirtualVegvisirInstanceTest {
     }
 
     @Test
+    void getSubscriptionList(){
+        VirtualVegvisirInstance a = VirtualVegvisirInstance.getInstance();
+        Map<String, List<String>> result = a.getSubscriptionList();
+        assertEquals(0, result.size());
+    }
+
+    @Test
     void updateSubscriptionList(){
         VegvisirApplicationContext context = new VegvisirApplicationContext( "Shop",
                 "We all should shop more",
@@ -39,14 +48,19 @@ class VirtualVegvisirInstanceTest {
         VirtualVegvisirApplicationDelegator delegator = new VirtualVegvisirApplicationDelegator();
 
         virtual.registerApplicationDelegator( context, delegator );
-
-
+        virtual.updateSubscriptionList(virtual.getDeviceId(), context.getChannels());
+        assertEquals(2, virtual.getSubscriptionList().size() );
+        virtual.updateSubscriptionList("Bob", Stream.of("Pepsi", "Coke").collect(Collectors.toSet()));
+        assertEquals(2, virtual.getSubscriptionList().size() );
+        virtual.updateSubscriptionList("Bob", Stream.of("Mountain Dew").collect(Collectors.toSet()));
+        assertEquals(3, virtual.getSubscriptionList().size() );
+        assertEquals(2, virtual.getSubscriptionList().get("Coke").size() );
+        assertEquals(2, virtual.getSubscriptionList().get("Pepsi").size() );
+        assertEquals(1, virtual.getSubscriptionList().get("Mountain Dew").size() );
+        virtual.updateSubscriptionList("Bob", Stream.of("Mountain Dew").collect(Collectors.toSet()));
+        assertEquals(3, virtual.getSubscriptionList().size() );
+        assertEquals(1, virtual.getSubscriptionList().get("Mountain Dew").size() );
     }
 
-
-
-
-
-            // context unused so there's a problem with the update of several subscribers to a channel
 
 }
