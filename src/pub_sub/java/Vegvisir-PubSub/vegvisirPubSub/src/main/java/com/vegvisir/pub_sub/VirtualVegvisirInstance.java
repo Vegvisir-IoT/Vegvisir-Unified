@@ -3,7 +3,9 @@ package com.vegvisir.pub_sub;
 import com.google.protobuf.ByteString;
 import com.vegvisir.core.datatype.proto.Block;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -103,12 +105,20 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
         for (String topic : applicableChannels)
         {
             if( subscriptionList.containsKey( topic )){
-                System.out.println("Key here");
+                System.out.format("Key: %s here\n", topic);
+                if (subscriptionList.get(topic).contains(deviceId) ){
+                    continue;  // NO DUPLICATES
+                }
+                else{
+                    subscriptionList.get(topic).add(deviceId);
+                }
             }
             else{
-                System.out.println("Topic not present");
+                System.out.format("%s not present \n", topic);
+                subscriptionList.put(topic, new ArrayList<>(Arrays.asList(deviceId)));
             }
         }
+        System.out.println(Arrays.asList( subscriptionList));
     }
     /**
      * Register a delegator, which will handle new transactions for that application.
@@ -271,6 +281,9 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
         return deviceId;
     }
 
+    public Map<String, List<String>> getSubscriptionList() {
+        return subscriptionList;
+    }
 
     public static Thread getPollingThread() {
         return pollingThread;
