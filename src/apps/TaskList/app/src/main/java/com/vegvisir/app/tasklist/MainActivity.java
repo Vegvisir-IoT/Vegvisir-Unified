@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mSwitchButton;
     public static ArrayList<String> items = new ArrayList<>();
     private ArrayAdapter<String> mAdapter;
-    public static String deviceId = "DeviceA";
+    public static String deviceId = "";
     // mapping from device ID to Transaction ID
     public static HashMap<String, TransactionID> latestTransactions = new HashMap<>();
     // mapping from an item to dependencies
@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
         instance = VegvisirInstanceV1.getInstance(androidContext);
         instance.registerApplicationDelegator(context, delegator);
+        this.deviceId = instance.getThisDeviceID();
 
 //        virtual.registerApplicationDelegator(context, delegator);
 

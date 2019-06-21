@@ -1,13 +1,12 @@
 package com.vegvisir.application;
 
 import android.content.Context;
-import android.util.Pair;
 
 import com.vegvisir.gossip.adapter.NetworkAdapter;
 import com.vegvisir.network.datatype.proto.Payload;
 import com.vegvisir.vegvisir_lower_level.network.Exceptions.ConnectionNotAvailableException;
 import com.vegvisir.vegvisir_lower_level.network.Network;
-
+import android.util.Pair;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;

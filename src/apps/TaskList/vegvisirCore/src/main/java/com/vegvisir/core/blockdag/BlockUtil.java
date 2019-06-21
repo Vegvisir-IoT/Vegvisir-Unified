@@ -65,7 +65,9 @@ public class BlockUtil {
      * @return a string format of given id.
      */
     public static String cryptoId2Str(com.isaacsheff.charlotte.proto.CryptoId id) {
-        return id.getHash().getSha3().toStringUtf8();
+        if (id.hasHash())
+            return id.getHash().getSha3().toStringUtf8();
+        else
+            return id.getPublicKey().getEllipticCurveP256().getByteString().toStringUtf8();
     }
-
 }

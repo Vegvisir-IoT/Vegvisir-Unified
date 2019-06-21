@@ -231,4 +231,9 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
     public static Thread getPollingThread() {
         return pollingThread;
     }
+
+    @Override
+    public String getThisDeviceID() {
+        return deviceId;
+    }
 }
