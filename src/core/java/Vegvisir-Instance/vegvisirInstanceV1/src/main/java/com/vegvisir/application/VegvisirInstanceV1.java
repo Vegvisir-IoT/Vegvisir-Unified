@@ -2,7 +2,7 @@ package com.vegvisir.application;
 
 import android.app.Application;
 import android.content.Context;
-import android.support.v4.util.Pair;
+import android.util.Pair;
 
 import com.isaacsheff.charlotte.proto.Block;
 import com.vegvisir.VegvisirCore;

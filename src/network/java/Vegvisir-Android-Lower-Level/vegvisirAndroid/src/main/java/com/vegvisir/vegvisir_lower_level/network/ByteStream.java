@@ -1,8 +1,8 @@
 package com.vegvisir.vegvisir_lower_level.network;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.util.Pair;
+import androidx.annotation.NonNull;
+import android.util.Pair;
 import android.util.Log;
 
 import com.google.android.gms.nearby.Nearby;
