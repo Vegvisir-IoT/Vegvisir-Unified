@@ -37,7 +37,7 @@ public class FullAnnotation {
             return false;
         }
         FullAnnotation fa = (FullAnnotation) o;
-        if(coords.equals(fa.getCoords()) && (annotation == fa.getAnnotation())) {
+        if(coords.equals(fa.getCoords())) { //&& (annotation == fa.getAnnotation())) {
             return true;
         }
         return false;
@@ -45,6 +45,11 @@ public class FullAnnotation {
 
     public int hashCode() {
         return (coords.hashCode() ^ annotation.hashCode());
+    }
+
+    @Override
+    public String toString() {
+        return annotation + ", coordinates: " + coords.toString();
     }
 
 }

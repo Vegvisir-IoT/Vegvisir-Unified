@@ -38,4 +38,9 @@ public class Coordinates {
     public int hashCode() {
         return ((new Integer(this.x).hashCode()) ^ (new Integer(this.y).hashCode()));
     }
+
+    @Override
+    public String toString() {
+        return ("" + x + "," + y);
+    }
 }

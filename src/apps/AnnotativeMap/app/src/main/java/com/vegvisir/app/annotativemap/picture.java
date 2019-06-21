@@ -99,6 +99,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
                 if (MainActivity.latestTransactions.containsKey(MainActivity.deviceId)) {
                     dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
                 }
+
                 String payloadString = "1" + image.startX + "," + image.startY + "," + anno;
                 byte[] payload = payloadString.getBytes();
                 MainActivity.virtual.addTransaction(MainActivity.context,topics,payload,dependencies);

@@ -26,4 +26,8 @@ public class TwoPSet {
     public Set<FullAnnotation> getRemoveSet(){
         return this.removeSet;
     }
+
+    public String toString() {
+        return "addSet: " + addSet.toString() + ", removeSet: " + removeSet.toString();
+    }
 }
