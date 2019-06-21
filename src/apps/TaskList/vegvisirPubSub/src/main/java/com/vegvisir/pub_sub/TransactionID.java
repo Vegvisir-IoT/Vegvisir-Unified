@@ -50,4 +50,9 @@ public class TransactionID {
       return (this.deviceID.hashCode() ^ (new Long(this.transactionHeight).hashCode()));
     }
 
+    @Override
+    public String toString(){
+        return this.getDeviceID() + this.getTransactionHeight();
+    }
+
 }

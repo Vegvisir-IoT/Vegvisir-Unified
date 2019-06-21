@@ -26,4 +26,8 @@ public class TwoPSet {
     public Set<String> getRemoveSet(){
         return this.removeSet;
     }
+
+    public String toString(){
+        return "addset:" + addSet.toString() +", removeset:"+ removeSet.toString();
+    }
 }

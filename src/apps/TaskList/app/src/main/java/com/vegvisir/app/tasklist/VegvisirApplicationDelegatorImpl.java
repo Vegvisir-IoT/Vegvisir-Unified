@@ -37,6 +37,8 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
             TransactionID tx_id,
             Set<TransactionID> deps) {
 
+
+
         String payloadString = new String(payload);
 
         int transactionType = Integer.parseInt(payloadString.substring(0,1));
@@ -102,8 +104,18 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 
         MainActivity.twoPSets.put(MainActivity.top, new TwoPSet(addSetTop, removeSetTop));
 
+        Log.i("2pset", MainActivity.twoPSets.toString());
+        Log.i("weird", "okok" + tx_id.getDeviceID());
+
+        Log.i("topdeps", MainActivity.topDeps.toString());
+
+        Log.i("addTop", addSetTop.toString());
+        Log.i("removeTop", removeSetTop.toString());
+
+
         Set<String> newSet = addSetTop;
         newSet.removeAll(removeSetTop);
+        Log.i("new set", newSet.toString());
         MainActivity.items.clear();
         MainActivity.items.addAll(newSet);
 
