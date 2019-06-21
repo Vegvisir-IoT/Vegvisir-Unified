@@ -22,7 +22,6 @@ import com.vegvisir.pub_sub.*;
 import java.util.Timer;
 import java.util.TimerTask;
 import com.vegvisir.application.*;
-//import com.vegvisir.core.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
     private Set<String> channels = new HashSet<String>();
     private Timer timer;
     private static VegvisirInstance instance = null;
-    public static boolean itemsWasModified = false;
 
     public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
 
@@ -206,12 +204,6 @@ public class MainActivity extends AppCompatActivity {
                     dependencies.add(latestTransactions.get(deviceId));
                 }
 
-//                try {
-//                    virtual.addTransaction(context, topics, payload, dependencies);
-//                } catch (NullPointerException e) {
-//                    virtual.addTransactionByDeviceAndHeight(deviceId, 1, topics, payload, dependencies);
-//                }
-
 //                virtual.addTransaction(context, topics, payload, dependencies);
                 instance.addTransaction(context, topics, payload, dependencies);
 
@@ -219,7 +211,6 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //Log.i("From main remove",MainActivity.items.toString());
 
                         mAdapter.clear();
                         mAdapter.addAll(items);
@@ -257,12 +248,7 @@ public class MainActivity extends AppCompatActivity {
                         if (latestTransactions.containsKey(deviceId)){
                             dependencies.add(latestTransactions.get(deviceId));
                         }
-//
-//                        try {
-//                            virtual.addTransaction(context, topics, payload, dependencies);
-//                        } catch (NullPointerException e) {
-//                            virtual.addTransactionByDeviceAndHeight(deviceId, 1, topics, payload, dependencies);
-//                        }
+
 //                        virtual.addTransaction(context, topics, payload, dependencies);
                         instance.addTransaction(context, topics, payload, dependencies);
 
