@@ -37,4 +37,10 @@ public interface VegvisirInstance {
                                   Set<String> topics,
                                   byte[] payload,
                                   Set<TransactionID> dependencies);
+
+
+    /**
+     * @return this device's ID in string format.
+     */
+    public String getThisDeviceID();
 }

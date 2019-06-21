@@ -45,6 +45,10 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
 
     private ConcurrentHashMap<String, VegvisirApplicationDelegator> app2handler;
 
+    private KeyPair keyPair;
+
+    private String deviceID;
+
     /**
      * The singleton instance.
      */
@@ -60,19 +64,20 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
     }
 
     private VegvisirInstanceV1(Context ctx) {
-        KeyPair keyPair = Config.generateKeypair();
-        String deviceName = Config.pk2str(keyPair.getPublic());
-        core = new VegvisirCore(new AndroidAdapter(ctx, deviceName),
+        keyPair = Config.generateKeypair();
+        deviceID = Config.pk2str(keyPair.getPublic());
+        core = new VegvisirCore(new AndroidAdapter(ctx, deviceID),
                 ReconciliationV1.class,
                 createGenesisBlock(keyPair),
                 keyPair,
-                deviceName
+                deviceID
         );
         core.registerNewBlockListener(this);
         transactionQueue = new LinkedBlockingDeque<>();
         topic2app = new ConcurrentHashMap<>();
         app2handler = new ConcurrentHashMap<>();
         new Thread(this::pollTransactions).start();
+        new Thread(core).start();
     }
 
 
@@ -175,6 +180,11 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
         }
         core.createTransaction(deps, topics, payload);
         return true;
+    }
+
+    @Override
+    public String getThisDeviceID() {
+        return deviceID;
     }
 
     /**
