@@ -19,8 +19,10 @@ import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,7 +44,10 @@ public class VegvisirCore implements Runnable {
     /* Protocol that this instance will use for reconciliation with peers */
     private Class<? extends ReconciliationProtocol> protocol;
 
+    /* Config object contains device configuration such as key pairs */
     private Config config;
+
+    private Map<String, ReconciliationProtocol> disconnectHandlers;
 
 
     /**
@@ -52,8 +57,7 @@ public class VegvisirCore implements Runnable {
     private long transactionHeight = 1;
     private final int BLOCK_SIZE = 1;
 
-    private Set<Transaction> transactionBuffer1;
-    private Set<Transaction> transactionBuffer2;
+    private Set<Transaction> transactionBuffer;
 
 
     private ExecutorService service;
@@ -85,8 +89,8 @@ public class VegvisirCore implements Runnable {
         dag = new BlockDAGv1(genesisBlock, config);
         this.protocol = protocol;
         service = Executors.newCachedThreadPool();
-        transactionBuffer1 = new HashSet<>();
-        transactionBuffer2 = new HashSet<>();
+        transactionBuffer = new HashSet<>();
+        disconnectHandlers = new HashMap<>();
     }
 
     public VegvisirCore(NetworkAdapter adapter, Class<ReconciliationProtocol> protocol) {
@@ -123,16 +127,34 @@ public class VegvisirCore implements Runnable {
                 service.submit(() -> {
                     try {
                         gossipLayer.linkReconciliationInstanceWithConnection(remoteId, Thread.currentThread());
-                        protocol.newInstance().setGossipLayer(gossipLayer).exchangeBlocks(dag, remoteId);
+                        ReconciliationProtocol _protocol = protocol.newInstance();
+                        _protocol.setGossipLayer(gossipLayer);
+                        disconnectHandlers.put(remoteId, _protocol);
+                        _protocol.exchangeBlocks(dag, remoteId);
                     } catch (VegvisirReconciliationException ex) {
                         logger.info(ex.getLocalizedMessage());
                     } catch (InstantiationException ex) {
                     }
                     catch (IllegalAccessException ex) {
                     }
+                    finally {
+                        if (disconnectHandlers.containsKey(remoteId)) {
+                            disconnectHandlers.remove(remoteId);
+                        }
+                    }
                 });
             }
         }
+    }
+
+    public void onLostConnection(String id) {
+        if (disconnectHandlers.containsKey(id)) {
+            disconnectHandlers.get(id).onDisconnected(id);
+        }
+    }
+
+    public Set<String> findWitnessForBlock(com.isaacsheff.charlotte.proto.Hash bh) {
+        return null;
     }
 
     private String waitingForNewConnection() {
@@ -156,10 +178,10 @@ public class VegvisirCore implements Runnable {
                 .setTransactionHeight(getNIncTransactionHeight())
                 .build();
         builder.setTransactionId(id);
-        transactionBuffer1.add(builder.build());
-        if (transactionBuffer1.size() >= BLOCK_SIZE) {
-            dag.createBlock(transactionBuffer1, getDag().getFrontierBlocks());
-            transactionBuffer1.clear();
+        transactionBuffer.add(builder.build());
+        if (transactionBuffer.size() >= BLOCK_SIZE) {
+            dag.createBlock(transactionBuffer, getDag().getFrontierBlocks());
+            transactionBuffer.clear();
         }
         return true;
     }

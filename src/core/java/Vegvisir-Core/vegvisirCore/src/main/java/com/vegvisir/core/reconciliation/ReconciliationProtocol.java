@@ -59,6 +59,8 @@ public abstract class ReconciliationProtocol {
         return version;
     }
 
+    public abstract void onDisconnected(String remoteId);
+
     /**
      * Class for protocol version
      */

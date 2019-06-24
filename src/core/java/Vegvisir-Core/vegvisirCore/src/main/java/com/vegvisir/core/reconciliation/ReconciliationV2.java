@@ -62,4 +62,8 @@ public class ReconciliationV2 extends ReconciliationV1 {
         this.gossipLayer.sendToPeer(this.remoteId, payload);
     }
 
+    @Override
+    public void onDisconnected(String remoteId) {
+        return;
+    }
 }

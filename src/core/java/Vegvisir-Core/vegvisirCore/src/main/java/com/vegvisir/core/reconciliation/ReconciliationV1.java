@@ -18,6 +18,7 @@ public class ReconciliationV1 extends ReconciliationProtocol
 
     private BlockingQueue<String> completionQueue;
     Thread dispatchThread;
+    Thread currentThread;
 
     public ReconciliationV1() {
         super(1, 0, 0);
@@ -27,6 +28,7 @@ public class ReconciliationV1 extends ReconciliationProtocol
     @Override
     public void exchangeBlocks(BlockDAG myDAG, String remoteConnectionID)
     {
+        currentThread = Thread.currentThread();
         this.dag = myDAG;
         this.remoteId = remoteConnectionID;
 
@@ -52,10 +54,10 @@ public class ReconciliationV1 extends ReconciliationProtocol
             /* Take for receive complete */
             completionQueue.take();
         } catch (InterruptedException ex) {
-            return;
         }
 
         dispatchThread.interrupt();
+        //TODO: make a up call
         gossipLayer.disconnect(remoteId);
     }
 
@@ -138,5 +140,10 @@ public class ReconciliationV1 extends ReconciliationProtocol
                 .build();
         this.gossipLayer.sendToPeer(remoteId, payload);
         completionQueue.add("Send");
+    }
+
+    @Override
+    public void onDisconnected(String remoteId) {
+        currentThread.interrupt();
     }
 }

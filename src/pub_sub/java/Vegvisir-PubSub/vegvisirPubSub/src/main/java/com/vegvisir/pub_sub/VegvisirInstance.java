@@ -43,4 +43,7 @@ public interface VegvisirInstance {
      * @return this device's ID in string format.
      */
     public String getThisDeviceID();
+
+
+    public Set<String> getWitnessForTransaction(TransactionID id);
 }

@@ -5,6 +5,7 @@ import com.google.protobuf.MessageLite;
 import com.isaacsheff.charlotte.proto.CryptoId;
 import com.vegvisir.core.blockdag.BlockUtil;
 
+import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECPublicKeySpec;
@@ -292,5 +293,21 @@ public class Config {
 
     public static String pk2str(PublicKey pk) {
         return ByteString.copyFrom(pk.getEncoded()).toStringUtf8();
+    }
+
+    public static PublicKey bytes2pk(byte[] pub) {
+        try {
+            return KeyFactory.getInstance("EC", "BC").generatePublic(new X509EncodedKeySpec(pub));
+        } catch (GeneralSecurityException ex) {
+            throw new RuntimeException(ex.getLocalizedMessage());
+        }
+    }
+
+    public static PrivateKey bytes2prk(byte[] pub) {
+        try {
+            return KeyFactory.getInstance("EC", "BC").generatePrivate(new X509EncodedKeySpec(pub));
+        } catch (GeneralSecurityException ex) {
+            throw new RuntimeException(ex.getLocalizedMessage());
+        }
     }
 }
