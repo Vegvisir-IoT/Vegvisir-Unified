@@ -8,6 +8,7 @@ import com.google.protobuf.ByteString;
 import com.isaacsheff.charlotte.proto.Block;
 import com.vegvisir.VegvisirCore;
 import com.vegvisir.core.blockdag.NewBlockListener;
+import com.vegvisir.core.blockdag.ReconciliationEndListener;
 import com.vegvisir.core.config.Config;
 import com.vegvisir.core.reconciliation.ReconciliationV1;
 import com.vegvisir.pub_sub.TransactionID;
@@ -42,7 +43,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 /**
  * The ADD ALL BLOCKS reconciliation protocol instance.
  */
-public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
+public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, ReconciliationEndListener {
 
     /**
      * The block DAG instance.
@@ -92,6 +93,7 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
                 deviceID
         );
         core.registerNewBlockListener(this);
+        core.registerReconciliationEndListener(this);
         transactionQueue = new LinkedBlockingDeque<>();
         topic2app = new ConcurrentHashMap<>();
         app2handler = new ConcurrentHashMap<>();
@@ -267,6 +269,11 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
             tx2block.put(txIDFromProto(transaction), bh);
         });
         transactionQueue.addAll(block.getVegvisirBlock().getBlock().getTransactionsList());
+    }
+
+    @Override
+    public void onReconciliationEnd() {
+        app2handler.values().forEach(VegvisirApplicationDelegator::onNewReconciliationFinished);
     }
 
     /**

@@ -2,6 +2,7 @@ package com.vegvisir.core.reconciliation;
 
 import com.vegvisir.common.datatype.proto.ControlSignal;
 import com.vegvisir.core.blockdag.BlockDAG;
+import com.vegvisir.core.blockdag.ReconciliationEndListener;
 import com.vegvisir.network.datatype.proto.Payload;
 import com.vegvisir.network.datatype.proto.VegvisirProtocolMessage;
 
@@ -26,7 +27,7 @@ public class ReconciliationV1 extends ReconciliationProtocol
     }
 
     @Override
-    public void exchangeBlocks(BlockDAG myDAG, String remoteConnectionID)
+    public void exchangeBlocks(BlockDAG myDAG, String remoteConnectionID, ReconciliationEndListener listener)
     {
         currentThread = Thread.currentThread();
         this.dag = myDAG;
@@ -57,7 +58,8 @@ public class ReconciliationV1 extends ReconciliationProtocol
         }
 
         dispatchThread.interrupt();
-        //TODO: make a up call
+        listener.onReconciliationEnd();
+        //TODO: make a up call to tx layer to notify a reconciliation finished.
         gossipLayer.disconnect(remoteId);
     }
 

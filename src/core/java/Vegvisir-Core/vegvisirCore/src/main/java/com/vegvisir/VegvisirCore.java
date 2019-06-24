@@ -4,6 +4,7 @@ import com.google.protobuf.ByteString;
 import com.vegvisir.core.blockdag.BlockDAG;
 import com.vegvisir.core.blockdag.BlockDAGv1;
 import com.vegvisir.core.blockdag.NewBlockListener;
+import com.vegvisir.core.blockdag.ReconciliationEndListener;
 import com.vegvisir.core.config.Config;
 import com.vegvisir.core.reconciliation.ReconciliationProtocol;
 import com.vegvisir.core.reconciliation.ReconciliationV1;
@@ -49,6 +50,8 @@ public class VegvisirCore implements Runnable {
 
     private Map<String, ReconciliationProtocol> disconnectHandlers;
 
+    private ReconciliationEndListener reconciliationEndListener;
+
 
     /**
      * A sequence counter for transactions on this device.
@@ -91,6 +94,7 @@ public class VegvisirCore implements Runnable {
         service = Executors.newCachedThreadPool();
         transactionBuffer = new HashSet<>();
         disconnectHandlers = new HashMap<>();
+        adapter.onConnectionLost(this::onLostConnection);
     }
 
     public VegvisirCore(NetworkAdapter adapter, Class<ReconciliationProtocol> protocol) {
@@ -130,7 +134,7 @@ public class VegvisirCore implements Runnable {
                         ReconciliationProtocol _protocol = protocol.newInstance();
                         _protocol.setGossipLayer(gossipLayer);
                         disconnectHandlers.put(remoteId, _protocol);
-                        _protocol.exchangeBlocks(dag, remoteId);
+                        _protocol.exchangeBlocks(dag, remoteId, reconciliationEndListener);
                     } catch (VegvisirReconciliationException ex) {
                         logger.info(ex.getLocalizedMessage());
                     } catch (InstantiationException ex) {
@@ -164,6 +168,10 @@ public class VegvisirCore implements Runnable {
 
     public void registerNewBlockListener(NewBlockListener listener) {
         dag.setNewBlockListener(listener);
+    }
+
+    public void registerReconciliationEndListener(ReconciliationEndListener listener) {
+        reconciliationEndListener = listener;
     }
 
     public synchronized boolean createTransaction(Collection<Transaction.TransactionId> deps,
