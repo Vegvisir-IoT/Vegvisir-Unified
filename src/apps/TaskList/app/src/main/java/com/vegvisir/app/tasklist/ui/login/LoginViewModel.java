@@ -33,14 +33,25 @@ public class LoginViewModel extends ViewModel {
 
     public void login(String username, String password) throws IOException {
         // can be launched in a separate asynchronous job
-        Result<LoggedInUser> result = loginRepository.login(username, password);
+        try {
+            Result<LoggedInUser> result = loginRepository.login(username, password);
 
-        if (result instanceof Result.Success) {
-            LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
-        } else {
-            //loginResult.setValue(new LoginResult(R.string.login_failed));
-            throw new IOException("Incorrect password");
+            if (result instanceof Result.Success) {
+                LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
+                loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
+            }
+        } catch (IOException e) {
+            throw e;
+        }
+    }
+
+    public String register(String username, String password) throws IOException {
+        // can be launched in a separate asynchronous job
+        try {
+            Result result = loginRepository.register(username, password);
+            return "Registered successfully. Please press sign in";
+        } catch (IOException e) {
+            throw e;
         }
     }
 

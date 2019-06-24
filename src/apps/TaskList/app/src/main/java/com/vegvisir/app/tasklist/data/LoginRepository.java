@@ -2,6 +2,8 @@ package com.vegvisir.app.tasklist.data;
 
 import com.vegvisir.app.tasklist.data.model.LoggedInUser;
 
+import java.io.IOException;
+
 /**
  * Class that requests authentication and user information from the remote data source and
  * maintains an in-memory cache of login status and user credentials information.
@@ -43,12 +45,25 @@ public class LoginRepository {
         // @see https://developer.android.com/training/articles/keystore
     }
 
-    public Result<LoggedInUser> login(String username, String password) {
+    public Result<LoggedInUser> login(String username, String password) throws IOException {
         // handle login
-        Result<LoggedInUser> result = dataSource.login(username, password);
-        if (result instanceof Result.Success) {
+        try {
+            Result<LoggedInUser> result = dataSource.login(username, password);
             setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
+            return result;
+        } catch (IOException e) {
+            throw e;
         }
-        return result;
+    }
+
+    public Result<LoggedInUser> register(String username, String password) throws IOException {
+        // handle login
+        try {
+            Result<LoggedInUser> result = dataSource.register(username, password);
+            //setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
+            return result;
+        } catch (IOException e) {
+            throw e;
+        }
     }
 }

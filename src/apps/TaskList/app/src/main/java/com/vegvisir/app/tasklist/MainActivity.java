@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.vegvisir.app.tasklist.ui.login.LoginActivity;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
 import com.vegvisir.pub_sub.VegvisirInstance;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText mItemEdit;
     private Button mAddButton;
     private Button mSwitchButton;
+    private Button mLogoutButton;
     public static ArrayList<String> items = new ArrayList<>();
     private ArrayAdapter<String> mAdapter;
     public static String deviceId = "";
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         mItemEdit = (EditText) findViewById(R.id.item_editText);
         mAddButton = (Button) findViewById(R.id.add_button);
         mSwitchButton = findViewById(R.id.switch_button);
+        mLogoutButton = findViewById(R.id.logout_button);
 
         channels.add(topic);
         context = new VegvisirApplicationContext(appID, desc, channels);
@@ -274,6 +277,16 @@ public class MainActivity extends AppCompatActivity {
             }
 
             });
+
+        mLogoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //finish();
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+
+        });
 
     }
 

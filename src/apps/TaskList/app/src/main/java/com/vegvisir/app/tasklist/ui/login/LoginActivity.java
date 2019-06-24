@@ -1,6 +1,7 @@
 package com.vegvisir.app.tasklist.ui.login;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -22,12 +23,41 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.vegvisir.app.tasklist.MainActivity;
 import com.vegvisir.app.tasklist.R;
+import com.vegvisir.app.tasklist.TransactionTuple;
+import com.vegvisir.pub_sub.TransactionID;
+import com.vegvisir.pub_sub.VegvisirApplicationContext;
+import com.vegvisir.pub_sub.VegvisirInstance;
+import com.vegvisir.pub_sub.VirtualVegvisirInstance;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Timer;
 
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
+    public static String deviceId = "";
+    // mapping from device ID to Transaction ID
+    public static HashMap<String, TransactionID> latestTransactions = new HashMap<>();
+    // mapping from an item to dependencies
+    public static HashMap<String, Set<TransactionTuple>> dependencySets = new HashMap<>();
+    //mapping from transaction ID to its 2P set
+    public static HashMap<TransactionID, TwoPSetUser> twoPSets = new HashMap<>();
+    public static HashMap<String, String> usernames = new HashMap<>();
+    public static Set<TransactionID> topDeps = new HashSet<>();
+    public static TransactionID top = new TransactionID("", -1);
+    public static  VegvisirApplicationContext context = null;
+    private LoginImpl delegator = new LoginImpl();
+    public static String topic = "Red team";
+    private String appID = "123";
+    private  String desc = "task list";
+    private Set<String> channels = new HashSet<String>();
+    private Timer timer;
+    private static VegvisirInstance instance = null;
+
+    public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,7 +69,18 @@ public class LoginActivity extends AppCompatActivity {
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
         final Button loginButton = findViewById(R.id.login);
+        final Button registerButton = findViewById(R.id.register);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
+
+        channels.add(topic);
+        context = new VegvisirApplicationContext(appID, desc, channels);
+        Context androidContext = getApplicationContext();
+
+        //instance = VegvisirInstanceV1.getInstance(androidContext);
+        //instance.registerApplicationDelegator(context, delegator);
+        //this.deviceId = instance.getThisDeviceID();
+
+        virtual.registerApplicationDelegator(context, delegator);
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
@@ -48,6 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
                 loginButton.setEnabled(loginFormState.isDataValid());
+                registerButton.setEnabled(loginFormState.isDataValid());
                 if (loginFormState.getUsernameError() != null) {
                     usernameEditText.setError(getString(loginFormState.getUsernameError()));
                 }
@@ -128,10 +170,29 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                loadingProgressBar.setVisibility(View.VISIBLE);
+                try {
+                    String displayString = loginViewModel.register(usernameEditText.getText().toString(),
+                            passwordEditText.getText().toString());
+                    Toast.makeText(getApplicationContext(),displayString,Toast.LENGTH_LONG).show();
+                } catch (IOException e) {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+//                    finish();
+//                    startActivity(getIntent());
+
+                    usernameEditText.setText("");
+                    passwordEditText.setText("");
+                }
+            }
+        });
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
-        String welcome = getString(R.string.welcome) + " " + model.getDisplayName();
+        String welcome = getString(R.string.welcome) + model.getDisplayName();
         // TODO : initiate successful logged in experience
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
