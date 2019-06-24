@@ -2,6 +2,8 @@ package com.vegvisir.app.tasklist;
 //123456 password
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -18,23 +20,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.vegvisir.pub_sub.*;
-import java.util.Timer;
-import java.util.TimerTask;
-import com.vegvisir.application.*;
+import com.vegvisir.pub_sub.TransactionID;
+import com.vegvisir.pub_sub.VegvisirApplicationContext;
+import com.vegvisir.pub_sub.VegvisirInstance;
+import com.vegvisir.pub_sub.VirtualVegvisirInstance;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import android.util.Log;
-import android.content.Intent;
-import android.content.Context;
-
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -93,11 +90,11 @@ public class MainActivity extends AppCompatActivity {
         context = new VegvisirApplicationContext(appID, desc, channels);
         Context androidContext = getApplicationContext();
 
-        instance = VegvisirInstanceV1.getInstance(androidContext);
-        instance.registerApplicationDelegator(context, delegator);
-        this.deviceId = instance.getThisDeviceID();
+        //instance = VegvisirInstanceV1.getInstance(androidContext);
+        //instance.registerApplicationDelegator(context, delegator);
+        //this.deviceId = instance.getThisDeviceID();
 
-//        virtual.registerApplicationDelegator(context, delegator);
+        virtual.registerApplicationDelegator(context, delegator);
 
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1){
             @Override
@@ -205,8 +202,8 @@ public class MainActivity extends AppCompatActivity {
                     dependencies.add(latestTransactions.get(deviceId));
                 }
 
-//                virtual.addTransaction(context, topics, payload, dependencies);
-                instance.addTransaction(context, topics, payload, dependencies);
+                virtual.addTransaction(context, topics, payload, dependencies);
+                //instance.addTransaction(context, topics, payload, dependencies);
 
 
                 MainActivity.this.runOnUiThread(new Runnable() {
@@ -250,8 +247,8 @@ public class MainActivity extends AppCompatActivity {
                             dependencies.add(latestTransactions.get(deviceId));
                         }
 
-//                        virtual.addTransaction(context, topics, payload, dependencies);
-                        instance.addTransaction(context, topics, payload, dependencies);
+                        virtual.addTransaction(context, topics, payload, dependencies);
+                       // instance.addTransaction(context, topics, payload, dependencies);
 
 
                         MainActivity.this.runOnUiThread(new Runnable() {
