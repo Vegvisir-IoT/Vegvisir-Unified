@@ -7,6 +7,7 @@ package com.vegvisir.app.annotativemap;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -120,6 +121,16 @@ public class PictureTagView extends RelativeLayout{
     }
     public static int getViewHeight(){
         return ViewHeight;
+    }
+
+    public boolean justHasView(int x, int y) {
+        int left = (int) this.getX();
+        int top = (int) this.getY();
+        int right = this.getRight();
+        int bottom = this.getBottom();
+        Rect rect = new Rect(left, top, right, bottom);
+        boolean contains = rect.contains(x, y);
+        return contains;
     }
 
     public String getTime() {

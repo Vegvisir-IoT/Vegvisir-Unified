@@ -81,7 +81,6 @@ public class PictureTagLayout extends RelativeLayout implements OnTouchListener 
                 touchView = null;
                 if(clickView!=null){
                     ((PictureTagView)clickView).setStatus(Status.Normal);
-
                     clickView = null;
                 }
                 startX = (int) event.getX();
@@ -188,7 +187,7 @@ public class PictureTagLayout extends RelativeLayout implements OnTouchListener 
         return false;
     }
 
-    public boolean justHasView(int x,int y){
+    public PictureTagView justHasView(int x,int y){
         for(int index = 0; index < this.getChildCount(); index ++){
             View view = this.getChildAt(index);
             int left = (int) view.getX();
@@ -199,10 +198,10 @@ public class PictureTagLayout extends RelativeLayout implements OnTouchListener 
             boolean contains = rect.contains(x, y);
 
             if(contains){
-                return true;
+                return (PictureTagView) view;
             }
         }
-        return false;
+        return null;
     }
 
     public void load() {

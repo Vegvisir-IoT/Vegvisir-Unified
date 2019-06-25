@@ -79,8 +79,8 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
         if (resultCode == 0) { //Done
             anno = annotation.getStringExtra(ANNOTATION);
             cur_time = annotation.getStringExtra(TIME);
+            PictureTagLayout image = findViewById(R.id.image);
             if (!TextUtils.isEmpty(anno)) {
-                PictureTagLayout image = findViewById(R.id.image);
                 //Log.i("image",image.toString());
 //                Log.i("add x", Integer.toString(image.startX));
 //                Log.i("add y", Integer.toString(image.startY));
@@ -100,7 +100,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
                     dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
                 }
 
-                String payloadString = "1" + image.startX + "," + image.startY + "," + anno;
+                String payloadString = "1" + image.startX + "," + image.startX + "," + anno;
                 byte[] payload = payloadString.getBytes();
                 MainActivity.virtual.addTransaction(MainActivity.context,topics,payload,dependencies);
 //                MainActivity.annotations.put(coords,new Annotation(anno));
@@ -133,17 +133,33 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
                 dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
             }
 
-            for(Map.Entry<Coordinates, Annotation> entry : MainActivity.annotations.entrySet()) {
-                Coordinates c = entry.getKey();
-                Annotation annoObj = entry.getValue();
-                PictureTagLayout i = MainActivity.imageAtCoords.get(c);
+            PictureTagView view = image.justHasView(image.startX,image.startY);
 
-                if (i.justHasView(image.startX,image.startY)) {
+            if (view != null) {
+                if (MainActivity.coordForViews.containsKey(view)) {
+                    Coordinates c = MainActivity.coordForViews.get(view);
                     anno = MainActivity.annotations.get(c).getAnnotation();
-                    break;
                 }
-
+                else {
+                    Log.i("How did we", "get here");
+                }
             }
+
+            else {
+                Log.i("wtf","This shouldn't happen");
+            }
+
+//            for(Map.Entry<Coordinates, Annotation> entry : MainActivity.annotations.entrySet()) {
+//                Coordinates c = entry.getKey();
+//                Annotation annoObj = entry.getValue();
+//                PictureTagView view = MainActivity.imageAtCoords.get(c);
+//
+//                if (view.justHasView(image.startX,image.startY)) {
+//                    anno = MainActivity.annotations.get(c).getAnnotation();
+//                    break;
+//                }
+//
+//            }
 
             String payloadString = "0" + image.startX + "," + image.startY + "," + anno;
             byte[] payload = payloadString.getBytes();
@@ -194,6 +210,10 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public PictureTagView findView() {
+        return (findViewById(R.id.image));
     }
 
 }

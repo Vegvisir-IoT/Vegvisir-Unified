@@ -16,6 +16,7 @@ import java.io.IOException;
 import android.os.ParcelFileDescriptor;
 import java.io.FileDescriptor;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import android.util.Log;
 
@@ -27,11 +28,12 @@ import com.vegvisir.pub_sub.VirtualVegvisirInstance;
 public class MainActivity extends AppCompatActivity {
 
     private Button editButton = null;
-    public static HashMap<Coordinates,Annotation> annotations = new HashMap<>();
-    public static HashMap<Coordinates,PictureTagLayout> imageAtCoords = new HashMap<>();
+    public static ConcurrentHashMap<Coordinates,Annotation> annotations = new ConcurrentHashMap<>();
+    public static HashMap<Coordinates,PictureTagView> imageAtCoords = new HashMap<>();
     public static HashMap<Coordinates,Set<TransactionTuple>> dependencySets = new HashMap<>();
     public static HashMap<String, TransactionID> latestTransactions = new HashMap<>();
     public static HashMap<TransactionID,TwoPSet> twoPSets = new HashMap<>();
+    public static HashMap<PictureTagView,Coordinates> coordForViews = new HashMap<>();
     public static Set<TransactionID> topDeps = new HashSet<>();
     public static TransactionID top = new TransactionID("",-1);
     public static picture currentPicture = null;
@@ -83,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         if(currentPicture != null) {
                             Set<Coordinates> entriesToRemove = new HashSet<>();
+                            Set<PictureTagView> viewsToRemove = new HashSet<>();
 
 //                            Log.i("before",annotations.toString());
                             for(Map.Entry<Coordinates, Annotation> entry : annotations.entrySet()) {
@@ -96,22 +99,25 @@ public class MainActivity extends AppCompatActivity {
 //                            PictureTagLayout image = pic.findViewById(R.id.image);
 
                                 Annotation annoObj = entry.getValue();
-                                PictureTagLayout image = imageAtCoords.get(coords);
 //                            PictureTagLayout image = annoObj.getLayout();
                                 anno = annoObj.getAnnotation();
+                                PictureTagLayout image = currentPicture.findViewById(R.id.image);
                                 View v = image.clickView;
                                 image.clickView = null;
                                 image.removeView(v);
                                 if (annoObj.getShouldRemove()) {
-//                                    Log.i("Should remove","reached");
+                                    Log.i("Should remove","reached");
                                     entriesToRemove.add(coords);
+                                    viewsToRemove.add((PictureTagView) v);
                                 }
                                 else {
                                     Log.i("annoobj",annoObj.toString());
                                     if (!annoObj.getAlreadyAdded()){
 
-                                        View view = image.addItem(coords.getX(), coords.getY());
-                                        ((PictureTagView) view).setAnnotation(anno);
+                                        PictureTagView view = (PictureTagView) image.addItem(coords.getX(), coords.getY());
+                                        view.setAnnotation(anno);
+//                                        imageAtCoords.put(coords,view);
+                                        coordForViews.put(view,coords);
                                         Log.i("ok","nice");
                                         annoObj.setAlreadyAdded(true);
                                     }
@@ -122,38 +128,38 @@ public class MainActivity extends AppCompatActivity {
 
                             for (Coordinates coords: entriesToRemove) {
                                 annotations.remove(coords);
-                                imageAtCoords.remove(coords);
+//                                imageAtCoords.remove(coords);
+                            }
+
+                            for (PictureTagView view: viewsToRemove) {
+                                coordForViews.remove(view);
                             }
 
                             Log.i("annos",annotations.toString());
 
-                            try{
-                                Thread.sleep(5000);
-                            } catch (InterruptedException e) {}
-
-                            Random rand = new Random();
-                            int rand1 = rand.nextInt(500);
-                            int rand2 = rand.nextInt(500);
-
-                            String payloadString = "1" + rand1 + "," + rand2 + "," + "abcdef";
-                            byte[] payload = payloadString.getBytes();
-                            count+=1;
-                            Set<String> topics = new HashSet<>();
-                            topics.add(topic);
-                            Set<TransactionID> dependencies = new HashSet<>();
-                            Coordinates c = new Coordinates(500,500);
-                            if (dependencySets.containsKey(c)) {
-                                Iterator<TransactionTuple> it = dependencySets.get(c).iterator();
-                                while(it.hasNext()) {
-                                    TransactionTuple x = (TransactionTuple) ((Iterator)it).next();
-                                    dependencies.add(x.transaction);
-                                }
-                            }
-                            if (latestTransactions.containsKey("DeviceB")) {
-                                dependencies.add(latestTransactions.get("DeviceB"));
-                            }
-
-                            virtual.addTransaction(context, topics, payload, dependencies);
+//                            Random rand = new Random();
+//                            int rand1 = rand.nextInt(500);
+//                            int rand2 = rand.nextInt(500);
+//
+//                            String payloadString = "1" + rand1 + "," + rand2 + "," + "abcdef";
+//                            byte[] payload = payloadString.getBytes();
+//                            count+=1;
+//                            Set<String> topics = new HashSet<>();
+//                            topics.add(topic);
+//                            Set<TransactionID> dependencies = new HashSet<>();
+//                            Coordinates c = new Coordinates(500,500);
+//                            if (dependencySets.containsKey(c)) {
+//                                Iterator<TransactionTuple> it = dependencySets.get(c).iterator();
+//                                while(it.hasNext()) {
+//                                    TransactionTuple x = (TransactionTuple) ((Iterator)it).next();
+//                                    dependencies.add(x.transaction);
+//                                }
+//                            }
+//                            if (latestTransactions.containsKey("DeviceB")) {
+//                                dependencies.add(latestTransactions.get("DeviceB"));
+//                            }
+//
+//                            virtual.addTransaction(context, topics, payload, dependencies);
 
                         }
                     }

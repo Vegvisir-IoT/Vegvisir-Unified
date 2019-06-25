@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import android.util.Log;
+import android.app.Activity;
 
 /**
  * Ideally, all applications should implement this interface.
@@ -49,6 +50,24 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 
         Coordinates coords = new Coordinates(x,y);
 
+        PictureTagLayout image = MainActivity.currentPicture.findViewById(R.id.image);
+        PictureTagView pointView = image.justHasView(x,y);
+        if (pointView != null) {
+            Log.i("View","found");
+            if (MainActivity.coordForViews.containsKey(pointView)) {
+                coords = MainActivity.coordForViews.get(pointView);
+                x = coords.getX();
+                y = coords.getY();
+            }
+            else {
+                Log.i("View","Should have a coordinate mapping");
+                MainActivity.coordForViews.put(pointView,coords);
+            }
+        }
+        else {
+            Log.i("View","not found");
+        }
+
         Set<TransactionTuple> updatedSet = new HashSet<>();
         Set<TransactionTuple> prevSets = MainActivity.dependencySets.get(coords);
         String deviceId = tx_id.getDeviceID();
@@ -87,73 +106,66 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
         }
 
         if (transactionType == 1) {
-            if (addSet.isEmpty()) {
-                addSet.add(new FullAnnotation(coords,anno));
-            }
-            else{
+            PictureTagView view = image.justHasView(x,y);
+            if (view != null) {
+
                 boolean doesExist = false;
-                for(FullAnnotation fa: addSet) {
+                for (FullAnnotation fa: addSet) {
                     Coordinates c = fa.getCoords();
-                    String a = fa.getAnnotation();
-                    PictureTagLayout image = MainActivity.imageAtCoords.get(c);
-                    try {
-                        if (image.justHasView(x, y)) {
-                            doesExist = true;
-                            break;
-                        }
-                    } catch (NullPointerException e) {}
-                }
-                if (!doesExist) {
-                    addSet.add(new FullAnnotation(coords, anno));
+                    if (view.justHasView(c.getX(),c.getY())) {
+                        doesExist = true;
+                        break;
+                    }
+
                 }
 
-            }
+                if (addSet.isEmpty() || !doesExist) {
+                    addSet.add(new FullAnnotation(coords,anno));
+                }
 
-            for(FullAnnotation fa: removeSet) {
-                Coordinates c = fa.getCoords();
-                String a = fa.getAnnotation();
-                PictureTagLayout image = MainActivity.imageAtCoords.get(c);
-                try {
-                    if (image.justHasView(x, y)) {
+                for(FullAnnotation fa: removeSet) {
+                    Coordinates c = fa.getCoords();
+
+                    if (view.justHasView(c.getX(),c.getY())) {
                         removeSet.remove(fa);
                         break;
                     }
-                } catch (NullPointerException e) {}
+                }
             }
-        } else {
-            for(FullAnnotation fa: addSet) {
-                Coordinates c = fa.getCoords();
-                String a = fa.getAnnotation();
-                PictureTagLayout image = MainActivity.imageAtCoords.get(c);
 
-                try {
-                    if (image.justHasView(x, y)) {
+            else {
+                addSet.add(new FullAnnotation(coords,anno));
+            }
+
+        } else {
+            PictureTagView view = image.justHasView(x,y);
+            if (view != null) {
+
+                for (FullAnnotation fa: addSet) {
+                    Coordinates c = fa.getCoords();
+                    if (view.justHasView(c.getX(),c.getY())) {
                         addSet.remove(fa);
                         break;
                     }
-                } catch (NullPointerException e) {}
-            }
+                }
 
-            if (removeSet.isEmpty()){
-                removeSet.add(new FullAnnotation(coords,anno));
-            }
-            else{
                 boolean doesExist = false;
                 for(FullAnnotation fa: removeSet) {
                     Coordinates c = fa.getCoords();
-                    String a = fa.getAnnotation();
-                    PictureTagLayout image = MainActivity.imageAtCoords.get(c);
 
-                    try {
-                        if (image.justHasView(x, y)) {
-                            doesExist = true;
-                            break;
-                        }
-                    } catch(NullPointerException e) {}
+                    if (view.justHasView(c.getX(),c.getY())) {
+                        doesExist = true;
+                        break;
+                    }
                 }
-                if (!doesExist) {
+
+                if (removeSet.isEmpty() || !doesExist) {
                     removeSet.add(new FullAnnotation(coords,anno));
                 }
+            }
+
+            else {
+                addSet.add(new FullAnnotation(coords,anno));
             }
 
         }
@@ -188,22 +200,31 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 
         for (FullAnnotation fa: addSetTop) {
             Coordinates c = fa.getCoords();
-            boolean exists = false;
-            for (Map.Entry<Coordinates, PictureTagLayout> entry : MainActivity.imageAtCoords.entrySet()) {
-                PictureTagLayout image = entry.getValue();
-                Coordinates coordinates = entry.getKey();
-                if (image.justHasView(c.getX(),c.getY()) || coordinates.equals(c)) {
-                    MainActivity.annotations.get(entry.getKey()).setAnnotation(anno);
-                    exists = true;
-                    break;
-                }
+//            boolean exists = false;
+
+            PictureTagView view = image.justHasView(c.getX(),c.getY());
+            if (view != null) {
+                Coordinates adjustedCoords = MainActivity.coordForViews.get(view);
+                MainActivity.annotations.get(adjustedCoords).setAnnotation(anno);
             }
 
-            if (!exists) {
-                PictureTagLayout image = MainActivity.currentPicture.findViewById(R.id.image);
-                MainActivity.imageAtCoords.put(c,image);
+            else {
                 MainActivity.annotations.put(c,new Annotation(fa.getAnnotation()));
-        }
+            }
+
+//            for (Map.Entry<Coordinates, PictureTagView> entry : MainActivity.imageAtCoords.entrySet()) {
+//                PictureTagView view = entry.getValue();
+//                Coordinates coordinates = entry.getKey();
+//                if (view.justHasView(c.getX(),c.getY()) || coordinates.equals(c)) {
+//                    MainActivity.annotations.get(entry.getKey()).setAnnotation(anno);
+//                    exists = true;
+//                    break;
+//                }
+//            }
+//
+//            if (!exists) {
+//                MainActivity.annotations.put(c,new Annotation(fa.getAnnotation()));
+//        }
         }
 
 //        for (Map.Entry<Coordinates, PictureTagLayout> entry : MainActivity.imageAtCoords.entrySet()) {
@@ -212,12 +233,25 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 
         for (FullAnnotation fa: removeSetTop) {
             Coordinates c = fa.getCoords();
-            for (Map.Entry<Coordinates, PictureTagLayout> entry : MainActivity.imageAtCoords.entrySet()) {
-                PictureTagLayout image = entry.getValue();
-                if (image.justHasView(c.getX(),c.getY())) {
-                    MainActivity.annotations.get(entry.getKey()).setShouldRemove(true);
-                }
+
+            PictureTagView view = image.justHasView(c.getX(),c.getY());
+            if (view != null) {
+                Coordinates adjustedCoords = MainActivity.coordForViews.get(view);
+                MainActivity.annotations.get(adjustedCoords).setShouldRemove(true);
             }
+            else {
+                Log.i("Remove view","not found");
+            }
+
+//            for (Map.Entry<Coordinates, PictureTagView> entry : MainActivity.imageAtCoords.entrySet()) {
+//                PictureTagView view = entry.getValue();
+//                if (view.justHasView(c.getX(),c.getY())) {
+//                    Log.i("here","comes");
+//                    MainActivity.annotations.get(entry.getKey()).setShouldRemove(true);
+//                }
+//            }
+
+
 //            if (MainActivity.imageAtCoords.containsKey(c)) {
 //                MainActivity.annotations.get(c).setShouldRemove(true);
 //            }
