@@ -50,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
     public static TransactionID top = new TransactionID("", -1);
     public static  VegvisirApplicationContext context = null;
     private LoginImpl delegator = new LoginImpl();
-    public static String topic = "Red team";
+    public static String topic = "Blue team";
     private String appID = "123";
     private  String desc = "task list";
     private Set<String> channels = new HashSet<String>();

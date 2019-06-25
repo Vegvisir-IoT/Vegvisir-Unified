@@ -5,23 +5,19 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.vegvisir.app.tasklist.ui.login.LoginActivity;
-import com.vegvisir.application.VegvisirInstanceV1;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
 import com.vegvisir.pub_sub.VegvisirInstance;
@@ -43,19 +39,24 @@ public class MainActivity extends AppCompatActivity {
     private Button mSwitchButton;
     private Button mLogoutButton;
     public static ArrayList<String> items = new ArrayList<>();
-    private ArrayAdapter<String> mAdapter;
+    public enum Priority{
+        High, Medium, Low;
+    }
+    public static HashMap<String,Priority > priorities = new HashMap<>();
+    //private ArrayAdapter<String> mAdapter;
+    public OrderAdapter mAdapter;
     public static String deviceId = "";
     // mapping from device ID to Transaction ID
     public static HashMap<String, TransactionID> latestTransactions = new HashMap<>();
     // mapping from an item to dependencies
     public static HashMap<String, Set<TransactionTuple>> dependencySets = new HashMap<>();
     //mapping from transaction ID to its 2P set
-    public static HashMap<TransactionID, TwoPSet> twoPSets = new HashMap<>();
+    public static HashMap<TransactionID, FourPSet> fourPSets = new HashMap<>();
     public static Set<TransactionID> topDeps = new HashSet<>();
     public static TransactionID top = new TransactionID("", -1);
-    private VegvisirApplicationContext context = null;
+    public static VegvisirApplicationContext context = null;
     private VegvisirApplicationDelegatorImpl delegator = new VegvisirApplicationDelegatorImpl();
-    private String topic = "Red team";
+    public static String topic = "Red team";
     private String appID = "123";
     private  String desc = "task list";
     private Set<String> channels = new HashSet<String>();
@@ -84,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
         }
 
+        mAdapter = new OrderAdapter(this, R.layout.swipe, new ArrayList<String>());
+
         mTaskList = (ListView) findViewById(R.id.task_listView);
         mItemEdit = (EditText) findViewById(R.id.item_editText);
         mAddButton = (Button) findViewById(R.id.add_button);
@@ -94,21 +97,21 @@ public class MainActivity extends AppCompatActivity {
         context = new VegvisirApplicationContext(appID, desc, channels);
         Context androidContext = getApplicationContext();
 
-        instance = VegvisirInstanceV1.getInstance(androidContext);
-        instance.registerApplicationDelegator(context, delegator);
-        this.deviceId = instance.getThisDeviceID();
-
+//        instance = VegvisirInstanceV1.getInstance(androidContext);
+//        instance.registerApplicationDelegator(context, delegator);
+//        this.deviceId = instance.getThisDeviceID();
+        this.deviceId = virtual.getThisDeviceID();
         virtual.registerApplicationDelegator(context, delegator);
 
-        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1){
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView text = (TextView) view.findViewById(android.R.id.text1);
-                text.setTextColor(Color.RED);
-                return view;
-            }
-        };
+//        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1){
+//            @Override
+//            public View getView(int position, View convertView, ViewGroup parent) {
+//                View view = super.getView(position, convertView, parent);
+//                TextView text = (TextView) view.findViewById(android.R.id.text1);
+//                text.setTextColor(Color.RED);
+//                return view;
+//            }
+//        };
 
         mTaskList.setAdapter(mAdapter);
 
@@ -120,9 +123,11 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+
                         mAdapter.clear();
                         mAdapter.addAll(items);
                         mAdapter.notifyDataSetChanged();
+                        Log.i("items main", items.toString());
                         //Log.i("From refresh",MainActivity.items.toString());
 
 //                        String payloadString2 = "0" + "a";
@@ -178,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
 
-        },0,1000);
+        },0,2000);
 
 
 
@@ -189,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
 //                mAdapter.add(item);
 //                mAdapter.notifyDataSetChanged();
                 mItemEdit.setText("");
-                String payloadString = "1" + item;
+                String payloadString = "2" + item;
                 byte[] payload = payloadString.getBytes();
                 Set<String> topics = new HashSet<String>();
                 topics.add(topic);

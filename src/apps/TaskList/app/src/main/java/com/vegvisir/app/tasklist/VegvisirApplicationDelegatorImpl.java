@@ -1,12 +1,14 @@
 package com.vegvisir.app.tasklist;
 
-import com.vegvisir.pub_sub.*;
+import android.util.Log;
+
+import com.vegvisir.pub_sub.TransactionID;
+import com.vegvisir.pub_sub.VegvisirApplicationDelegator;
+import com.vegvisir.pub_sub.VegvisirInstance;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import android.util.Log;
-import java.lang.Thread;
 
 /**
  * Ideally, all applications should implement this interface.
@@ -44,7 +46,6 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
         int transactionType = Integer.parseInt(payloadString.substring(0,1));
         String item = payloadString.substring(1);
 
-//        if (activityName == 0) {
         Set<TransactionTuple> updatedSet = new HashSet<>();
         Set<TransactionTuple> prevSets = MainActivity.dependencySets.get(item);
         String deviceId = tx_id.getDeviceID();
@@ -72,52 +73,97 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
             MainActivity.topDeps.remove(d);
         }
         MainActivity.topDeps.add(tx_id);
-        HashSet<String> addSet = new HashSet<>();
+        HashSet<String> lowSet = new HashSet<>();
+        HashSet<String> mediumSet = new HashSet<>();
+        HashSet<String> highSet = new HashSet<>();
         HashSet<String> removeSet = new HashSet<>();
 
         for (TransactionID d : deps) {
-            if (MainActivity.twoPSets.containsKey(d)) {
-                addSet.addAll(MainActivity.twoPSets.get(d).getAddSet());
-                removeSet.addAll(MainActivity.twoPSets.get(d).getRemoveSet());
+            if (MainActivity.fourPSets.containsKey(d)) {
+                lowSet.addAll(MainActivity.fourPSets.get(d).getLowSet());
+                mediumSet.addAll(MainActivity.fourPSets.get(d).getMediumSet());
+                highSet.addAll(MainActivity.fourPSets.get(d).getHighSet());
+                removeSet.addAll(MainActivity.fourPSets.get(d).getRemoveSet());
             }
         }
 
         if (transactionType == 1) {
-            addSet.add(item);
+            lowSet.add(item);
+            mediumSet.remove(item);
+            highSet.remove(item);
             removeSet.remove(item);
-        } else {
-            addSet.remove(item);
+        }
+        else if (transactionType == 2) {
+            lowSet.remove(item);
+            mediumSet.add(item);
+            highSet.remove(item);
+            removeSet.remove(item);
+        }
+        else if (transactionType == 3) {
+            lowSet.remove(item);
+            mediumSet.remove(item);
+            highSet.add(item);
+            removeSet.remove(item);
+        }
+        else if (transactionType == 0){
+            lowSet.remove(item);
+            mediumSet.remove(item);
+            highSet.remove(item);
             removeSet.add(item);
         }
 
-        MainActivity.twoPSets.put(tx_id, new TwoPSet(addSet, removeSet));
+        MainActivity.fourPSets.put(tx_id, new FourPSet(lowSet, mediumSet, highSet, removeSet));
 
-        HashSet<String> addSetTop = new HashSet<>();
+        HashSet<String> lowSetTop = new HashSet<>();
+        HashSet<String> mediumSetTop = new HashSet<>();
+        HashSet<String> highSetTop = new HashSet<>();
         HashSet<String> removeSetTop = new HashSet<>();
 
         for (TransactionID d : MainActivity.topDeps) {
-            if (MainActivity.twoPSets.containsKey(d)) {
-                addSetTop.addAll(MainActivity.twoPSets.get(d).getAddSet());
-                removeSetTop.addAll(MainActivity.twoPSets.get(d).getRemoveSet());
+            if (MainActivity.fourPSets.containsKey(d)) {
+                lowSetTop.addAll(MainActivity.fourPSets.get(d).getLowSet());
+                mediumSetTop.addAll(MainActivity.fourPSets.get(d).getMediumSet());
+                highSetTop.addAll(MainActivity.fourPSets.get(d).getHighSet());
+                removeSetTop.addAll(MainActivity.fourPSets.get(d).getRemoveSet());
             }
         }
 
-        MainActivity.twoPSets.put(MainActivity.top, new TwoPSet(addSetTop, removeSetTop));
+        MainActivity.fourPSets.put(MainActivity.top, new FourPSet(lowSetTop, mediumSetTop, highSetTop, removeSetTop));
 
-        Log.i("2pset", MainActivity.twoPSets.toString());
-        Log.i("weird", "okok" + tx_id.getDeviceID());
-
-        Log.i("topdeps", MainActivity.topDeps.toString());
-
-        Log.i("addTop", addSetTop.toString());
-        Log.i("removeTop", removeSetTop.toString());
-
-
-        Set<String> newSet = addSetTop;
-        newSet.removeAll(removeSetTop);
-        Log.i("new set", newSet.toString());
         MainActivity.items.clear();
-        MainActivity.items.addAll(newSet);
+        MainActivity.priorities.clear();
+
+        Set<String> newLowSet = lowSetTop;
+        newLowSet.removeAll(mediumSetTop);
+        newLowSet.removeAll(highSetTop);
+        newLowSet.removeAll(removeSetTop);
+
+        for(String lowItem: newLowSet) {
+            MainActivity.items.add(lowItem);
+            MainActivity.priorities.put(lowItem, MainActivity.Priority.Low);
+        }
+
+        Set<String> newMediumSet = mediumSetTop;
+        newMediumSet.removeAll(highSetTop);
+        newMediumSet.removeAll(removeSetTop);
+
+        for(String mediumItem: newMediumSet) {
+            MainActivity.items.add(mediumItem);
+            MainActivity.priorities.put(mediumItem, MainActivity.Priority.Medium);
+        }
+
+        Set<String> newHighSet = highSetTop;
+        newHighSet.removeAll(removeSetTop);
+
+        for(String highItem: newHighSet) {
+            MainActivity.items.add(highItem);
+            MainActivity.priorities.put(highItem, MainActivity.Priority.High);
+        }
+
+        Log.i("set new low",newLowSet.toString());
+        Log.i("set new medium",newMediumSet.toString());
+        Log.i("set new high",newHighSet.toString());
+        Log.i("items",MainActivity.items.toString());
 
 
     }

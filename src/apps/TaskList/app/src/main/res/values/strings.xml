@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Task List</string>
     <string name="add_button_text">Add</string>
+    <string name="low_p_text">L</string>
+    <string name="medium_p_text">M</string>
+    <string name="high_p_text">H</string>
     <string name="switch_button_text">Switch</string>
     <string name="logout_button_text">Log out</string>
     <string name="item_editText_hint">Write the name of the item you want to add/remove</string>
