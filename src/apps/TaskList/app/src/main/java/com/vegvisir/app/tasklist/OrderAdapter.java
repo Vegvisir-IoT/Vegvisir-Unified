@@ -1,7 +1,6 @@
 package com.vegvisir.app.tasklist;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,13 +56,16 @@ public class OrderAdapter extends ArrayAdapter<String> {
         selected_item.setText(item);
         MainActivity.Priority p = MainActivity.priorities.get(item);
         if (p == MainActivity.Priority.Low) {
-            selected_item.setTextColor(Color.GREEN);
+            int green = this.context.getResources().getColor(R.color.Green);
+            selected_item.setTextColor(green);
         }
         else if (p == MainActivity.Priority.Medium){
-            selected_item.setTextColor(Color.BLUE);
+            int blue = this.context.getResources().getColor(R.color.Blue);
+            selected_item.setTextColor(blue);
         }
         else{
-            selected_item.setTextColor(Color.RED);
+            int red = this.context.getResources().getColor(R.color.Red);
+            selected_item.setTextColor(red);
         }
 
         //OnClick listeners for all the buttons on the ListView Item
@@ -81,7 +83,9 @@ public class OrderAdapter extends ArrayAdapter<String> {
 
                 while(it.hasNext()){
                     TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-                    dependencies.add(x.transaction);
+                    if (!x.transaction.getDeviceID().equals(MainActivity.deviceId)){
+                        dependencies.add(x.transaction);
+                    }
                 }
 
                 if (MainActivity.latestTransactions.containsKey(MainActivity.deviceId)){
@@ -109,7 +113,9 @@ public class OrderAdapter extends ArrayAdapter<String> {
 
                 while(it.hasNext()){
                     TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-                    dependencies.add(x.transaction);
+                    if (!x.transaction.getDeviceID().equals(MainActivity.deviceId)){
+                        dependencies.add(x.transaction);
+                    }
                 }
 
                 if (MainActivity.latestTransactions.containsKey(MainActivity.deviceId)){
@@ -137,7 +143,9 @@ public class OrderAdapter extends ArrayAdapter<String> {
 
                 while(it.hasNext()){
                     TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-                    dependencies.add(x.transaction);
+                    if (!x.transaction.getDeviceID().equals(MainActivity.deviceId)){
+                        dependencies.add(x.transaction);
+                    }
                 }
 
                 if (MainActivity.latestTransactions.containsKey(MainActivity.deviceId)){
@@ -165,7 +173,9 @@ public class OrderAdapter extends ArrayAdapter<String> {
 
                 while(it.hasNext()){
                     TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-                    dependencies.add(x.transaction);
+                    if (!x.transaction.getDeviceID().equals(MainActivity.deviceId)){
+                        dependencies.add(x.transaction);
+                    }
                 }
 
                 if (MainActivity.latestTransactions.containsKey(MainActivity.deviceId)){

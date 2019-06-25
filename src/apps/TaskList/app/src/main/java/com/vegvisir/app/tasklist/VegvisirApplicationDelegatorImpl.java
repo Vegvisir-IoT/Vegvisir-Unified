@@ -50,6 +50,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
         Set<TransactionTuple> prevSets = MainActivity.dependencySets.get(item);
         String deviceId = tx_id.getDeviceID();
 
+        Log.i("deps",deps.toString());
 
         if (prevSets != null) {
             Iterator<TransactionTuple> itr = prevSets.iterator();
@@ -62,6 +63,8 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
                 }
             }
         }
+
+
 
         TransactionTuple t = new TransactionTuple(tx_id, transactionType);
         updatedSet.add(t);
@@ -160,9 +163,9 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
             MainActivity.priorities.put(highItem, MainActivity.Priority.High);
         }
 
-        Log.i("set new low",newLowSet.toString());
-        Log.i("set new medium",newMediumSet.toString());
-        Log.i("set new high",newHighSet.toString());
+        Log.i("setnew low",newLowSet.toString());
+        Log.i("setnew medium",newMediumSet.toString());
+        Log.i("setnew high",newHighSet.toString());
         Log.i("items",MainActivity.items.toString());
 
 

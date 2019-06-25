@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -229,51 +228,51 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        mTaskList.setOnItemClickListener(
-                new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapter,
-                                                   View viewItem, int pos, long id) {
-                        // Remove the item within array at position
-                        String item = mAdapter.getItem(pos);
-//                        mAdapter.remove(item);
-//                        mAdapter.notifyDataSetChanged();
-                        String payloadString = "0" + item;
-                        byte[] payload = payloadString.getBytes();
-                        Set<String> topics = new HashSet<>();
-                        topics.add(topic);
-                        Set<TransactionID> dependencies = new HashSet<>();
-
+//        mTaskList.setOnItemClickListener(
+//                new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> adapter,
+//                                                   View viewItem, int pos, long id) {
+//                        // Remove the item within array at position
+//                        String item = mAdapter.getItem(pos);
+////                        mAdapter.remove(item);
+////                        mAdapter.notifyDataSetChanged();
+//                        String payloadString = "0" + item;
+//                        byte[] payload = payloadString.getBytes();
+//                        Set<String> topics = new HashSet<>();
+//                        topics.add(topic);
+//                        Set<TransactionID> dependencies = new HashSet<>();
 //
-                        Iterator<TransactionTuple> it = dependencySets.get(item).iterator();
-
-                        while(it.hasNext()){
-                            TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-                            dependencies.add(x.transaction);
-                        }
-
-                        if (latestTransactions.containsKey(deviceId)){
-                            dependencies.add(latestTransactions.get(deviceId));
-                        }
-
-                        virtual.addTransaction(context, topics, payload, dependencies);
-                        //instance.addTransaction(context, topics, payload, dependencies);
-
-
-                        MainActivity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                //Log.i("From main remove",MainActivity.items.toString());
-                                mAdapter.clear();
-                                mAdapter.addAll(items);
-                                mAdapter.notifyDataSetChanged();
-
-                            }
-                        });
-
-                    }
-
-                });
+////
+//                        Iterator<TransactionTuple> it = dependencySets.get(item).iterator();
+//
+//                        while(it.hasNext()){
+//                            TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+//                            dependencies.add(x.transaction);
+//                        }
+//
+//                        if (latestTransactions.containsKey(deviceId)){
+//                            dependencies.add(latestTransactions.get(deviceId));
+//                        }
+//
+//                        virtual.addTransaction(context, topics, payload, dependencies);
+//                        //instance.addTransaction(context, topics, payload, dependencies);
+//
+//
+//                        MainActivity.this.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                //Log.i("From main remove",MainActivity.items.toString());
+//                                mAdapter.clear();
+//                                mAdapter.addAll(items);
+//                                mAdapter.notifyDataSetChanged();
+//
+//                            }
+//                        });
+//
+//                    }
+//
+//                });
 
         mSwitchButton.setOnClickListener(new View.OnClickListener() {
             @Override
