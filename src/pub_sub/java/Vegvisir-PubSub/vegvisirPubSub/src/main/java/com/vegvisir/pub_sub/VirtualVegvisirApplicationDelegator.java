@@ -33,6 +33,11 @@ public class VirtualVegvisirApplicationDelegator implements VegvisirApplicationD
             System.out.println("Tx: Broadcast to this channel: ");
         }
     }
+
+    @Override
+    public void onNewReconciliationFinished() {
+
+    }
 }
 
 

@@ -4,9 +4,11 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Pair;
 
+import com.google.protobuf.ByteString;
 import com.isaacsheff.charlotte.proto.Block;
 import com.vegvisir.VegvisirCore;
 import com.vegvisir.core.blockdag.NewBlockListener;
+import com.vegvisir.core.blockdag.ReconciliationEndListener;
 import com.vegvisir.core.config.Config;
 import com.vegvisir.core.reconciliation.ReconciliationV1;
 import com.vegvisir.pub_sub.TransactionID;
@@ -15,7 +17,20 @@ import com.vegvisir.pub_sub.VegvisirApplicationDelegator;
 import com.vegvisir.pub_sub.VegvisirInstance;
 import com.vegvisir.core.datatype.proto.Block.Transaction;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.KeyFactory;
 import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,7 +43,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 /**
  * The ADD ALL BLOCKS reconciliation protocol instance.
  */
-public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
+public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, ReconciliationEndListener {
 
     /**
      * The block DAG instance.
@@ -45,9 +60,14 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
 
     private ConcurrentHashMap<String, VegvisirApplicationDelegator> app2handler;
 
+    private ConcurrentHashMap<TransactionID, com.isaacsheff.charlotte.proto.Hash> tx2block;
+
     private KeyPair keyPair;
 
     private String deviceID;
+
+    private static String PUB_FILENAME = "pub";
+    private static String PRV_FILENAME = "prv";
 
     /**
      * The singleton instance.
@@ -64,7 +84,7 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
     }
 
     private VegvisirInstanceV1(Context ctx) {
-        keyPair = Config.generateKeypair();
+        keyPair = getKeyPair(ctx);
         deviceID = Config.pk2str(keyPair.getPublic());
         core = new VegvisirCore(new AndroidAdapter(ctx, deviceID),
                 ReconciliationV1.class,
@@ -73,11 +93,52 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
                 deviceID
         );
         core.registerNewBlockListener(this);
+        core.registerReconciliationEndListener(this);
         transactionQueue = new LinkedBlockingDeque<>();
         topic2app = new ConcurrentHashMap<>();
         app2handler = new ConcurrentHashMap<>();
+        tx2block = new ConcurrentHashMap<>();
         new Thread(this::pollTransactions).start();
         new Thread(core).start();
+    }
+
+    /**
+     * Load existing key pairs. If there is no key pair available, then generate a new one and store
+     * the pair to the files. This allows application to use the same key pair after reboot. Key pairs
+     * are stored into the internal storage of this app.
+     * @param ctx the application context for storing data.
+     * @return a key pair.
+     */
+    private static synchronized KeyPair getKeyPair(Context ctx) {
+        KeyPair keyPair;
+        File pub = new File(ctx.getFilesDir(), PUB_FILENAME);
+        File prv = new File(ctx.getFilesDir(), PRV_FILENAME);
+        try {
+            if (pub.exists() && prv.exists()) {
+                InputStream stream = new FileInputStream(pub);
+                ByteString bytes = ByteString.readFrom(stream);
+                PublicKey publicKey = Config.bytes2pk(bytes.toByteArray());
+                stream = new FileInputStream(prv);
+                bytes = ByteString.readFrom(stream);
+                PrivateKey privateKey = Config.bytes2prk(bytes.toByteArray());
+                keyPair = new KeyPair(publicKey, privateKey);
+                stream.close();
+            } else {
+                keyPair = Config.generateKeypair();
+                OutputStream stream = new FileOutputStream(pub);
+                stream.write(keyPair.getPublic().getEncoded());
+                stream.close();
+                stream = new FileOutputStream(prv);
+                stream.write(keyPair.getPrivate().getEncoded());
+                stream.close();
+            }
+        } catch (FileNotFoundException ex) {
+            throw new RuntimeException(ex.getLocalizedMessage());
+
+        } catch (IOException ex) {
+            throw new RuntimeException(ex.getLocalizedMessage());
+        }
+        return keyPair;
     }
 
 
@@ -187,6 +248,14 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
         return deviceID;
     }
 
+    @Override
+    public Set<String> getWitnessForTransaction(TransactionID id) {
+        if (tx2block.containsKey(id))
+            return core.findWitnessForBlock(tx2block.get(id));
+        else
+            throw new RuntimeException("No such transaction available in the blockchain " + id.toString());
+    }
+
     /**
      * Called when a new block arrived.
      * Add all transaction in the block to the transaction queue.
@@ -195,7 +264,16 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
      */
     @Override
     public void onNewBlock(Block block) {
+        com.isaacsheff.charlotte.proto.Hash bh = Config.sha3(block);
+        block.getVegvisirBlock().getBlock().getTransactionsList().parallelStream().forEach(transaction -> {
+            tx2block.put(txIDFromProto(transaction), bh);
+        });
         transactionQueue.addAll(block.getVegvisirBlock().getBlock().getTransactionsList());
+    }
+
+    @Override
+    public void onReconciliationEnd() {
+        app2handler.values().forEach(VegvisirApplicationDelegator::onNewReconciliationFinished);
     }
 
     /**
@@ -213,6 +291,15 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener {
                 .build()
 
         ).build();
+    }
+
+    private TransactionID txIDFromProto(Transaction tx) {
+        return new TransactionID(tx.getTransactionId().getDeviceId(), tx.getTransactionId().getTransactionHeight());
+    }
+
+    private Transaction.TransactionId txID2Proto(TransactionID id) {
+        return Transaction.TransactionId.newBuilder().setDeviceId(id.getDeviceID()).setTransactionHeight(id.getTransactionHeight())
+                .build();
     }
 
 }

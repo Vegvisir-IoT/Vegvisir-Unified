@@ -31,4 +31,12 @@ public interface VegvisirApplicationDelegator {
             byte[] payload,
             TransactionID tx_id,
             Set<TransactionID> deps);
+
+
+    /**
+     * This method will bed called when a reconciliation is finished between this device and the
+     * other one. Applications can do a poll for updating witness of transactions after receive this
+     * call.
+     */
+    public void onNewReconciliationFinished();
 }

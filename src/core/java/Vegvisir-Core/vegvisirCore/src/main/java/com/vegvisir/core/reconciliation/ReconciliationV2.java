@@ -2,6 +2,7 @@ package com.vegvisir.core.reconciliation;
 
 import com.vegvisir.core.blockdag.BlockDAG;
 import com.vegvisir.core.blockdag.BlockDAGv2;
+import com.vegvisir.core.blockdag.ReconciliationEndListener;
 import com.vegvisir.core.datatype.proto.Block;
 import com.vegvisir.common.datatype.proto.ControlSignal;
 import com.vegvisir.core.blockdag.BlockDAG;
@@ -16,7 +17,7 @@ public class ReconciliationV2 extends ReconciliationV1 {
      * @param remoteConnectionID
      */
     @Override
-    public void exchangeBlocks(BlockDAG myDAG, String remoteConnectionID) {
+    public void exchangeBlocks(BlockDAG myDAG, String remoteConnectionID, ReconciliationEndListener listener) {
         /**
          * Send protocol version to the remote side and figure out a version that both can understand.
          * The final version should be the highest one that both can understand.
@@ -28,7 +29,7 @@ public class ReconciliationV2 extends ReconciliationV1 {
              * If current version is higher than running version, then we let parent class handle this.
              * This will eventually be handled because all nodes should be able to run version 1.
              */
-            super.exchangeBlocks(myDAG, remoteConnectionID);
+            super.exchangeBlocks(myDAG, remoteConnectionID, listener);
             return;
         }
 
@@ -62,4 +63,8 @@ public class ReconciliationV2 extends ReconciliationV1 {
         this.gossipLayer.sendToPeer(this.remoteId, payload);
     }
 
+    @Override
+    public void onDisconnected(String remoteId) {
+        return;
+    }
 }
