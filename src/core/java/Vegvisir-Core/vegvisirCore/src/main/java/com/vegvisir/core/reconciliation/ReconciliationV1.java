@@ -125,6 +125,7 @@ public class ReconciliationV1 extends ReconciliationProtocol
 
     protected void handleAddBlocks(Iterable<com.isaacsheff.charlotte.proto.Block> blocks) {
         dag.addAllBlocks(blocks);
+        blocks.forEach(b -> dag.witness(b, remoteId));
         completionQueue.add("Add");
     }
 

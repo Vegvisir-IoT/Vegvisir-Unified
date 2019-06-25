@@ -3,6 +3,7 @@ package com.vegvisir;
 import com.google.protobuf.ByteString;
 import com.vegvisir.core.blockdag.BlockDAG;
 import com.vegvisir.core.blockdag.BlockDAGv1;
+import com.vegvisir.core.blockdag.BlockUtil;
 import com.vegvisir.core.blockdag.NewBlockListener;
 import com.vegvisir.core.blockdag.ReconciliationEndListener;
 import com.vegvisir.core.config.Config;
@@ -158,7 +159,7 @@ public class VegvisirCore implements Runnable {
     }
 
     public Set<String> findWitnessForBlock(com.isaacsheff.charlotte.proto.Hash bh) {
-        return null;
+        return dag.computeWitness(BlockUtil.byRef(bh));
     }
 
     private String waitingForNewConnection() {
