@@ -103,11 +103,11 @@ public class Config {
      */
     protected static Signature initSignature() {
         try {
-            return Signature.getInstance("SHA256withECDSA", "BC");
+            return Signature.getInstance("SHA256withECDSA");
         } catch (NoSuchAlgorithmException e) {
             logger.info("No Algorithm available\n"+e.getLocalizedMessage());
-        } catch (NoSuchProviderException e) {
-            logger.info("No BC provider available\n"+e.getLocalizedMessage());
+//        } catch (NoSuchProviderException e) {
+//            logger.info("No BC provider available\n"+e.getLocalizedMessage());
         }
         return null;
     }
@@ -209,12 +209,12 @@ public class Config {
     public static boolean checkSignature(byte[] signedBytes, com.isaacsheff.charlotte.proto.Signature signature) {
         java.security.PublicKey publicKey = null;
         try {
-            publicKey = KeyFactory.getInstance("EC", "BC").generatePublic(new X509EncodedKeySpec(
+            publicKey = KeyFactory.getInstance("EC").generatePublic(new X509EncodedKeySpec(
                     signature.getCryptoId().getPublicKey().getEllipticCurveP256().getByteString().toByteArray()));
         } catch(NoSuchAlgorithmException e) {
             return false;
-        } catch(NoSuchProviderException e) {
-            return false;
+//        } catch(NoSuchProviderException e) {
+//            return false;
         } catch (InvalidKeySpecException e) {
             logger.info("tried to verify a signature which had an invalid key");
             return false; // the key was invalid
@@ -247,8 +247,8 @@ public class Config {
 
     public static KeyPair generateKeypair() {
         try {
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", "BC");
-            keyGen.initialize(new ECGenParameterSpec("P-256"));
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
+            keyGen.initialize(new ECGenParameterSpec("prime256v1"));
             return keyGen.generateKeyPair();
         } catch (GeneralSecurityException ex) {
             throw new ServiceConfigurationError("Generate Key pair failed: " + ex);
@@ -297,7 +297,7 @@ public class Config {
 
     public static PublicKey bytes2pk(byte[] pub) {
         try {
-            return KeyFactory.getInstance("EC", "BC").generatePublic(new X509EncodedKeySpec(pub));
+            return KeyFactory.getInstance("EC").generatePublic(new X509EncodedKeySpec(pub));
         } catch (GeneralSecurityException ex) {
             throw new RuntimeException(ex.getLocalizedMessage());
         }
@@ -305,7 +305,7 @@ public class Config {
 
     public static PrivateKey bytes2prk(byte[] pub) {
         try {
-            return KeyFactory.getInstance("EC", "BC").generatePrivate(new X509EncodedKeySpec(pub));
+            return KeyFactory.getInstance("EC").generatePrivate(new X509EncodedKeySpec(pub));
         } catch (GeneralSecurityException ex) {
             throw new RuntimeException(ex.getLocalizedMessage());
         }
