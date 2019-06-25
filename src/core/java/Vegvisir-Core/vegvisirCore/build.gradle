@@ -4,32 +4,15 @@ plugins {
 	id 'idea'
 }
 
-//protobuf {
-//
-//    protoc {
-//        // Download from repositories
-//        artifact = 'com.google.protobuf:protoc:3.6.1'
-//    }
-//
-//    generateProtoTasks {
-//        all().each { task ->
-//            task.builtins {
-////                python { }
-//            }
-//        }
-//    }
-//}
-//
-//idea {
-//	module {}
-//}
-
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-//    compile files('src/main/proto')
     implementation 'com.google.protobuf:protobuf-java:3.6.1'
     implementation 'org.bouncycastle:bcpkix-jdk15on:1.60'
     implementation project(":vegvisirGossip")
     implementation project(":vegvisirDatatype")
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
+    testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.4.2'
+
 }
