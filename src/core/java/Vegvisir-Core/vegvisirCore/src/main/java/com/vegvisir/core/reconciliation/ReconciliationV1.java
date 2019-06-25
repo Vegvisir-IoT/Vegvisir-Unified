@@ -2,6 +2,7 @@ package com.vegvisir.core.reconciliation;
 
 import com.vegvisir.common.datatype.proto.ControlSignal;
 import com.vegvisir.core.blockdag.BlockDAG;
+import com.vegvisir.core.blockdag.ReconciliationEndListener;
 import com.vegvisir.network.datatype.proto.Payload;
 import com.vegvisir.network.datatype.proto.VegvisirProtocolMessage;
 
@@ -18,6 +19,7 @@ public class ReconciliationV1 extends ReconciliationProtocol
 
     private BlockingQueue<String> completionQueue;
     Thread dispatchThread;
+    Thread currentThread;
 
     public ReconciliationV1() {
         super(1, 0, 0);
@@ -25,8 +27,9 @@ public class ReconciliationV1 extends ReconciliationProtocol
     }
 
     @Override
-    public void exchangeBlocks(BlockDAG myDAG, String remoteConnectionID)
+    public void exchangeBlocks(BlockDAG myDAG, String remoteConnectionID, ReconciliationEndListener listener)
     {
+        currentThread = Thread.currentThread();
         this.dag = myDAG;
         this.remoteId = remoteConnectionID;
 
@@ -52,10 +55,11 @@ public class ReconciliationV1 extends ReconciliationProtocol
             /* Take for receive complete */
             completionQueue.take();
         } catch (InterruptedException ex) {
-            return;
         }
 
         dispatchThread.interrupt();
+        listener.onReconciliationEnd();
+        //TODO: make a up call to tx layer to notify a reconciliation finished.
         gossipLayer.disconnect(remoteId);
     }
 
@@ -121,6 +125,7 @@ public class ReconciliationV1 extends ReconciliationProtocol
 
     protected void handleAddBlocks(Iterable<com.isaacsheff.charlotte.proto.Block> blocks) {
         dag.addAllBlocks(blocks);
+        blocks.forEach(b -> dag.witness(b, remoteId));
         completionQueue.add("Add");
     }
 
@@ -138,5 +143,10 @@ public class ReconciliationV1 extends ReconciliationProtocol
                 .build();
         this.gossipLayer.sendToPeer(remoteId, payload);
         completionQueue.add("Send");
+    }
+
+    @Override
+    public void onDisconnected(String remoteId) {
+        currentThread.interrupt();
     }
 }

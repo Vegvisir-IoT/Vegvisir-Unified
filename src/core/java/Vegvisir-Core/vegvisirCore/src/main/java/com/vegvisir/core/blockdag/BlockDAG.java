@@ -171,4 +171,10 @@ public abstract class BlockDAG {
     public Set<Reference> getFrontierBlocks() {
         return Collections.emptySet();
     }
+
+    public Set<String> computeWitness(Reference ref) {
+        return Collections.emptySet();
+    };
+
+    public void witness(Block block, String remoteId) {}
 }

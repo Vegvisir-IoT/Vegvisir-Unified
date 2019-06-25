@@ -7,12 +7,16 @@ import com.vegvisir.core.config.Config;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class BlockDAGv1 extends BlockDAG {
+
+    private Map<Reference, Set<String>> witnessMap;
 
     private Set<Reference> frontierReference;
 
@@ -23,6 +27,7 @@ public class BlockDAGv1 extends BlockDAG {
     public BlockDAGv1(Block genesisBlock, Config config) {
         super(genesisBlock, config);
         frontierReference = new HashSet<>();
+        witnessMap = new HashMap<>();
     }
 
     public BlockDAGv1() {
@@ -96,5 +101,23 @@ public class BlockDAGv1 extends BlockDAG {
     @Override
     public Set<Reference> getFrontierBlocks() {
         return frontierReference;
+    }
+
+    @Override
+    public Set<String> computeWitness(Reference ref) {
+        return witnessMap.get(ref);
+    }
+
+    public void witness(Reference ref, String remoteId) {
+        if (!witnessMap.containsKey(ref)) {
+            witnessMap.put(ref, new HashSet<>());
+            witnessMap.get(ref).add(config.getDeviceID());
+        }
+        witnessMap.get(ref).add(remoteId);
+    }
+
+    @Override
+    public void witness(Block block, String remoteId) {
+        witness(BlockUtil.byRef(block), remoteId);
     }
 }

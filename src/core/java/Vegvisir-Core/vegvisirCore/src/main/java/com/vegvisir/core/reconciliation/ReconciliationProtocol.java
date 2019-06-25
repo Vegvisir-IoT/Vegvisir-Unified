@@ -1,6 +1,7 @@
 package com.vegvisir.core.reconciliation;
 
 import com.vegvisir.core.blockdag.BlockDAG;
+import com.vegvisir.core.blockdag.ReconciliationEndListener;
 import com.vegvisir.core.reconciliation.exceptions.VegvisirReconciliationException;
 import com.vegvisir.gossip.Gossip;
 
@@ -42,7 +43,9 @@ public abstract class ReconciliationProtocol {
      * @param remoteConnectionID the connection we are going to use to send blocks.
      * @throws VegvisirReconciliationException
      */
-    public abstract void exchangeBlocks(BlockDAG myDAG, String remoteConnectionID) throws VegvisirReconciliationException;
+    public abstract void exchangeBlocks(BlockDAG myDAG,
+                                        String remoteConnectionID,
+                                        ReconciliationEndListener listener) throws VegvisirReconciliationException;
 
 
     /**
@@ -58,6 +61,8 @@ public abstract class ReconciliationProtocol {
     public Version getVersion() {
         return version;
     }
+
+    public abstract void onDisconnected(String remoteId);
 
     /**
      * Class for protocol version
