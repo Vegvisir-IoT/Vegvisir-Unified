@@ -21,6 +21,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.vegvisir.app.tasklist.ui.login.LoginActivity;
+import com.vegvisir.application.VegvisirInstanceV1;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
 import com.vegvisir.pub_sub.VegvisirInstance;
@@ -93,9 +94,9 @@ public class MainActivity extends AppCompatActivity {
         context = new VegvisirApplicationContext(appID, desc, channels);
         Context androidContext = getApplicationContext();
 
-        //instance = VegvisirInstanceV1.getInstance(androidContext);
-        //instance.registerApplicationDelegator(context, delegator);
-        //this.deviceId = instance.getThisDeviceID();
+        instance = VegvisirInstanceV1.getInstance(androidContext);
+        instance.registerApplicationDelegator(context, delegator);
+        this.deviceId = instance.getThisDeviceID();
 
         virtual.registerApplicationDelegator(context, delegator);
 
@@ -251,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         virtual.addTransaction(context, topics, payload, dependencies);
-                       // instance.addTransaction(context, topics, payload, dependencies);
+                        //instance.addTransaction(context, topics, payload, dependencies);
 
 
                         MainActivity.this.runOnUiThread(new Runnable() {
