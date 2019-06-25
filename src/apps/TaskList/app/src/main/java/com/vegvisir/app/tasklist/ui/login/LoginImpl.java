@@ -117,5 +117,9 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 
     }
 
+    public void onNewReconciliationFinished(){
+
+    }
+
 
 }

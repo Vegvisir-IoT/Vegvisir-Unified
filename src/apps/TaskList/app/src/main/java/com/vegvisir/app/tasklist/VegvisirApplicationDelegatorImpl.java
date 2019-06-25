@@ -171,5 +171,9 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 
     }
 
+    public void onNewReconciliationFinished(){
+
+    }
+
 
 }
