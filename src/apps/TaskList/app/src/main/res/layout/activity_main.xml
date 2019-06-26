@@ -38,5 +38,11 @@
             android:text="@string/switch_button_text"/>
 
     </LinearLayout>
+    <Button
+        android:id="@+id/logout_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/logout_button_text"/>
 
 </LinearLayout>

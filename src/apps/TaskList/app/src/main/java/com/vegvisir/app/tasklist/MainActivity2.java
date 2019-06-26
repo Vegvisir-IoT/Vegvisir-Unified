@@ -21,8 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import android.util.Log;
+
 import android.content.Intent;
 
 public class MainActivity2 extends AppCompatActivity {
@@ -39,7 +38,7 @@ public class MainActivity2 extends AppCompatActivity {
     // mapping from an item to dependencies
     public static HashMap<String, Set<TransactionTuple>> dependencySets = new HashMap<>();
     //mapping from transaction ID to its 2P set
-    public static HashMap<TransactionID, TwoPSet> twoPSets = new HashMap<>();
+    public static HashMap<TransactionID, FourPSet> twoPSets = new HashMap<>();
     public static Set<TransactionID> topDeps = new HashSet<>();
     public static TransactionID top = new TransactionID("", -1);
     private VegvisirApplicationContext context = null;

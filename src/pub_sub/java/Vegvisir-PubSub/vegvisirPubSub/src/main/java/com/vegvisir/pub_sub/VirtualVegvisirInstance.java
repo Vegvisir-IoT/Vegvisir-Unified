@@ -7,11 +7,13 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -48,6 +50,8 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
 
     private static Thread pollingThread;
 
+    private Map<TransactionID, Set<String>> witnessMap;
+
 
     /**
      * We only need one instance of this class, i.e. singleton.
@@ -62,6 +66,7 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
                     instance = new VirtualVegvisirInstance();
                     instance.deviceToTransactionHeight = new HashMap<>();
                     instance.txQueue = new LinkedBlockingDeque<>();
+                    instance.witnessMap = new HashMap<>();
                     pollingThread = new Thread(instance::poll);
                     pollingThread.start();
                 }
@@ -149,6 +154,7 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
      * wait on this object until a delegator is assigned.
      */
     private void poll() {
+        Random random = new Random();
         while (true) {
             try {
                 if (delegator == null) {
@@ -169,6 +175,8 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
                         tx.getPayload().toByteArray(),
                         new TransactionID(tx.getTransactionId().getDeviceId(), tx.getTransactionId().getTransactionHeight()),
                         deps);
+                if (random.nextBoolean())
+                    delegator.onNewReconciliationFinished();
             } catch (InterruptedException ex) {
                 System.err.println("Interrupted transaction polling thread! Will exit.");
                 break;
@@ -288,5 +296,19 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
 
     public static Thread getPollingThread() {
         return pollingThread;
+    }
+
+    @Override
+    public String getThisDeviceID() {
+        return deviceId;
+    }
+
+    @Override
+    public Set<String> getWitnessForTransaction(TransactionID id) {
+        if (!witnessMap.containsKey(id))
+            witnessMap.put(id, new HashSet<>(Arrays.asList(deviceId)));
+        Set<String> witnesses = witnessMap.get(id);
+        witnesses.add("Device_"+witnesses.size());
+        return new HashSet<>(witnesses);
     }
 }

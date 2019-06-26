@@ -1,7 +1,7 @@
 package com.vegvisir.application;
 
 import android.content.Context;
-import android.support.v4.util.Pair;
+import android.util.Pair;
 
 import com.vegvisir.gossip.adapter.NetworkAdapter;
 import com.vegvisir.network.datatype.proto.Payload;

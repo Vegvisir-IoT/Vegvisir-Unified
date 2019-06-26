@@ -1,8 +1,8 @@
 package com.vegvisir.vegvisir_lower_level.network;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.util.Pair;
+import androidx.annotation.NonNull;
+import android.util.Pair;
 import android.util.Log;
 
 import com.google.android.gms.nearby.Nearby;
@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
@@ -49,6 +50,8 @@ public class ByteStream {
 
     /* EndPointConnection mapping form id to connection */
     private HashMap<String, EndPointConnection> connections;
+
+    private Map<String, String> endpoint2id;
 
     private BlockingDeque<EndPointConnection> establishedConnection;
 
@@ -75,8 +78,9 @@ public class ByteStream {
     private final PayloadCallback payloadCallback = new PayloadCallback() {
         @Override
         public void onPayloadReceived(@NonNull String endPointId, @NonNull Payload payload) {
-            if (connections.containsKey(endPointId)) {
-                recv(endPointId, payload);
+            String remoteId = endpoint2id.get(endPointId);
+            if (connections.containsKey(remoteId)) {
+                recv(remoteId, payload);
             }
         }
 
@@ -91,13 +95,21 @@ public class ByteStream {
         @Override
         public void onEndpointFound(@NonNull String endPoint, @NonNull DiscoveredEndpointInfo
                 discoveredEndpointInfo) {
+            String remoteId = discoveredEndpointInfo.getEndpointName();
             Log.i(TAG, "onEndpointFound: "+ discoveredEndpointInfo.getEndpointName() + "/" + endPoint);
-            if (discoveredEndpointInfo.getServiceId().equals(SERVICE_ID))
+            if (discoveredEndpointInfo.getServiceId().equals(SERVICE_ID)) {
+                endpoint2id.put(endPoint, remoteId);
                 nearbyEndpoints.add(endPoint);
-            if (discoveredEndpointInfo.getServiceId().equals(SERVICE_ID) &&
-                    (!connections.containsKey(endPoint) || (connections.containsKey(endPoint) &&
-                    connections.get(endPoint).isWakeup() && !connections.get(endPoint).isConnected()))) {
-                    Task<Void> requestTask = client.requestConnection(advisingID, endPoint, connectionLifecycleCallback);
+                if (connections.containsKey(remoteId)) {
+                    if (connections.get(remoteId).isConnected())
+                        /* Already connected */
+                        return;
+                    if (!connections.get(remoteId).isWakeup()) {
+                        /* not wake up yet */
+                        return;
+                    }
+                }
+                Task<Void> requestTask = client.requestConnection(advisingID, endPoint, connectionLifecycleCallback);
                 requestTask.addOnFailureListener((t) -> {
                     Log.e(TAG, "onEndpointFound: ", t);
                     Log.d(TAG, "onEndpointFound: " + t.getMessage());
@@ -105,7 +117,19 @@ public class ByteStream {
                         restart();
                     }
                 });
-                }
+            }
+//            if (discoveredEndpointInfo.getServiceId().equals(SERVICE_ID) &&
+//                    (!connections.containsKey(endPoint) || (connections.containsKey(endPoint) &&
+//                    connections.get(endPoint).isWakeup() && !connections.get(endPoint).isConnected()))) {
+//                    Task<Void> requestTask = client.requestConnection(advisingID, endPoint, connectionLifecycleCallback);
+//                requestTask.addOnFailureListener((t) -> {
+//                    Log.e(TAG, "onEndpointFound: ", t);
+//                    Log.d(TAG, "onEndpointFound: " + t.getMessage());
+//                    if (t.getMessage().equals("8012: STATUS_ENDPOINT_IO_ERROR")) {
+//                        restart();
+//                    }
+//                });
+//                }
         }
 
         @Override
@@ -120,6 +144,7 @@ public class ByteStream {
         @Override
         public void onConnectionInitiated(@NonNull String endPoint, @NonNull ConnectionInfo connectionInfo) {
             Log.d(TAG, "onConnectionInitiated: Received Connection Request");
+            endpoint2id.putIfAbsent(endPoint, connectionInfo.getEndpointName());
             if (activeEndPoint != null) {
                 client.rejectConnection(endPoint);
                 Log.d(TAG, "onConnectionInitiated: Rejected request");
@@ -155,11 +180,11 @@ public class ByteStream {
                         synchronized (this) {
                             isDiscovering = false;
                         }
-                        connections.putIfAbsent(endPoint, new EndPointConnection(endPoint,
+                        connections.put(endpoint2id.get(endPoint), new EndPointConnection(endPoint,
                                 appContext,
                                 self));
-                        connections.get(endPoint).setConnected(true);
-                        establishedConnection.push(connections.get(endPoint));
+                        connections.get(endpoint2id.get(endPoint)).setConnected(true);
+                        establishedConnection.push(connections.get(endpoint2id.get(endPoint)));
                         Log.i(TAG, "onConnectionResult: Connection established!");
                     } else {
                         Log.i("Vegivsir-EndPointConnection", "connection failed");
@@ -173,7 +198,7 @@ public class ByteStream {
         public void onDisconnected(@NonNull String endPoint) {
             synchronized (lock) {
                 activeEndPoint = null;
-                connections.get(endPoint).setConnected(false);
+                connections.get(endpoint2id.get(endPoint)).setConnected(false);
                 disconnectedId.add(endPoint);
             }
             Log.d(TAG, "disconnect: Disconnected with " + endPoint);
@@ -245,7 +270,7 @@ public class ByteStream {
 
     /**
      * Send payload to remote device
-     * @param dest
+     * @param dest the temporal endpoint id not the crypto (public key) id.
      * @param payload
      * @return
      */
@@ -337,11 +362,12 @@ public class ByteStream {
      */
     public void disconnect(String id) {
         if (id.equals(getActiveEndPoint())) {
-            connections.get(id).waitUntilFlushAllData();
+            String remoteId = endpoint2id.get(id);
+            connections.get(remoteId).waitUntilFlushAllData();
 //            client.disconnectFromEndpoint(id);
             synchronized (lock) {
-                connections.get(id).setConnected(false);
-                disconnectedId.add(id);
+                connections.get(remoteId).setConnected(false);
+                disconnectedId.add(remoteId);
                 activeEndPoint = null;
                 start();
             }
