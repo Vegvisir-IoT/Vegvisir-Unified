@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package vegvisir.protocol.datatype;
+
+message HandshakeMessage {
+
+    enum ProtocolVersion {
+        VERSION = 0;
+        SEND_ALL = 1;
+        FRONTIER = 2;
+        VECTOR = 3;
+    }
+
+    enum Type {
+        DUMMY_STATUS = 0;
+        REQUEST = 1;
+        RESPONSE = 2;
+    }
+
+    repeated ProtocolVersion spokenVersions = 1;
+    repeated Type type = 2;
+}

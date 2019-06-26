@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+
+package vegvisir.network.datatype;
+
+option java_multiple_files = true;
+option java_package = "com.vegvisir.network.datatype.proto";
+option java_outer_classname = "VegvisirNetworkDatatypeProto";
+option objc_class_prefix = "VEGVISIR";
+
+import "handshake.proto";
+import "generic.proto";
+import "vegvisir.proto";
+import "vector.proto";
+import "frontier.proto";
+import "sendall.proto";
+
+message VegvisirProtocolMessage {
+    bool endProtocol = 1;
+    oneof message_types {
+        vegvisir.protocol.datatype.HandshakeMessage handshake  = 2;
+        vegvisir.protocol.datatype.GenericMessage generic = 3;
+        vegvisir.protocol.datatype.SendallMessage sendall = 4;
+        vegvisir.protocol.datatype.VectorMessage vector = 5;
+        vegvisir.protocol.datatype.FrontierMessage frontier = 6;
+    }
+}
+
+message Payload {
+  string type = 1;
+  oneof content_oneof {
+    VegvisirProtocolMessage message = 2;
+    string info = 3;
+  }
+}
+
+message Identifier {
+  oneof idtype_oneof {
+    string name = 1;
+  }
+}
+
+message Peer {
+  Identifier id = 1;
+  Connection conn = 2;
+}
+
+message PeerView {
+  repeated Peer active_peers = 1;
+  repeated Peer connected_peers = 2;
+}
+
+// EndPointConnection
+message Connection {
+  Identifier remote_id = 1;
+  vegvisir.core.datatype.Timestamp connected_time = 2;
+  vegvisir.core.datatype.Timestamp wakeup_time = 3;
+}
+
+message ConnectionCloseResponse {
+  string error_message = 1;
+}
+
+message SendResponse {
+  string error_message = 1;
+}
+
+message SendRequest {
+  Payload payload = 1;
+}
+
+message SendInteruptedException {
+  oneof exception_type_oneof {
+    ConnectionLostException lost_connection = 1;
+  }
+}
+
+message RecvInteruptedException {
+  oneof exception_type_oneof {
+    ConnectionLostException lost_connection = 1;
+  }
+}
+
+message ConnectionLostException {
+  string error_message = 1;
+  Identifier remote_id = 2;
+}
