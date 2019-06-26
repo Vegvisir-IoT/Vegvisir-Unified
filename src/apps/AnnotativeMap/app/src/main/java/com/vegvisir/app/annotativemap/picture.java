@@ -82,9 +82,18 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
             PictureTagLayout image = findViewById(R.id.image);
             if (!TextUtils.isEmpty(anno)) {
                 //Log.i("image",image.toString());
-//                Log.i("add x", Integer.toString(image.startX));
-//                Log.i("add y", Integer.toString(image.startY));
-                Coordinates coords = new Coordinates(image.startX,image.startY);
+                Log.i("add x", Integer.toString(image.startX));
+                Log.i("add y", Integer.toString(image.startY));
+                Coordinates coords;
+                PictureTagView view = image.justHasView(image.startX,image.startY);
+
+                if (view != null) {
+                    coords = new Coordinates(view.getXVal(),view.getYVal());
+                }
+                else{
+                    coords = new Coordinates(image.startX,image.startY);
+                }
+
                 Set<String> topics = new HashSet<>();
                 topics.add(MainActivity.topic);
                 Set<TransactionID> dependencies = new HashSet<>();
@@ -100,7 +109,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
                     dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
                 }
 
-                String payloadString = "1" + image.startX + "," + image.startX + "," + anno;
+                String payloadString = "1" + coords.getX() + "," + coords.getY() + "," + anno;
                 byte[] payload = payloadString.getBytes();
                 MainActivity.virtual.addTransaction(MainActivity.context,topics,payload,dependencies);
 //                MainActivity.annotations.put(coords,new Annotation(anno));
@@ -111,43 +120,40 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
             super.onActivityResult(requestCode,resultCode,annotation);
         }
         else if (resultCode == 1) { //Del
-            String del = annotation.getStringExtra(DEL);
-            PictureTagLayout image = findViewById(R.id.image);
-            //image.setStatus(Status.Del,del);
-//            Log.i("del x", Integer.toString(image.startX));
-//            Log.i("del y", Integer.toString(image.startY));
-
-            Coordinates coords = new Coordinates(image.startX,image.startY);
-            Set<String> topics = new HashSet<>();
-            topics.add(MainActivity.topic);
-            Set<TransactionID> dependencies = new HashSet<>();
-
-            if (MainActivity.dependencySets.containsKey(coords)) {
-                Iterator<TransactionTuple> it = MainActivity.dependencySets.get(coords).iterator();
-                while (it.hasNext()) {
-                    TransactionTuple tt = (TransactionTuple) ((Iterator) it).next();
-                    dependencies.add(tt.transaction);
+            try {
+                //String del = annotation.getStringExtra(DEL);
+                PictureTagLayout image = findViewById(R.id.image);
+                //image.setStatus(Status.Del,del);
+                Log.i("del x", Integer.toString(image.startX));
+                Log.i("del y", Integer.toString(image.startY));
+                PictureTagView view = image.justHasView(image.startX, image.startY);
+                Coordinates coords;
+                if (view != null) {
+                    coords = new Coordinates(view.getXVal(), view.getYVal());
+                } else {
+                    Log.i("View", "somehow not found");
+                    coords = new Coordinates(image.startX, image.startY);
                 }
-            }
-            if (MainActivity.latestTransactions.containsKey(MainActivity.deviceId)) {
-                dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
-            }
+                Set<String> topics = new HashSet<>();
+                topics.add(MainActivity.topic);
+                Set<TransactionID> dependencies = new HashSet<>();
 
-            PictureTagView view = image.justHasView(image.startX,image.startY);
-
-            if (view != null) {
-                if (MainActivity.coordForViews.containsKey(view)) {
-                    Coordinates c = MainActivity.coordForViews.get(view);
-                    anno = MainActivity.annotations.get(c).getAnnotation();
+                if (MainActivity.dependencySets.containsKey(coords)) {
+                    Iterator<TransactionTuple> it = MainActivity.dependencySets.get(coords).iterator();
+                    while (it.hasNext()) {
+                        TransactionTuple tt = (TransactionTuple) ((Iterator) it).next();
+                        dependencies.add(tt.transaction);
+                    }
                 }
-                else {
+                if (MainActivity.latestTransactions.containsKey(MainActivity.deviceId)) {
+                    dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
+                }
+
+                if (MainActivity.annotations.containsKey(coords)) {
+                    anno = MainActivity.annotations.get(coords).getAnnotation();
+                } else {
                     Log.i("How did we", "get here");
                 }
-            }
-
-            else {
-                Log.i("wtf","This shouldn't happen");
-            }
 
 //            for(Map.Entry<Coordinates, Annotation> entry : MainActivity.annotations.entrySet()) {
 //                Coordinates c = entry.getKey();
@@ -160,57 +166,57 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 //                }
 //
 //            }
-
-            String payloadString = "0" + image.startX + "," + image.startY + "," + anno;
-            byte[] payload = payloadString.getBytes();
-            MainActivity.virtual.addTransaction(MainActivity.context,topics,payload,dependencies);
-
-            //hjlg
-
-            super.onActivityResult(requestCode,resultCode,annotation);
+                String payloadString = "0" + view.getXVal() + "," + view.getYVal() + "," + anno;
+                byte[] payload = payloadString.getBytes();
+                MainActivity.virtual.addTransaction(MainActivity.context, topics, payload, dependencies);
+                Log.i("In the try","");
+                super.onActivityResult(requestCode, resultCode, annotation);
+            } catch (Exception e) {
+                Log.i("In the catch","");
+            }
         }
         else if (resultCode == 2) { //Send Done
             super.onActivityResult(requestCode,resultCode,annotation);
         }
     }
 
-    public void init() {
-        InputStream is = picture.this.getClass().getClassLoader().
-                getResourceAsStream("assets/" + "info.json");
-        InputStreamReader streamReader = new InputStreamReader(is);
-        BufferedReader reader = new BufferedReader(streamReader);
-        String line;
-        StringBuilder stringBuilder = new StringBuilder();
-        try {
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-            reader.close();
-            is.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            JSONObject info = new JSONObject(stringBuilder.toString());
-            JSONObject anno_array = info.getJSONObject("ANNOTATION");
-            JSONArray cur_pic_anno_array = anno_array.getJSONArray(cur_pic_number+"");
-            if (cur_pic_anno_array.length()==0);
-            else {
-                for (int i = 0;i < cur_pic_anno_array.length(); i++) {
-                    JSONObject temp = cur_pic_anno_array.getJSONObject(i);
-                    int x = temp.getInt("x");
-                    int y = temp.getInt("y");
-                    String a = temp.getString("anno");
-
-                    PictureTagLayout image = (PictureTagLayout) findViewById(R.id.image);
-                    View view = image.addItem(x,y);
-                    ((PictureTagView)view).setAnnotation(a);
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
+//    public void init() {
+//        InputStream is = picture.this.getClass().getClassLoader().
+//                getResourceAsStream("assets/" + "info.json");
+//        InputStreamReader streamReader = new InputStreamReader(is);
+//        BufferedReader reader = new BufferedReader(streamReader);
+//        String line;
+//        StringBuilder stringBuilder = new StringBuilder();
+//        try {
+//            while ((line = reader.readLine()) != null) {
+//                stringBuilder.append(line);
+//            }
+//            reader.close();
+//            is.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        try {
+//            JSONObject info = new JSONObject(stringBuilder.toString());
+//            JSONObject anno_array = info.getJSONObject("ANNOTATION");
+//            JSONArray cur_pic_anno_array = anno_array.getJSONArray(cur_pic_number+"");
+//            if (cur_pic_anno_array.length()==0);
+//            else {
+//                for (int i = 0;i < cur_pic_anno_array.length(); i++) {
+//                    JSONObject temp = cur_pic_anno_array.getJSONObject(i);
+//                    int x = temp.getInt("x");
+//                    int y = temp.getInt("y");
+//                    String a = temp.getString("anno");
+//
+//                    PictureTagLayout image = (PictureTagLayout) findViewById(R.id.image);
+//                    View view = image.addItem(x,y);
+//                    ((PictureTagView)view).setAnnotation(a);
+//                }
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public PictureTagView findView() {
         return (findViewById(R.id.image));

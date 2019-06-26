@@ -28,6 +28,8 @@ public class PictureTagView extends RelativeLayout{
     private InputMethodManager imm;
     private static final int ViewWidth = 80;
     private static final int ViewHeight = 50;
+    public static int x = -1;
+    public static int y = -1;
 
     public PictureTagView(Context context,Direction direction) {
         super(context);
@@ -123,16 +125,6 @@ public class PictureTagView extends RelativeLayout{
         return ViewHeight;
     }
 
-    public boolean justHasView(int x, int y) {
-        int left = (int) this.getX();
-        int top = (int) this.getY();
-        int right = this.getRight();
-        int bottom = this.getBottom();
-        Rect rect = new Rect(left, top, right, bottom);
-        boolean contains = rect.contains(x, y);
-        return contains;
-    }
-
     public String getTime() {
         long time = System.currentTimeMillis();
         SimpleDateFormat time_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -140,4 +132,21 @@ public class PictureTagView extends RelativeLayout{
         String t1 = time_format.format(d1);
         return t1;
     }
+
+    public int getXVal() {
+        return this.x;
+    }
+
+    public int getYVal() {
+        return this.y;
+    }
+
+    public void setXVal(int x) {
+        this.x = x;
+    }
+
+    public void setYVal(int y) {
+        this.y = y;
+    }
+
 }

@@ -33,7 +33,7 @@ import android.util.Log;
 @SuppressLint("NewApi")
 
 public class PictureTagLayout extends RelativeLayout implements OnTouchListener {
-    private static final int CLICKRANGE = 5;
+    private static final int CLICKRANGE = 10;
     public int startX = 0;
     public int startY = 0;
     int startTouchViewLeft = 0;
@@ -78,6 +78,7 @@ public class PictureTagLayout extends RelativeLayout implements OnTouchListener 
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                Log.i("Action","down");
                 touchView = null;
                 if(clickView!=null){
                     ((PictureTagView)clickView).setStatus(Status.Normal);
@@ -90,7 +91,7 @@ public class PictureTagLayout extends RelativeLayout implements OnTouchListener 
                     startTouchViewTop = touchView.getTop();
                 }
                 else{
-                    //hasView(startX, startY);
+//                    hasView(startX, startY);
                     touchView = addItem(startX,startY);
                     ((PictureTagView) touchView).setStatus(Status.Edit);
                     clickView = touchView;
@@ -103,10 +104,12 @@ public class PictureTagLayout extends RelativeLayout implements OnTouchListener 
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
+                Log.i("Action","move");
                 moveView((int) event.getX(),
                         (int) event.getY());
                 break;
             case MotionEvent.ACTION_UP:
+                Log.i("Action","up");
                 int endX = (int) event.getX();
                 int endY = (int) event.getY();
                 //如果挪动的范围很小，则判定为单击
@@ -141,6 +144,9 @@ public class PictureTagLayout extends RelativeLayout implements OnTouchListener 
             params.leftMargin = x;
             view = new PictureTagView(getContext(),Direction.Left);
         }
+
+        ((PictureTagView) view).setXVal(x);
+        ((PictureTagView) view).setYVal(y);
 
         params.topMargin = y;
         //上下位置在视图内
@@ -194,6 +200,11 @@ public class PictureTagLayout extends RelativeLayout implements OnTouchListener 
             int top = (int) view.getY();
             int right = view.getRight();
             int bottom = view.getBottom();
+            Log.i("view number",Integer.toString(index));
+            Log.i("view left",Integer.toString(left));
+            Log.i("view right",Integer.toString(right));
+            Log.i("view top",Integer.toString(top));
+            Log.i("view bottom",Integer.toString(bottom));
             Rect rect = new Rect(left, top, right, bottom);
             boolean contains = rect.contains(x, y);
 

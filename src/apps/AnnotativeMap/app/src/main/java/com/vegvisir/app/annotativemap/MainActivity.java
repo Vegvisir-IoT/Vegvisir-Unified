@@ -29,11 +29,9 @@ public class MainActivity extends AppCompatActivity {
 
     private Button editButton = null;
     public static ConcurrentHashMap<Coordinates,Annotation> annotations = new ConcurrentHashMap<>();
-    public static HashMap<Coordinates,PictureTagView> imageAtCoords = new HashMap<>();
     public static HashMap<Coordinates,Set<TransactionTuple>> dependencySets = new HashMap<>();
     public static HashMap<String, TransactionID> latestTransactions = new HashMap<>();
     public static HashMap<TransactionID,TwoPSet> twoPSets = new HashMap<>();
-    public static HashMap<PictureTagView,Coordinates> coordForViews = new HashMap<>();
     public static Set<TransactionID> topDeps = new HashSet<>();
     public static TransactionID top = new TransactionID("",-1);
     public static picture currentPicture = null;
@@ -103,8 +101,9 @@ public class MainActivity extends AppCompatActivity {
                                 anno = annoObj.getAnnotation();
                                 PictureTagLayout image = currentPicture.findViewById(R.id.image);
                                 View v = image.clickView;
-                                image.clickView = null;
+//                                image.clickView = null;
                                 image.removeView(v);
+
                                 if (annoObj.getShouldRemove()) {
                                     Log.i("Should remove","reached");
                                     entriesToRemove.add(coords);
@@ -116,26 +115,21 @@ public class MainActivity extends AppCompatActivity {
 
                                         PictureTagView view = (PictureTagView) image.addItem(coords.getX(), coords.getY());
                                         view.setAnnotation(anno);
-//                                        imageAtCoords.put(coords,view);
-                                        coordForViews.put(view,coords);
                                         Log.i("ok","nice");
                                         annoObj.setAlreadyAdded(true);
                                     }
-
                                 }
+                                image.justHasView(-1,-1);
 
                             }
 
                             for (Coordinates coords: entriesToRemove) {
                                 annotations.remove(coords);
-//                                imageAtCoords.remove(coords);
-                            }
-
-                            for (PictureTagView view: viewsToRemove) {
-                                coordForViews.remove(view);
                             }
 
                             Log.i("annos",annotations.toString());
+
+
 
 //                            Random rand = new Random();
 //                            int rand1 = rand.nextInt(500);

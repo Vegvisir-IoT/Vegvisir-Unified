@@ -54,15 +54,8 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
         PictureTagView pointView = image.justHasView(x,y);
         if (pointView != null) {
             Log.i("View","found");
-            if (MainActivity.coordForViews.containsKey(pointView)) {
-                coords = MainActivity.coordForViews.get(pointView);
-                x = coords.getX();
-                y = coords.getY();
-            }
-            else {
-                Log.i("View","Should have a coordinate mapping");
-                MainActivity.coordForViews.put(pointView,coords);
-            }
+            x = pointView.getXVal();
+            y = pointView.getYVal();
         }
         else {
             Log.i("View","not found");
@@ -112,7 +105,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
                 boolean doesExist = false;
                 for (FullAnnotation fa: addSet) {
                     Coordinates c = fa.getCoords();
-                    if (view.justHasView(c.getX(),c.getY())) {
+                    if (image.justHasView(c.getX(),c.getY()) != null) {
                         doesExist = true;
                         break;
                     }
@@ -126,7 +119,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
                 for(FullAnnotation fa: removeSet) {
                     Coordinates c = fa.getCoords();
 
-                    if (view.justHasView(c.getX(),c.getY())) {
+                    if (image.justHasView(c.getX(),c.getY()) != null) {
                         removeSet.remove(fa);
                         break;
                     }
@@ -143,7 +136,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 
                 for (FullAnnotation fa: addSet) {
                     Coordinates c = fa.getCoords();
-                    if (view.justHasView(c.getX(),c.getY())) {
+                    if (image.justHasView(c.getX(),c.getY()) != null) {
                         addSet.remove(fa);
                         break;
                     }
@@ -153,7 +146,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
                 for(FullAnnotation fa: removeSet) {
                     Coordinates c = fa.getCoords();
 
-                    if (view.justHasView(c.getX(),c.getY())) {
+                    if (image.justHasView(c.getX(),c.getY()) != null) {
                         doesExist = true;
                         break;
                     }
@@ -204,10 +197,12 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 
             PictureTagView view = image.justHasView(c.getX(),c.getY());
             if (view != null) {
-                Coordinates adjustedCoords = MainActivity.coordForViews.get(view);
-                MainActivity.annotations.get(adjustedCoords).setAnnotation(anno);
+                c = new Coordinates(view.getXVal(),view.getYVal());
             }
 
+            if (MainActivity.annotations.containsKey(c)) {
+                MainActivity.annotations.get(c).setAnnotation(anno);
+            }
             else {
                 MainActivity.annotations.put(c,new Annotation(fa.getAnnotation()));
             }
@@ -236,7 +231,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 
             PictureTagView view = image.justHasView(c.getX(),c.getY());
             if (view != null) {
-                Coordinates adjustedCoords = MainActivity.coordForViews.get(view);
+                Coordinates adjustedCoords = new Coordinates(view.getXVal(),view.getYVal());
                 MainActivity.annotations.get(adjustedCoords).setShouldRemove(true);
             }
             else {
@@ -256,6 +251,10 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 //                MainActivity.annotations.get(c).setShouldRemove(true);
 //            }
         }
+
+    }
+
+    public void onNewReconciliationFinished() {
 
     }
 
