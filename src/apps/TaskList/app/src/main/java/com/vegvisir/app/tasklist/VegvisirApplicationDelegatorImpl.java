@@ -1,7 +1,5 @@
 package com.vegvisir.app.tasklist;
 
-import android.util.Log;
-
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationDelegator;
 import com.vegvisir.pub_sub.VegvisirInstance;
@@ -49,8 +47,6 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
         Set<TransactionTuple> updatedSet = new HashSet<>();
         Set<TransactionTuple> prevSets = MainActivity.dependencySets.get(item);
         String deviceId = tx_id.getDeviceID();
-
-        Log.i("deps",deps.toString());
 
         if (prevSets != null) {
             Iterator<TransactionTuple> itr = prevSets.iterator();
@@ -163,15 +159,19 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
             MainActivity.priorities.put(highItem, MainActivity.Priority.High);
         }
 
-        Log.i("setnew low",newLowSet.toString());
-        Log.i("setnew medium",newMediumSet.toString());
-        Log.i("setnew high",newHighSet.toString());
-        Log.i("items",MainActivity.items.toString());
+        MainActivity.notWitnessedTransactions.add(tx_id);
 
 
     }
 
     public void onNewReconciliationFinished(){
+//        for (TransactionID tid: MainActivity.notWitnessedTransactions){
+//            Set<String> witnesses = MainActivity.instance.getWitnessForTransaction(tid);
+//            if (witnesses.size() >= 3){
+//                MainActivity.witnessedTransactions.add(tid);
+//            }
+//        }
+//        MainActivity.notWitnessedTransactions.removeAll(MainActivity.witnessedTransactions);
 
     }
 
