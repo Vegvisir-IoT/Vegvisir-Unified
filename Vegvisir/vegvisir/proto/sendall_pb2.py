@@ -13,14 +13,14 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-import vegvisirCommon_pb2 as vegvisirCommon__pb2
+from . import vegvisirCommon_pb2 as vegvisirCommon__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='sendall.proto',
-  package='',
+  package='vegvisir.proto',
   syntax='proto3',
-  serialized_pb=_b('\n\rsendall.proto\x1a\x14vegvisirCommon.proto\")\n\x0eSendallMessage\x12\x17\n\x03\x61\x64\x64\x18\x02 \x01(\x0b\x32\n.AddBlocksb\x06proto3')
+  serialized_pb=_b('\n\rsendall.proto\x12\x0evegvisir.proto\x1a\x14vegvisirCommon.proto\"8\n\x0eSendallMessage\x12&\n\x03\x61\x64\x64\x18\x02 \x01(\x0b\x32\x19.vegvisir.proto.AddBlocksb\x06proto3')
   ,
   dependencies=[vegvisirCommon__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -30,13 +30,13 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _SENDALLMESSAGE = _descriptor.Descriptor(
   name='SendallMessage',
-  full_name='SendallMessage',
+  full_name='vegvisir.proto.SendallMessage',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='add', full_name='SendallMessage.add', index=0,
+      name='add', full_name='vegvisir.proto.SendallMessage.add', index=0,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -54,8 +54,8 @@ _SENDALLMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=39,
-  serialized_end=80,
+  serialized_start=55,
+  serialized_end=111,
 )
 
 _SENDALLMESSAGE.fields_by_name['add'].message_type = vegvisirCommon__pb2._ADDBLOCKS
@@ -64,7 +64,7 @@ DESCRIPTOR.message_types_by_name['SendallMessage'] = _SENDALLMESSAGE
 SendallMessage = _reflection.GeneratedProtocolMessageType('SendallMessage', (_message.Message,), dict(
   DESCRIPTOR = _SENDALLMESSAGE,
   __module__ = 'sendall_pb2'
-  # @@protoc_insertion_point(class_scope:SendallMessage)
+  # @@protoc_insertion_point(class_scope:vegvisir.proto.SendallMessage)
   ))
 _sym_db.RegisterMessage(SendallMessage)
 

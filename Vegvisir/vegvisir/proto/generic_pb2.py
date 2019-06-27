@@ -17,9 +17,9 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='generic.proto',
-  package='',
+  package='vegvisir.proto',
   syntax='proto3',
-  serialized_pb=_b('\n\rgeneric.proto\"5\n\x0eGenericMessage\x12\x12\n\nidentifier\x18\x01 \x01(\x05\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\x62\x06proto3')
+  serialized_pb=_b('\n\rgeneric.proto\x12\x0evegvisir.proto\"5\n\x0eGenericMessage\x12\x12\n\nidentifier\x18\x01 \x01(\x05\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\x62\x06proto3')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -28,20 +28,20 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _GENERICMESSAGE = _descriptor.Descriptor(
   name='GenericMessage',
-  full_name='GenericMessage',
+  full_name='vegvisir.proto.GenericMessage',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='identifier', full_name='GenericMessage.identifier', index=0,
+      name='identifier', full_name='vegvisir.proto.GenericMessage.identifier', index=0,
       number=1, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='payload', full_name='GenericMessage.payload', index=1,
+      name='payload', full_name='vegvisir.proto.GenericMessage.payload', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -59,8 +59,8 @@ _GENERICMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=17,
-  serialized_end=70,
+  serialized_start=33,
+  serialized_end=86,
 )
 
 DESCRIPTOR.message_types_by_name['GenericMessage'] = _GENERICMESSAGE
@@ -68,7 +68,7 @@ DESCRIPTOR.message_types_by_name['GenericMessage'] = _GENERICMESSAGE
 GenericMessage = _reflection.GeneratedProtocolMessageType('GenericMessage', (_message.Message,), dict(
   DESCRIPTOR = _GENERICMESSAGE,
   __module__ = 'generic_pb2'
-  # @@protoc_insertion_point(class_scope:GenericMessage)
+  # @@protoc_insertion_point(class_scope:vegvisir.proto.GenericMessage)
   ))
 _sym_db.RegisterMessage(GenericMessage)
 

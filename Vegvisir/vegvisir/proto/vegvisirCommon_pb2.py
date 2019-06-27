@@ -13,14 +13,14 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-import charlotte_pb2 as charlotte__pb2
+from . import charlotte_pb2 as charlotte__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='vegvisirCommon.proto',
-  package='',
+  package='vegvisir.proto',
   syntax='proto3',
-  serialized_pb=_b('\n\x14vegvisirCommon.proto\x1a\x0f\x63harlotte.proto\"2\n\tAddBlocks\x12%\n\x0b\x62locksToAdd\x18\x01 \x03(\x0b\x32\x10.charlotte.BlockBN\n\"com.vegvisir.common.datatype.protoB\x1bVegvisirCommonDatatypeProtoP\x01\xa2\x02\x08VEGVISIRb\x06proto3')
+  serialized_pb=_b('\n\x14vegvisirCommon.proto\x12\x0evegvisir.proto\x1a\x0f\x63harlotte.proto\"2\n\tAddBlocks\x12%\n\x0b\x62locksToAdd\x18\x01 \x03(\x0b\x32\x10.charlotte.BlockBN\n\"com.vegvisir.common.datatype.protoB\x1bVegvisirCommonDatatypeProtoP\x01\xa2\x02\x08VEGVISIRb\x06proto3')
   ,
   dependencies=[charlotte__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -30,13 +30,13 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _ADDBLOCKS = _descriptor.Descriptor(
   name='AddBlocks',
-  full_name='AddBlocks',
+  full_name='vegvisir.proto.AddBlocks',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='blocksToAdd', full_name='AddBlocks.blocksToAdd', index=0,
+      name='blocksToAdd', full_name='vegvisir.proto.AddBlocks.blocksToAdd', index=0,
       number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -54,8 +54,8 @@ _ADDBLOCKS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=41,
-  serialized_end=91,
+  serialized_start=57,
+  serialized_end=107,
 )
 
 _ADDBLOCKS.fields_by_name['blocksToAdd'].message_type = charlotte__pb2._BLOCK
@@ -64,7 +64,7 @@ DESCRIPTOR.message_types_by_name['AddBlocks'] = _ADDBLOCKS
 AddBlocks = _reflection.GeneratedProtocolMessageType('AddBlocks', (_message.Message,), dict(
   DESCRIPTOR = _ADDBLOCKS,
   __module__ = 'vegvisirCommon_pb2'
-  # @@protoc_insertion_point(class_scope:AddBlocks)
+  # @@protoc_insertion_point(class_scope:vegvisir.proto.AddBlocks)
   ))
 _sym_db.RegisterMessage(AddBlocks)
 

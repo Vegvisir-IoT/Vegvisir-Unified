@@ -13,14 +13,14 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-import common_pb2 as common__pb2
+from . import common_pb2 as common__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='vegvisir.proto',
-  package='',
+  package='vegvisir.proto',
   syntax='proto3',
-  serialized_pb=_b('\n\x0evegvisir.proto\x1a\x0c\x63ommon.proto\"Y\n\x0b\x43\x65rtificate\x12\x0e\n\x06userid\x18\t \x01(\t\x12\x12\n\npublic_key\x18\n \x01(\x0c\x12\x13\n\x0bprivate_key\x18\x0b \x01(\x0c\x12\x11\n\tsignature\x18\x0c \x01(\x0c\"3\n\tTimestamp\x12\x10\n\x08utc_time\x18\x01 \x01(\x01\x12\x14\n\x0c\x65lapsed_time\x18\x02 \x01(\x03\"`\n\x08Location\x12\x11\n\tlongitude\x18\x01 \x01(\x02\x12\x10\n\x08latitude\x18\x02 \x01(\x02\x12\x10\n\x08\x61ltitude\x18\x03 \x01(\x02\x12\x1d\n\ttimestamp\x18\x04 \x01(\x0b\x32\n.Timestamp\"\xe6\x05\n\x05\x42lock\x12\'\n\tsignature\x18\x01 \x01(\x0b\x32\x14.charlotte.Signature\x12,\n\rgenesis_block\x18\x02 \x01(\x0b\x32\x13.Block.GenesisBlockH\x00\x12&\n\nuser_block\x18\x03 \x01(\x0b\x32\x10.Block.UserBlockH\x00\x1a\x8a\x01\n\x0cGenesisBlock\x12\x0e\n\x06userid\x18\x01 \x01(\t\x12\x11\n\ttimestamp\x18\x02 \x01(\x02\x12$\n\x0e\x63\x61_certificate\x18\x03 \x01(\x0b\x32\x0c.Certificate\x12\x1e\n\x08\x63\x65rtlist\x18\x04 \x03(\x0b\x32\x0c.Certificate\x12\x11\n\tsignature\x18\x05 \x01(\x0c\x1a\x92\x02\n\x0bTransaction\x12\x0e\n\x06topics\x18\x01 \x03(\t\x12\x37\n\rtransactionId\x18\x02 \x01(\x0b\x32 .Block.Transaction.TransactionId\x12\x36\n\x0c\x64\x65pendencies\x18\x03 \x03(\x0b\x32 .Block.Transaction.TransactionId\x12\x0e\n\x06userid\x18\x04 \x01(\t\x12\x11\n\ttimestamp\x18\x05 \x01(\x01\x12\x10\n\x08recordid\x18\x06 \x01(\x05\x12\x0f\n\x07payload\x18\x07 \x01(\x0c\x1a<\n\rTransactionId\x12\x10\n\x08\x64\x65viceId\x18\x01 \x01(\t\x12\x19\n\x11transactionHeight\x18\x02 \x01(\x03\x1a\xa8\x01\n\tUserBlock\x12\x0e\n\x06userid\x18\x01 \x01(\t\x12\x1d\n\ttimestamp\x18\x02 \x01(\x0b\x32\n.Timestamp\x12\x1b\n\x08location\x18\x03 \x01(\x0b\x32\t.Location\x12%\n\x07parents\x18\x04 \x03(\x0b\x32\x14.charlotte.Reference\x12(\n\x0ctransactions\x18\x05 \x03(\x0b\x32\x12.Block.TransactionB\x11\n\x0f\x62locktype_oneof\"\x9f\x02\n\nBlockchain\x12$\n\x07genesis\x18\t \x01(\x0b\x32\x13.Block.GenesisBlock\x12&\n\x08keystore\x18\n \x01(\x0b\x32\x14.Blockchain.Keystore\x12 \n\x06\x62locks\x18\x0b \x03(\x0b\x32\x10.Block.UserBlock\x1a$\n\x12UseridAssociations\x12\x0e\n\x06userid\x18\x05 \x01(\t\x1a{\n\x08Keystore\x12\x1d\n\x07\x63\x61_cert\x18\x06 \x01(\x0b\x32\x0c.Certificate\x12/\n\x07userids\x18\x07 \x03(\x0b\x32\x1e.Blockchain.UseridAssociations\x12\x1f\n\tusercerts\x18\x08 \x03(\x0b\x32\x0c.Certificate\"b\n\x17LocationRequestResponse\x12\x1d\n\x08location\x18\x01 \x01(\x0b\x32\t.LocationH\x00\x12\x17\n\rerror_message\x18\x02 \x01(\tH\x00\x42\x0f\n\rcontent_oneof\"=\n$LocationServiceNotAvailableException\x12\x15\n\rerror_message\x18\x01 \x01(\tBJ\n com.vegvisir.core.datatype.protoB\x19VegvisirCoreDatatypeProtoP\x01\xa2\x02\x08VEGVISIRb\x06proto3')
+  serialized_pb=_b('\n\x0evegvisir.proto\x12\x0evegvisir.proto\x1a\x0c\x63ommon.proto\"Y\n\x0b\x43\x65rtificate\x12\x0e\n\x06userid\x18\t \x01(\t\x12\x12\n\npublic_key\x18\n \x01(\x0c\x12\x13\n\x0bprivate_key\x18\x0b \x01(\x0c\x12\x11\n\tsignature\x18\x0c \x01(\x0c\"3\n\tTimestamp\x12\x10\n\x08utc_time\x18\x01 \x01(\x01\x12\x14\n\x0c\x65lapsed_time\x18\x02 \x01(\x03\"o\n\x08Location\x12\x11\n\tlongitude\x18\x01 \x01(\x02\x12\x10\n\x08latitude\x18\x02 \x01(\x02\x12\x10\n\x08\x61ltitude\x18\x03 \x01(\x02\x12,\n\ttimestamp\x18\x04 \x01(\x0b\x32\x19.vegvisir.proto.Timestamp\"\xed\x06\n\x05\x42lock\x12\'\n\tsignature\x18\x01 \x01(\x0b\x32\x14.charlotte.Signature\x12;\n\rgenesis_block\x18\x02 \x01(\x0b\x32\".vegvisir.proto.Block.GenesisBlockH\x00\x12\x35\n\nuser_block\x18\x03 \x01(\x0b\x32\x1f.vegvisir.proto.Block.UserBlockH\x00\x1a\xa8\x01\n\x0cGenesisBlock\x12\x0e\n\x06userid\x18\x01 \x01(\t\x12\x11\n\ttimestamp\x18\x02 \x01(\x02\x12\x33\n\x0e\x63\x61_certificate\x18\x03 \x01(\x0b\x32\x1b.vegvisir.proto.Certificate\x12-\n\x08\x63\x65rtlist\x18\x04 \x03(\x0b\x32\x1b.vegvisir.proto.Certificate\x12\x11\n\tsignature\x18\x05 \x01(\x0c\x1a\xb0\x02\n\x0bTransaction\x12\x0e\n\x06topics\x18\x01 \x03(\t\x12\x46\n\rtransactionId\x18\x02 \x01(\x0b\x32/.vegvisir.proto.Block.Transaction.TransactionId\x12\x45\n\x0c\x64\x65pendencies\x18\x03 \x03(\x0b\x32/.vegvisir.proto.Block.Transaction.TransactionId\x12\x0e\n\x06userid\x18\x04 \x01(\t\x12\x11\n\ttimestamp\x18\x05 \x01(\x01\x12\x10\n\x08recordid\x18\x06 \x01(\x05\x12\x0f\n\x07payload\x18\x07 \x01(\x0c\x1a<\n\rTransactionId\x12\x10\n\x08\x64\x65viceId\x18\x01 \x01(\t\x12\x19\n\x11transactionHeight\x18\x02 \x01(\x03\x1a\xd5\x01\n\tUserBlock\x12\x0e\n\x06userid\x18\x01 \x01(\t\x12,\n\ttimestamp\x18\x02 \x01(\x0b\x32\x19.vegvisir.proto.Timestamp\x12*\n\x08location\x18\x03 \x01(\x0b\x32\x18.vegvisir.proto.Location\x12%\n\x07parents\x18\x04 \x03(\x0b\x32\x14.charlotte.Reference\x12\x37\n\x0ctransactions\x18\x05 \x03(\x0b\x32!.vegvisir.proto.Block.TransactionB\x11\n\x0f\x62locktype_oneof\"\xfa\x02\n\nBlockchain\x12\x33\n\x07genesis\x18\t \x01(\x0b\x32\".vegvisir.proto.Block.GenesisBlock\x12\x35\n\x08keystore\x18\n \x01(\x0b\x32#.vegvisir.proto.Blockchain.Keystore\x12/\n\x06\x62locks\x18\x0b \x03(\x0b\x32\x1f.vegvisir.proto.Block.UserBlock\x1a$\n\x12UseridAssociations\x12\x0e\n\x06userid\x18\x05 \x01(\t\x1a\xa8\x01\n\x08Keystore\x12,\n\x07\x63\x61_cert\x18\x06 \x01(\x0b\x32\x1b.vegvisir.proto.Certificate\x12>\n\x07userids\x18\x07 \x03(\x0b\x32-.vegvisir.proto.Blockchain.UseridAssociations\x12.\n\tusercerts\x18\x08 \x03(\x0b\x32\x1b.vegvisir.proto.Certificate\"q\n\x17LocationRequestResponse\x12,\n\x08location\x18\x01 \x01(\x0b\x32\x18.vegvisir.proto.LocationH\x00\x12\x17\n\rerror_message\x18\x02 \x01(\tH\x00\x42\x0f\n\rcontent_oneof\"=\n$LocationServiceNotAvailableException\x12\x15\n\rerror_message\x18\x01 \x01(\tBJ\n com.vegvisir.core.datatype.protoB\x19VegvisirCoreDatatypeProtoP\x01\xa2\x02\x08VEGVISIRb\x06proto3')
   ,
   dependencies=[common__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -30,34 +30,34 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _CERTIFICATE = _descriptor.Descriptor(
   name='Certificate',
-  full_name='Certificate',
+  full_name='vegvisir.proto.Certificate',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='userid', full_name='Certificate.userid', index=0,
+      name='userid', full_name='vegvisir.proto.Certificate.userid', index=0,
       number=9, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='public_key', full_name='Certificate.public_key', index=1,
+      name='public_key', full_name='vegvisir.proto.Certificate.public_key', index=1,
       number=10, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='private_key', full_name='Certificate.private_key', index=2,
+      name='private_key', full_name='vegvisir.proto.Certificate.private_key', index=2,
       number=11, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='signature', full_name='Certificate.signature', index=3,
+      name='signature', full_name='vegvisir.proto.Certificate.signature', index=3,
       number=12, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -75,27 +75,27 @@ _CERTIFICATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=32,
-  serialized_end=121,
+  serialized_start=48,
+  serialized_end=137,
 )
 
 
 _TIMESTAMP = _descriptor.Descriptor(
   name='Timestamp',
-  full_name='Timestamp',
+  full_name='vegvisir.proto.Timestamp',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='utc_time', full_name='Timestamp.utc_time', index=0,
+      name='utc_time', full_name='vegvisir.proto.Timestamp.utc_time', index=0,
       number=1, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='elapsed_time', full_name='Timestamp.elapsed_time', index=1,
+      name='elapsed_time', full_name='vegvisir.proto.Timestamp.elapsed_time', index=1,
       number=2, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -113,41 +113,41 @@ _TIMESTAMP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=123,
-  serialized_end=174,
+  serialized_start=139,
+  serialized_end=190,
 )
 
 
 _LOCATION = _descriptor.Descriptor(
   name='Location',
-  full_name='Location',
+  full_name='vegvisir.proto.Location',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='longitude', full_name='Location.longitude', index=0,
+      name='longitude', full_name='vegvisir.proto.Location.longitude', index=0,
       number=1, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='latitude', full_name='Location.latitude', index=1,
+      name='latitude', full_name='vegvisir.proto.Location.latitude', index=1,
       number=2, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='altitude', full_name='Location.altitude', index=2,
+      name='altitude', full_name='vegvisir.proto.Location.altitude', index=2,
       number=3, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='timestamp', full_name='Location.timestamp', index=3,
+      name='timestamp', full_name='vegvisir.proto.Location.timestamp', index=3,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -165,48 +165,48 @@ _LOCATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=176,
-  serialized_end=272,
+  serialized_start=192,
+  serialized_end=303,
 )
 
 
 _BLOCK_GENESISBLOCK = _descriptor.Descriptor(
   name='GenesisBlock',
-  full_name='Block.GenesisBlock',
+  full_name='vegvisir.proto.Block.GenesisBlock',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='userid', full_name='Block.GenesisBlock.userid', index=0,
+      name='userid', full_name='vegvisir.proto.Block.GenesisBlock.userid', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='timestamp', full_name='Block.GenesisBlock.timestamp', index=1,
+      name='timestamp', full_name='vegvisir.proto.Block.GenesisBlock.timestamp', index=1,
       number=2, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='ca_certificate', full_name='Block.GenesisBlock.ca_certificate', index=2,
+      name='ca_certificate', full_name='vegvisir.proto.Block.GenesisBlock.ca_certificate', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='certlist', full_name='Block.GenesisBlock.certlist', index=3,
+      name='certlist', full_name='vegvisir.proto.Block.GenesisBlock.certlist', index=3,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='signature', full_name='Block.GenesisBlock.signature', index=4,
+      name='signature', full_name='vegvisir.proto.Block.GenesisBlock.signature', index=4,
       number=5, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -224,26 +224,26 @@ _BLOCK_GENESISBLOCK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=412,
-  serialized_end=550,
+  serialized_start=473,
+  serialized_end=641,
 )
 
 _BLOCK_TRANSACTION_TRANSACTIONID = _descriptor.Descriptor(
   name='TransactionId',
-  full_name='Block.Transaction.TransactionId',
+  full_name='vegvisir.proto.Block.Transaction.TransactionId',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='deviceId', full_name='Block.Transaction.TransactionId.deviceId', index=0,
+      name='deviceId', full_name='vegvisir.proto.Block.Transaction.TransactionId.deviceId', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='transactionHeight', full_name='Block.Transaction.TransactionId.transactionHeight', index=1,
+      name='transactionHeight', full_name='vegvisir.proto.Block.Transaction.TransactionId.transactionHeight', index=1,
       number=2, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -261,61 +261,61 @@ _BLOCK_TRANSACTION_TRANSACTIONID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=767,
-  serialized_end=827,
+  serialized_start=888,
+  serialized_end=948,
 )
 
 _BLOCK_TRANSACTION = _descriptor.Descriptor(
   name='Transaction',
-  full_name='Block.Transaction',
+  full_name='vegvisir.proto.Block.Transaction',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='topics', full_name='Block.Transaction.topics', index=0,
+      name='topics', full_name='vegvisir.proto.Block.Transaction.topics', index=0,
       number=1, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='transactionId', full_name='Block.Transaction.transactionId', index=1,
+      name='transactionId', full_name='vegvisir.proto.Block.Transaction.transactionId', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='dependencies', full_name='Block.Transaction.dependencies', index=2,
+      name='dependencies', full_name='vegvisir.proto.Block.Transaction.dependencies', index=2,
       number=3, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='userid', full_name='Block.Transaction.userid', index=3,
+      name='userid', full_name='vegvisir.proto.Block.Transaction.userid', index=3,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='timestamp', full_name='Block.Transaction.timestamp', index=4,
+      name='timestamp', full_name='vegvisir.proto.Block.Transaction.timestamp', index=4,
       number=5, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='recordid', full_name='Block.Transaction.recordid', index=5,
+      name='recordid', full_name='vegvisir.proto.Block.Transaction.recordid', index=5,
       number=6, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='payload', full_name='Block.Transaction.payload', index=6,
+      name='payload', full_name='vegvisir.proto.Block.Transaction.payload', index=6,
       number=7, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -333,47 +333,47 @@ _BLOCK_TRANSACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=553,
-  serialized_end=827,
+  serialized_start=644,
+  serialized_end=948,
 )
 
 _BLOCK_USERBLOCK = _descriptor.Descriptor(
   name='UserBlock',
-  full_name='Block.UserBlock',
+  full_name='vegvisir.proto.Block.UserBlock',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='userid', full_name='Block.UserBlock.userid', index=0,
+      name='userid', full_name='vegvisir.proto.Block.UserBlock.userid', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='timestamp', full_name='Block.UserBlock.timestamp', index=1,
+      name='timestamp', full_name='vegvisir.proto.Block.UserBlock.timestamp', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='location', full_name='Block.UserBlock.location', index=2,
+      name='location', full_name='vegvisir.proto.Block.UserBlock.location', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='parents', full_name='Block.UserBlock.parents', index=3,
+      name='parents', full_name='vegvisir.proto.Block.UserBlock.parents', index=3,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='transactions', full_name='Block.UserBlock.transactions', index=4,
+      name='transactions', full_name='vegvisir.proto.Block.UserBlock.transactions', index=4,
       number=5, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -391,33 +391,33 @@ _BLOCK_USERBLOCK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=830,
-  serialized_end=998,
+  serialized_start=951,
+  serialized_end=1164,
 )
 
 _BLOCK = _descriptor.Descriptor(
   name='Block',
-  full_name='Block',
+  full_name='vegvisir.proto.Block',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='signature', full_name='Block.signature', index=0,
+      name='signature', full_name='vegvisir.proto.Block.signature', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='genesis_block', full_name='Block.genesis_block', index=1,
+      name='genesis_block', full_name='vegvisir.proto.Block.genesis_block', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='user_block', full_name='Block.user_block', index=2,
+      name='user_block', full_name='vegvisir.proto.Block.user_block', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -435,23 +435,23 @@ _BLOCK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
     _descriptor.OneofDescriptor(
-      name='blocktype_oneof', full_name='Block.blocktype_oneof',
+      name='blocktype_oneof', full_name='vegvisir.proto.Block.blocktype_oneof',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=275,
-  serialized_end=1017,
+  serialized_start=306,
+  serialized_end=1183,
 )
 
 
 _BLOCKCHAIN_USERIDASSOCIATIONS = _descriptor.Descriptor(
   name='UseridAssociations',
-  full_name='Blockchain.UseridAssociations',
+  full_name='vegvisir.proto.Blockchain.UseridAssociations',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='userid', full_name='Blockchain.UseridAssociations.userid', index=0,
+      name='userid', full_name='vegvisir.proto.Blockchain.UseridAssociations.userid', index=0,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -469,33 +469,33 @@ _BLOCKCHAIN_USERIDASSOCIATIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1146,
-  serialized_end=1182,
+  serialized_start=1357,
+  serialized_end=1393,
 )
 
 _BLOCKCHAIN_KEYSTORE = _descriptor.Descriptor(
   name='Keystore',
-  full_name='Blockchain.Keystore',
+  full_name='vegvisir.proto.Blockchain.Keystore',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='ca_cert', full_name='Blockchain.Keystore.ca_cert', index=0,
+      name='ca_cert', full_name='vegvisir.proto.Blockchain.Keystore.ca_cert', index=0,
       number=6, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='userids', full_name='Blockchain.Keystore.userids', index=1,
+      name='userids', full_name='vegvisir.proto.Blockchain.Keystore.userids', index=1,
       number=7, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='usercerts', full_name='Blockchain.Keystore.usercerts', index=2,
+      name='usercerts', full_name='vegvisir.proto.Blockchain.Keystore.usercerts', index=2,
       number=8, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -513,33 +513,33 @@ _BLOCKCHAIN_KEYSTORE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1184,
-  serialized_end=1307,
+  serialized_start=1396,
+  serialized_end=1564,
 )
 
 _BLOCKCHAIN = _descriptor.Descriptor(
   name='Blockchain',
-  full_name='Blockchain',
+  full_name='vegvisir.proto.Blockchain',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='genesis', full_name='Blockchain.genesis', index=0,
+      name='genesis', full_name='vegvisir.proto.Blockchain.genesis', index=0,
       number=9, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='keystore', full_name='Blockchain.keystore', index=1,
+      name='keystore', full_name='vegvisir.proto.Blockchain.keystore', index=1,
       number=10, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='blocks', full_name='Blockchain.blocks', index=2,
+      name='blocks', full_name='vegvisir.proto.Blockchain.blocks', index=2,
       number=11, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -557,27 +557,27 @@ _BLOCKCHAIN = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1020,
-  serialized_end=1307,
+  serialized_start=1186,
+  serialized_end=1564,
 )
 
 
 _LOCATIONREQUESTRESPONSE = _descriptor.Descriptor(
   name='LocationRequestResponse',
-  full_name='LocationRequestResponse',
+  full_name='vegvisir.proto.LocationRequestResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='location', full_name='LocationRequestResponse.location', index=0,
+      name='location', full_name='vegvisir.proto.LocationRequestResponse.location', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='error_message', full_name='LocationRequestResponse.error_message', index=1,
+      name='error_message', full_name='vegvisir.proto.LocationRequestResponse.error_message', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -595,23 +595,23 @@ _LOCATIONREQUESTRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
     _descriptor.OneofDescriptor(
-      name='content_oneof', full_name='LocationRequestResponse.content_oneof',
+      name='content_oneof', full_name='vegvisir.proto.LocationRequestResponse.content_oneof',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=1309,
-  serialized_end=1407,
+  serialized_start=1566,
+  serialized_end=1679,
 )
 
 
 _LOCATIONSERVICENOTAVAILABLEEXCEPTION = _descriptor.Descriptor(
   name='LocationServiceNotAvailableException',
-  full_name='LocationServiceNotAvailableException',
+  full_name='vegvisir.proto.LocationServiceNotAvailableException',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='error_message', full_name='LocationServiceNotAvailableException.error_message', index=0,
+      name='error_message', full_name='vegvisir.proto.LocationServiceNotAvailableException.error_message', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -629,8 +629,8 @@ _LOCATIONSERVICENOTAVAILABLEEXCEPTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1409,
-  serialized_end=1470,
+  serialized_start=1681,
+  serialized_end=1742,
 )
 
 _LOCATION.fields_by_name['timestamp'].message_type = _TIMESTAMP
@@ -681,21 +681,21 @@ DESCRIPTOR.message_types_by_name['LocationServiceNotAvailableException'] = _LOCA
 Certificate = _reflection.GeneratedProtocolMessageType('Certificate', (_message.Message,), dict(
   DESCRIPTOR = _CERTIFICATE,
   __module__ = 'vegvisir_pb2'
-  # @@protoc_insertion_point(class_scope:Certificate)
+  # @@protoc_insertion_point(class_scope:vegvisir.proto.Certificate)
   ))
 _sym_db.RegisterMessage(Certificate)
 
 Timestamp = _reflection.GeneratedProtocolMessageType('Timestamp', (_message.Message,), dict(
   DESCRIPTOR = _TIMESTAMP,
   __module__ = 'vegvisir_pb2'
-  # @@protoc_insertion_point(class_scope:Timestamp)
+  # @@protoc_insertion_point(class_scope:vegvisir.proto.Timestamp)
   ))
 _sym_db.RegisterMessage(Timestamp)
 
 Location = _reflection.GeneratedProtocolMessageType('Location', (_message.Message,), dict(
   DESCRIPTOR = _LOCATION,
   __module__ = 'vegvisir_pb2'
-  # @@protoc_insertion_point(class_scope:Location)
+  # @@protoc_insertion_point(class_scope:vegvisir.proto.Location)
   ))
 _sym_db.RegisterMessage(Location)
 
@@ -704,7 +704,7 @@ Block = _reflection.GeneratedProtocolMessageType('Block', (_message.Message,), d
   GenesisBlock = _reflection.GeneratedProtocolMessageType('GenesisBlock', (_message.Message,), dict(
     DESCRIPTOR = _BLOCK_GENESISBLOCK,
     __module__ = 'vegvisir_pb2'
-    # @@protoc_insertion_point(class_scope:Block.GenesisBlock)
+    # @@protoc_insertion_point(class_scope:vegvisir.proto.Block.GenesisBlock)
     ))
   ,
 
@@ -713,24 +713,24 @@ Block = _reflection.GeneratedProtocolMessageType('Block', (_message.Message,), d
     TransactionId = _reflection.GeneratedProtocolMessageType('TransactionId', (_message.Message,), dict(
       DESCRIPTOR = _BLOCK_TRANSACTION_TRANSACTIONID,
       __module__ = 'vegvisir_pb2'
-      # @@protoc_insertion_point(class_scope:Block.Transaction.TransactionId)
+      # @@protoc_insertion_point(class_scope:vegvisir.proto.Block.Transaction.TransactionId)
       ))
     ,
     DESCRIPTOR = _BLOCK_TRANSACTION,
     __module__ = 'vegvisir_pb2'
-    # @@protoc_insertion_point(class_scope:Block.Transaction)
+    # @@protoc_insertion_point(class_scope:vegvisir.proto.Block.Transaction)
     ))
   ,
 
   UserBlock = _reflection.GeneratedProtocolMessageType('UserBlock', (_message.Message,), dict(
     DESCRIPTOR = _BLOCK_USERBLOCK,
     __module__ = 'vegvisir_pb2'
-    # @@protoc_insertion_point(class_scope:Block.UserBlock)
+    # @@protoc_insertion_point(class_scope:vegvisir.proto.Block.UserBlock)
     ))
   ,
   DESCRIPTOR = _BLOCK,
   __module__ = 'vegvisir_pb2'
-  # @@protoc_insertion_point(class_scope:Block)
+  # @@protoc_insertion_point(class_scope:vegvisir.proto.Block)
   ))
 _sym_db.RegisterMessage(Block)
 _sym_db.RegisterMessage(Block.GenesisBlock)
@@ -743,19 +743,19 @@ Blockchain = _reflection.GeneratedProtocolMessageType('Blockchain', (_message.Me
   UseridAssociations = _reflection.GeneratedProtocolMessageType('UseridAssociations', (_message.Message,), dict(
     DESCRIPTOR = _BLOCKCHAIN_USERIDASSOCIATIONS,
     __module__ = 'vegvisir_pb2'
-    # @@protoc_insertion_point(class_scope:Blockchain.UseridAssociations)
+    # @@protoc_insertion_point(class_scope:vegvisir.proto.Blockchain.UseridAssociations)
     ))
   ,
 
   Keystore = _reflection.GeneratedProtocolMessageType('Keystore', (_message.Message,), dict(
     DESCRIPTOR = _BLOCKCHAIN_KEYSTORE,
     __module__ = 'vegvisir_pb2'
-    # @@protoc_insertion_point(class_scope:Blockchain.Keystore)
+    # @@protoc_insertion_point(class_scope:vegvisir.proto.Blockchain.Keystore)
     ))
   ,
   DESCRIPTOR = _BLOCKCHAIN,
   __module__ = 'vegvisir_pb2'
-  # @@protoc_insertion_point(class_scope:Blockchain)
+  # @@protoc_insertion_point(class_scope:vegvisir.proto.Blockchain)
   ))
 _sym_db.RegisterMessage(Blockchain)
 _sym_db.RegisterMessage(Blockchain.UseridAssociations)
@@ -764,14 +764,14 @@ _sym_db.RegisterMessage(Blockchain.Keystore)
 LocationRequestResponse = _reflection.GeneratedProtocolMessageType('LocationRequestResponse', (_message.Message,), dict(
   DESCRIPTOR = _LOCATIONREQUESTRESPONSE,
   __module__ = 'vegvisir_pb2'
-  # @@protoc_insertion_point(class_scope:LocationRequestResponse)
+  # @@protoc_insertion_point(class_scope:vegvisir.proto.LocationRequestResponse)
   ))
 _sym_db.RegisterMessage(LocationRequestResponse)
 
 LocationServiceNotAvailableException = _reflection.GeneratedProtocolMessageType('LocationServiceNotAvailableException', (_message.Message,), dict(
   DESCRIPTOR = _LOCATIONSERVICENOTAVAILABLEEXCEPTION,
   __module__ = 'vegvisir_pb2'
-  # @@protoc_insertion_point(class_scope:LocationServiceNotAvailableException)
+  # @@protoc_insertion_point(class_scope:vegvisir.proto.LocationServiceNotAvailableException)
   ))
 _sym_db.RegisterMessage(LocationServiceNotAvailableException)
 

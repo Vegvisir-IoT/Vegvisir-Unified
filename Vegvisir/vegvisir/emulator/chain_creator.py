@@ -11,7 +11,7 @@ from vegvisir.blockchain.blockdag import GenesisBlock, Blockchain
 from vegvisir.blockchain.crdt import Crdt
 from vegvisir.emulator.emulation_helpers import protobufy_certificate 
 from vegvisir.emulator.emulation_helpers import parse_chain_creator_args
-from vegvisir.protos import charlottewrapper_pb2 as block_wrapper
+from vegvisir.proto import vegvisir_pb2 as block_wrapper
 
 # The default peer address
 HOST = '127.0.0.1'

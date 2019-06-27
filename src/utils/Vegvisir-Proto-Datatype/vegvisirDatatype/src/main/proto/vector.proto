@@ -1,16 +1,20 @@
 syntax = "proto3";
 
+package vegvisir.proto;
 
 import "vegvisirCommon.proto";
 
 // Map of each peer's name to their leading block on a device.
 message VectorClock {
     map<string, int64> clocks = 1;
+
     // The number of blocks the peer can send during a vector
     // protocol reconciliation round.
     int32 sendLimit = 2;
+
     // Signature of the above using the device's private key.
     bytes signature = 3;
+
     // The public key that was used to sign the data.
     bytes publicKey = 4;
 }
@@ -18,7 +22,7 @@ message VectorClock {
 message VectorMessage {
     oneof vector_message_type {
         VectorClock worldView = 1;
-        AddBlocks add = 2;
+        vegvisir.proto.AddBlocks add = 2;
     }
 }
 

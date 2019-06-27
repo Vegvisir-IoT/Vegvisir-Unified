@@ -1,5 +1,6 @@
-syntax = "proto3";
+syntax = "proto3"; 
 
+package vegvisir.proto;
 
 option java_multiple_files = true;
 option java_package = "com.vegvisir.network.datatype.proto";
@@ -16,11 +17,11 @@ import "sendall.proto";
 message VegvisirProtocolMessage {
     bool endProtocol = 1;
     oneof message_types {
-        HandshakeMessage handshake  = 2;
-        GenericMessage generic = 3;
-        SendallMessage sendall = 4;
-        VectorMessage vector = 5;
-        FrontierMessage frontier = 6;
+        vegvisir.proto.HandshakeMessage handshake  = 2;
+        vegvisir.proto.GenericMessage generic = 3;
+        vegvisir.proto.SendallMessage sendall = 4;
+        vegvisir.proto.VectorMessage vector = 5;
+        vegvisir.proto.FrontierMessage frontier = 6;
     }
 }
 
