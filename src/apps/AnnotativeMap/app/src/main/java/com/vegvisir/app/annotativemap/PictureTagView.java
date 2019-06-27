@@ -28,13 +28,23 @@ public class PictureTagView extends RelativeLayout{
     private InputMethodManager imm;
     private static final int ViewWidth = 80;
     private static final int ViewHeight = 50;
-    public static int x = -1;
-    public static int y = -1;
+    private int x = -1;
+    private int y = -1;
 
     public PictureTagView(Context context,Direction direction) {
         super(context);
         this.context = context;
         this.direction = direction;
+        initViews();
+        init();
+    }
+
+    public PictureTagView(Context context,Direction direction, int x, int y) {
+        super(context);
+        this.context = context;
+        this.direction = direction;
+        this.x = x;
+        this.y = y;
         initViews();
         init();
     }

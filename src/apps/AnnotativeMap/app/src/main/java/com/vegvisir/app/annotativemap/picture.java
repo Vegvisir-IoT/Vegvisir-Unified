@@ -80,7 +80,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
             anno = annotation.getStringExtra(ANNOTATION);
             cur_time = annotation.getStringExtra(TIME);
             PictureTagLayout image = findViewById(R.id.image);
-            if (!TextUtils.isEmpty(anno)) {
+            //if (!TextUtils.isEmpty(anno)) {
                 //Log.i("image",image.toString());
                 Log.i("add x", Integer.toString(image.startX));
                 Log.i("add y", Integer.toString(image.startY));
@@ -116,7 +116,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 //                MainActivity.imageAtCoords.put(coords,image);
                 //image.setStatus(Status.Normal,anno);
 
-            }
+            //}
             super.onActivityResult(requestCode,resultCode,annotation);
         }
         else if (resultCode == 1) { //Del
@@ -130,6 +130,8 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
                 Coordinates coords;
                 if (view != null) {
                     coords = new Coordinates(view.getXVal(), view.getYVal());
+//                    Log.i("view x",""+view.getXVal());
+//                    Log.i("view y",""+view.getYVal());
                 } else {
                     Log.i("View", "somehow not found");
                     coords = new Coordinates(image.startX, image.startY);

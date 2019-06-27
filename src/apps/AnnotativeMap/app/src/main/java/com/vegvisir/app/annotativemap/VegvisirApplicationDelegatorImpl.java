@@ -40,6 +40,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
             Set<TransactionID> deps) {
 
         String payloadString = new String(payload);
+        Log.i("payload",payloadString);
 
         int transactionType = Integer.parseInt(payloadString.substring(0,1));
         int first = payloadString.indexOf(",");
@@ -109,7 +110,6 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
                         doesExist = true;
                         break;
                     }
-
                 }
 
                 if (addSet.isEmpty() || !doesExist) {
@@ -118,7 +118,6 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 
                 for(FullAnnotation fa: removeSet) {
                     Coordinates c = fa.getCoords();
-
                     if (image.justHasView(c.getX(),c.getY()) != null) {
                         removeSet.remove(fa);
                         break;
@@ -162,8 +161,23 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
             }
 
         }
+        FullAnnotation faToModify = null;
+        for (FullAnnotation fa: addSet) {
+            Coordinates c = fa.getCoords();
+            if (coords.equals(c)) {
+                faToModify = fa;
+            }
+        }
+        if (faToModify != null) {
+            FullAnnotation newFa = new FullAnnotation(faToModify.getCoords(),anno);
+            addSet.remove(faToModify);
+            addSet.add(newFa);
+        }
 
         MainActivity.twoPSets.put(tx_id, new TwoPSet(addSet, removeSet));
+
+        Log.i("addset",addSet.toString());
+        Log.i("remset",removeSet.toString());
 
         HashSet<FullAnnotation> addSetTop = new HashSet<>();
         HashSet<FullAnnotation> removeSetTop = new HashSet<>();
@@ -182,7 +196,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
         }
 
         Log.i("addsettop",addSetTop.toString());
-        Log.i("remset",removeSetTop.toString());
+        Log.i("remsettop",removeSetTop.toString());
 
         MainActivity.twoPSets.put(MainActivity.top, new TwoPSet(addSetTop, removeSetTop));
 
@@ -191,36 +205,40 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 //        Set<Coordinates> newSet = addSetTop;
 //        newSet.removeAll(removeSetTop);
 
-        for (FullAnnotation fa: addSetTop) {
-            Coordinates c = fa.getCoords();
-//            boolean exists = false;
-
-            PictureTagView view = image.justHasView(c.getX(),c.getY());
-            if (view != null) {
-                c = new Coordinates(view.getXVal(),view.getYVal());
-            }
-
-            if (MainActivity.annotations.containsKey(c)) {
-                MainActivity.annotations.get(c).setAnnotation(anno);
+        PictureTagView v = image.justHasView(coords.getX(),coords.getY());
+        if (v != null) {
+            if (MainActivity.annotations.containsKey(coords)) {
+                Log.i("set","case");
+                MainActivity.annotations.get(coords).setAnnotation(anno);
             }
             else {
-                MainActivity.annotations.put(c,new Annotation(fa.getAnnotation()));
+                MainActivity.annotations.put(coords,new Annotation(anno));
             }
+        }
+        else {
+            Log.i("View","does not exist");
+            MainActivity.annotations.put(coords,new Annotation(anno));
+        }
 
-//            for (Map.Entry<Coordinates, PictureTagView> entry : MainActivity.imageAtCoords.entrySet()) {
-//                PictureTagView view = entry.getValue();
-//                Coordinates coordinates = entry.getKey();
-//                if (view.justHasView(c.getX(),c.getY()) || coordinates.equals(c)) {
-//                    MainActivity.annotations.get(entry.getKey()).setAnnotation(anno);
-//                    exists = true;
-//                    break;
-//                }
+//        for (FullAnnotation fa: addSetTop) {
+//            Log.i("fa",fa.toString());
+//            Coordinates c = fa.getCoords();
+////            boolean exists = false;
+//
+////            PictureTagView view = image.justHasView(c.getX(),c.getY());
+//            if (view != null) {
+//                c = new Coordinates(view.getXVal(),view.getYVal());
 //            }
 //
-//            if (!exists) {
+//            if (MainActivity.annotations.containsKey(c)) {
+//                MainActivity.annotations.get(c).setAnnotation(anno);
+//            }
+//            else {
 //                MainActivity.annotations.put(c,new Annotation(fa.getAnnotation()));
+//            }
 //        }
-        }
+
+        Log.i("annosinimpl",MainActivity.annotations.toString());
 
 //        for (Map.Entry<Coordinates, PictureTagLayout> entry : MainActivity.imageAtCoords.entrySet()) {
 //
@@ -251,6 +269,8 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 //                MainActivity.annotations.get(c).setShouldRemove(true);
 //            }
         }
+
+
 
     }
 

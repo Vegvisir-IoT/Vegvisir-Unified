@@ -17,7 +17,6 @@ import android.os.ParcelFileDescriptor;
 import java.io.FileDescriptor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-
 import android.util.Log;
 
 import com.vegvisir.app.annotativemap.PictureTagView.Status;
@@ -43,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
     private static String appID = "456";
     private static String desc = "Annotated map";
     private static Set<String> channels = new HashSet<>();
-    private int counter = 0;
     private String anno;
 
     public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
@@ -82,8 +80,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         if(currentPicture != null) {
+                            Log.i("annosatstart",annotations.toString());
                             Set<Coordinates> entriesToRemove = new HashSet<>();
-                            Set<PictureTagView> viewsToRemove = new HashSet<>();
 
 //                            Log.i("before",annotations.toString());
                             for(Map.Entry<Coordinates, Annotation> entry : annotations.entrySet()) {
@@ -100,26 +98,38 @@ public class MainActivity extends AppCompatActivity {
 //                            PictureTagLayout image = annoObj.getLayout();
                                 anno = annoObj.getAnnotation();
                                 PictureTagLayout image = currentPicture.findViewById(R.id.image);
-                                View v = image.clickView;
-//                                image.clickView = null;
-                                image.removeView(v);
+
 
                                 if (annoObj.getShouldRemove()) {
                                     Log.i("Should remove","reached");
                                     entriesToRemove.add(coords);
-                                    viewsToRemove.add((PictureTagView) v);
+                                    View v = image.clickView;
+                                    image.removeView(v);
+                                    image.clickView = null;
+
                                 }
                                 else {
                                     Log.i("annoobj",annoObj.toString());
                                     if (!annoObj.getAlreadyAdded()){
-
-                                        PictureTagView view = (PictureTagView) image.addItem(coords.getX(), coords.getY());
-                                        view.setAnnotation(anno);
-                                        Log.i("ok","nice");
-                                        annoObj.setAlreadyAdded(true);
+//                                        PictureTagView view = (PictureTagView) image.addItem(coords.getX(), coords.getY());
+                                        PictureTagView view = image.justHasView(coords.getX(),coords.getY());
+                                        if (view != null) {
+                                            view.setAnnotation(anno);
+                                            Log.i("ok","nice");
+                                            annoObj.setAlreadyAdded(true);
+                                        }
+                                        else {
+                                            Log.i("View","was not created");
+                                        }
+                                    }
+                                    else {
+                                        PictureTagView view = image.justHasView(coords.getX(),coords.getY());
+                                        if (view != null) {
+                                            view.setAnnotation(anno);
+                                        }
                                     }
                                 }
-                                image.justHasView(-1,-1);
+//                                image.justHasView(-1,-1);
 
                             }
 
