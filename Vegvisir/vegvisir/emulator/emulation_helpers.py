@@ -9,7 +9,7 @@ from vegvisir.blockchain.authentication import Certificate
 from vegvisir.blockchain.crypto import (deserialize_public_key,
                                         deserialize_private_key)
 from vegvisir.blockchain.blockchain_helpers import str_to_bytestring
-from vegvisir.protos import charlottewrapper_pb2 as block_wrapper
+from vegvisir.proto import vegvisir_pb2 as vegvisir
 
 
 __author__ = "Gloire Rubambiza"
@@ -63,7 +63,7 @@ def protobufy_certificate(cert, ca_cert=False):
         :param ca_cert: boolean.
         :rtype: A Certificate in protos.charlottewrapper.
     """
-    cert_copy = block_wrapper.Certificate()
+    cert_copy = vegvisir.Certificate()
     cert_copy.userid = str(cert.userid)
     cert_copy.public_key = cert.public_key
     if not ca_cert:

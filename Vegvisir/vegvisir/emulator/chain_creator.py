@@ -11,7 +11,7 @@ from vegvisir.blockchain.blockdag import GenesisBlock, Blockchain
 from vegvisir.blockchain.crdt import Crdt
 from vegvisir.emulator.emulation_helpers import protobufy_certificate 
 from vegvisir.emulator.emulation_helpers import parse_chain_creator_args
-from vegvisir.proto import vegvisir_pb2 as block_wrapper
+from vegvisir.proto import vegvisir_pb2 as vegvisir
 
 # The default peer address
 HOST = '127.0.0.1'
@@ -92,13 +92,13 @@ class BlockchainGenerator(object):
         chain = Blockchain(gblock, ks, crdt)
 
         # Serialize the Blockchain and save it to a file
-        chain_copy = block_wrapper.Blockchain()
+        chain_copy = vegvisir.Blockchain()
 
         # Copy ca certificate info
         ca_cert_copy = protobufy_certificate(ca_cert, ca_cert=True)
 
         # Copy genesis block info
-        genesis_copy = block_wrapper.Block.GenesisBlock()
+        genesis_copy = vegvisir.Block.GenesisBlock()
         genesis_copy.userid = str(gblock.userid)
         genesis_copy.timestamp = gblock.timestamp
         genesis_copy.ca_certificate.CopyFrom(ca_cert_copy)
@@ -109,7 +109,7 @@ class BlockchainGenerator(object):
         genesis_copy.signature = gblock.sig
 
         # Copy keystore info
-        ks_copy = block_wrapper.Blockchain.Keystore()
+        ks_copy = vegvisir.Blockchain.Keystore()
         ks_copy.ca_cert.CopyFrom(ca_cert_copy)
         for usr_idx in range(len(self.user_names)):
             userid = self.user_names[usr_idx]
