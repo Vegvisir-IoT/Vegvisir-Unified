@@ -1,6 +1,5 @@
 syntax = "proto3";
 
-package vegvisir.protocol.datatype;
 
 message GenericMessage {
     int32 identifier = 1;

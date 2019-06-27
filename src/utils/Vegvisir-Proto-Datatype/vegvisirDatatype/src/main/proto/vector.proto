@@ -1,6 +1,5 @@
 syntax = "proto3";
 
-package vegvisir.protocol.datatype;
 
 import "vegvisirCommon.proto";
 
@@ -19,7 +18,7 @@ message VectorClock {
 message VectorMessage {
     oneof vector_message_type {
         VectorClock worldView = 1;
-        vegvisir.common.datatype.AddBlocks add = 2;
+        AddBlocks add = 2;
     }
 }
 

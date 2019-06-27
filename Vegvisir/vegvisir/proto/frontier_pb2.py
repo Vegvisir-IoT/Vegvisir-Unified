@@ -18,9 +18,9 @@ import vegvisirCommon_pb2 as vegvisirCommon__pb2
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='frontier.proto',
-  package='vegvisir.protocol.datatype',
+  package='',
   syntax='proto3',
-  serialized_pb=_b('\n\x0e\x66rontier.proto\x12\x1avegvisir.protocol.datatype\x1a\x14vegvisirCommon.proto\"\x19\n\x07HashSet\x12\x0e\n\x06hashes\x18\x01 \x03(\x0c\"\xa6\x02\n\x07Request\x12\x36\n\x04type\x18\x01 \x01(\x0e\x32(.vegvisir.protocol.datatype.Request.Type\x12\x33\n\x04send\x18\x02 \x01(\x0b\x32#.vegvisir.protocol.datatype.HashSetH\x00\x12\x32\n\x03\x61\x64\x64\x18\x03 \x01(\x0b\x32#.vegvisir.common.datatype.AddBlocksH\x00\"j\n\x04Type\x12\x11\n\rDUMMY_REQUEST\x10\x00\x12\x15\n\x11SEND_FRONTIER_SET\x10\x01\x12\x0e\n\nSEND_BLOCK\x10\x02\x12\r\n\tADD_BLOCK\x10\x03\x12\x19\n\x15RECONCILIATION_NEEDED\x10\x04\x42\x0e\n\x0ctargets_type\"\xaa\x01\n\x08Response\x12;\n\x0chashResponse\x18\x01 \x01(\x0b\x32#.vegvisir.protocol.datatype.HashSetH\x00\x12<\n\rblockResponse\x18\x02 \x01(\x0b\x32#.vegvisir.common.datatype.AddBlocksH\x00\x12\x11\n\tis_subset\x18\x03 \x01(\x08\x42\x10\n\x0eresponse_types\"\x9c\x01\n\x0f\x46rontierMessage\x12\x36\n\x07request\x18\x01 \x01(\x0b\x32#.vegvisir.protocol.datatype.RequestH\x00\x12\x38\n\x08response\x18\x02 \x01(\x0b\x32$.vegvisir.protocol.datatype.ResponseH\x00\x42\x17\n\x15\x66rontier_message_typeb\x06proto3')
+  serialized_pb=_b('\n\x0e\x66rontier.proto\x1a\x14vegvisirCommon.proto\"\x19\n\x07HashSet\x12\x0e\n\x06hashes\x18\x01 \x03(\x0c\"\xd7\x01\n\x07Request\x12\x1b\n\x04type\x18\x01 \x01(\x0e\x32\r.Request.Type\x12\x18\n\x04send\x18\x02 \x01(\x0b\x32\x08.HashSetH\x00\x12\x19\n\x03\x61\x64\x64\x18\x03 \x01(\x0b\x32\n.AddBlocksH\x00\"j\n\x04Type\x12\x11\n\rDUMMY_REQUEST\x10\x00\x12\x15\n\x11SEND_FRONTIER_SET\x10\x01\x12\x0e\n\nSEND_BLOCK\x10\x02\x12\r\n\tADD_BLOCK\x10\x03\x12\x19\n\x15RECONCILIATION_NEEDED\x10\x04\x42\x0e\n\x0ctargets_type\"v\n\x08Response\x12 \n\x0chashResponse\x18\x01 \x01(\x0b\x32\x08.HashSetH\x00\x12#\n\rblockResponse\x18\x02 \x01(\x0b\x32\n.AddBlocksH\x00\x12\x11\n\tis_subset\x18\x03 \x01(\x08\x42\x10\n\x0eresponse_types\"f\n\x0f\x46rontierMessage\x12\x1b\n\x07request\x18\x01 \x01(\x0b\x32\x08.RequestH\x00\x12\x1d\n\x08response\x18\x02 \x01(\x0b\x32\t.ResponseH\x00\x42\x17\n\x15\x66rontier_message_typeb\x06proto3')
   ,
   dependencies=[vegvisirCommon__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -29,7 +29,7 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _REQUEST_TYPE = _descriptor.EnumDescriptor(
   name='Type',
-  full_name='vegvisir.protocol.datatype.Request.Type',
+  full_name='Request.Type',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -56,21 +56,21 @@ _REQUEST_TYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=268,
-  serialized_end=374,
+  serialized_start=161,
+  serialized_end=267,
 )
 _sym_db.RegisterEnumDescriptor(_REQUEST_TYPE)
 
 
 _HASHSET = _descriptor.Descriptor(
   name='HashSet',
-  full_name='vegvisir.protocol.datatype.HashSet',
+  full_name='HashSet',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='hashes', full_name='vegvisir.protocol.datatype.HashSet.hashes', index=0,
+      name='hashes', full_name='HashSet.hashes', index=0,
       number=1, type=12, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -88,34 +88,34 @@ _HASHSET = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=68,
-  serialized_end=93,
+  serialized_start=40,
+  serialized_end=65,
 )
 
 
 _REQUEST = _descriptor.Descriptor(
   name='Request',
-  full_name='vegvisir.protocol.datatype.Request',
+  full_name='Request',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='type', full_name='vegvisir.protocol.datatype.Request.type', index=0,
+      name='type', full_name='Request.type', index=0,
       number=1, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='send', full_name='vegvisir.protocol.datatype.Request.send', index=1,
+      name='send', full_name='Request.send', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='add', full_name='vegvisir.protocol.datatype.Request.add', index=2,
+      name='add', full_name='Request.add', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -134,37 +134,37 @@ _REQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
     _descriptor.OneofDescriptor(
-      name='targets_type', full_name='vegvisir.protocol.datatype.Request.targets_type',
+      name='targets_type', full_name='Request.targets_type',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=96,
-  serialized_end=390,
+  serialized_start=68,
+  serialized_end=283,
 )
 
 
 _RESPONSE = _descriptor.Descriptor(
   name='Response',
-  full_name='vegvisir.protocol.datatype.Response',
+  full_name='Response',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='hashResponse', full_name='vegvisir.protocol.datatype.Response.hashResponse', index=0,
+      name='hashResponse', full_name='Response.hashResponse', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='blockResponse', full_name='vegvisir.protocol.datatype.Response.blockResponse', index=1,
+      name='blockResponse', full_name='Response.blockResponse', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='is_subset', full_name='vegvisir.protocol.datatype.Response.is_subset', index=2,
+      name='is_subset', full_name='Response.is_subset', index=2,
       number=3, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
@@ -182,30 +182,30 @@ _RESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
     _descriptor.OneofDescriptor(
-      name='response_types', full_name='vegvisir.protocol.datatype.Response.response_types',
+      name='response_types', full_name='Response.response_types',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=393,
-  serialized_end=563,
+  serialized_start=285,
+  serialized_end=403,
 )
 
 
 _FRONTIERMESSAGE = _descriptor.Descriptor(
   name='FrontierMessage',
-  full_name='vegvisir.protocol.datatype.FrontierMessage',
+  full_name='FrontierMessage',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='request', full_name='vegvisir.protocol.datatype.FrontierMessage.request', index=0,
+      name='request', full_name='FrontierMessage.request', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='response', full_name='vegvisir.protocol.datatype.FrontierMessage.response', index=1,
+      name='response', full_name='FrontierMessage.response', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -223,11 +223,11 @@ _FRONTIERMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
     _descriptor.OneofDescriptor(
-      name='frontier_message_type', full_name='vegvisir.protocol.datatype.FrontierMessage.frontier_message_type',
+      name='frontier_message_type', full_name='FrontierMessage.frontier_message_type',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=566,
-  serialized_end=722,
+  serialized_start=405,
+  serialized_end=507,
 )
 
 _REQUEST.fields_by_name['type'].enum_type = _REQUEST_TYPE
@@ -264,28 +264,28 @@ DESCRIPTOR.message_types_by_name['FrontierMessage'] = _FRONTIERMESSAGE
 HashSet = _reflection.GeneratedProtocolMessageType('HashSet', (_message.Message,), dict(
   DESCRIPTOR = _HASHSET,
   __module__ = 'frontier_pb2'
-  # @@protoc_insertion_point(class_scope:vegvisir.protocol.datatype.HashSet)
+  # @@protoc_insertion_point(class_scope:HashSet)
   ))
 _sym_db.RegisterMessage(HashSet)
 
 Request = _reflection.GeneratedProtocolMessageType('Request', (_message.Message,), dict(
   DESCRIPTOR = _REQUEST,
   __module__ = 'frontier_pb2'
-  # @@protoc_insertion_point(class_scope:vegvisir.protocol.datatype.Request)
+  # @@protoc_insertion_point(class_scope:Request)
   ))
 _sym_db.RegisterMessage(Request)
 
 Response = _reflection.GeneratedProtocolMessageType('Response', (_message.Message,), dict(
   DESCRIPTOR = _RESPONSE,
   __module__ = 'frontier_pb2'
-  # @@protoc_insertion_point(class_scope:vegvisir.protocol.datatype.Response)
+  # @@protoc_insertion_point(class_scope:Response)
   ))
 _sym_db.RegisterMessage(Response)
 
 FrontierMessage = _reflection.GeneratedProtocolMessageType('FrontierMessage', (_message.Message,), dict(
   DESCRIPTOR = _FRONTIERMESSAGE,
   __module__ = 'frontier_pb2'
-  # @@protoc_insertion_point(class_scope:vegvisir.protocol.datatype.FrontierMessage)
+  # @@protoc_insertion_point(class_scope:FrontierMessage)
   ))
 _sym_db.RegisterMessage(FrontierMessage)
 

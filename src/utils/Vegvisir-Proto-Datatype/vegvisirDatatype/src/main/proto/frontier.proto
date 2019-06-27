@@ -1,6 +1,5 @@
 syntax = "proto3";
 
-package vegvisir.protocol.datatype;
 
 import "vegvisirCommon.proto";
 
@@ -15,22 +14,21 @@ message Request {
         SEND_FRONTIER_SET = 1;
         SEND_BLOCK = 2;
         ADD_BLOCK = 3;
-        LOCAL_RECONCILIATION_NEEDED = 4;
-        REMOTE_RECONCILIATION_NEEDED = 5;
+        RECONCILIATION_NEEDED = 4;
     }
 
     Type type = 1;
    
     oneof targets_type {
         HashSet send = 2;
-        vegvisir.common.datatype.AddBlocks add = 3;
+        AddBlocks add = 3;
     }
 } 
 
 message Response {
     oneof response_types {
         HashSet hashResponse = 1;
-        vegvisir.common.datatype.AddBlocks blockResponse = 2;
+        AddBlocks blockResponse = 2;
     }
     // To be used for telling whether the receiver is behind
    // in terms of their view of the world.

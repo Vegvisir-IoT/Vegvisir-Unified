@@ -5,7 +5,6 @@ option java_package = "com.vegvisir.core.datatype.proto";
 option java_outer_classname = "VegvisirCoreDatatypeProto";
 option objc_class_prefix = "VEGVISIR";
 
-package vegvisir.core.datatype;
 
 import "common.proto";
 

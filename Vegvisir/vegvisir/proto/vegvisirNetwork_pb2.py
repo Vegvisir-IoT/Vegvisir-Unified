@@ -23,9 +23,9 @@ import sendall_pb2 as sendall__pb2
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='vegvisirNetwork.proto',
-  package='vegvisir.network.datatype',
+  package='',
   syntax='proto3',
-  serialized_pb=_b('\n\x15vegvisirNetwork.proto\x12\x19vegvisir.network.datatype\x1a\x0fhandshake.proto\x1a\rgeneric.proto\x1a\x0evegvisir.proto\x1a\x0cvector.proto\x1a\x0e\x66rontier.proto\x1a\rsendall.proto\"\xfe\x02\n\x17VegvisirProtocolMessage\x12\x13\n\x0b\x65ndProtocol\x18\x01 \x01(\x08\x12\x41\n\thandshake\x18\x02 \x01(\x0b\x32,.vegvisir.protocol.datatype.HandshakeMessageH\x00\x12=\n\x07generic\x18\x03 \x01(\x0b\x32*.vegvisir.protocol.datatype.GenericMessageH\x00\x12=\n\x07sendall\x18\x04 \x01(\x0b\x32*.vegvisir.protocol.datatype.SendallMessageH\x00\x12;\n\x06vector\x18\x05 \x01(\x0b\x32).vegvisir.protocol.datatype.VectorMessageH\x00\x12?\n\x08\x66rontier\x18\x06 \x01(\x0b\x32+.vegvisir.protocol.datatype.FrontierMessageH\x00\x42\x0f\n\rmessage_types\"\x7f\n\x07Payload\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\x45\n\x07message\x18\x02 \x01(\x0b\x32\x32.vegvisir.network.datatype.VegvisirProtocolMessageH\x00\x12\x0e\n\x04info\x18\x03 \x01(\tH\x00\x42\x0f\n\rcontent_oneof\",\n\nIdentifier\x12\x0e\n\x04name\x18\x01 \x01(\tH\x00\x42\x0e\n\x0cidtype_oneof\"n\n\x04Peer\x12\x31\n\x02id\x18\x01 \x01(\x0b\x32%.vegvisir.network.datatype.Identifier\x12\x33\n\x04\x63onn\x18\x02 \x01(\x0b\x32%.vegvisir.network.datatype.Connection\"{\n\x08PeerView\x12\x35\n\x0c\x61\x63tive_peers\x18\x01 \x03(\x0b\x32\x1f.vegvisir.network.datatype.Peer\x12\x38\n\x0f\x63onnected_peers\x18\x02 \x03(\x0b\x32\x1f.vegvisir.network.datatype.Peer\"\xb9\x01\n\nConnection\x12\x38\n\tremote_id\x18\x01 \x01(\x0b\x32%.vegvisir.network.datatype.Identifier\x12\x39\n\x0e\x63onnected_time\x18\x02 \x01(\x0b\x32!.vegvisir.core.datatype.Timestamp\x12\x36\n\x0bwakeup_time\x18\x03 \x01(\x0b\x32!.vegvisir.core.datatype.Timestamp\"0\n\x17\x43onnectionCloseResponse\x12\x15\n\rerror_message\x18\x01 \x01(\t\"%\n\x0cSendResponse\x12\x15\n\rerror_message\x18\x01 \x01(\t\"B\n\x0bSendRequest\x12\x33\n\x07payload\x18\x01 \x01(\x0b\x32\".vegvisir.network.datatype.Payload\"\x80\x01\n\x17SendInteruptedException\x12M\n\x0flost_connection\x18\x01 \x01(\x0b\x32\x32.vegvisir.network.datatype.ConnectionLostExceptionH\x00\x42\x16\n\x14\x65xception_type_oneof\"\x80\x01\n\x17RecvInteruptedException\x12M\n\x0flost_connection\x18\x01 \x01(\x0b\x32\x32.vegvisir.network.datatype.ConnectionLostExceptionH\x00\x42\x16\n\x14\x65xception_type_oneof\"j\n\x17\x43onnectionLostException\x12\x15\n\rerror_message\x18\x01 \x01(\t\x12\x38\n\tremote_id\x18\x02 \x01(\x0b\x32%.vegvisir.network.datatype.IdentifierBP\n#com.vegvisir.network.datatype.protoB\x1cVegvisirNetworkDatatypeProtoP\x01\xa2\x02\x08VEGVISIRb\x06proto3')
+  serialized_pb=_b('\n\x15vegvisirNetwork.proto\x1a\x0fhandshake.proto\x1a\rgeneric.proto\x1a\x0evegvisir.proto\x1a\x0cvector.proto\x1a\x0e\x66rontier.proto\x1a\rsendall.proto\"\xf7\x01\n\x17VegvisirProtocolMessage\x12\x13\n\x0b\x65ndProtocol\x18\x01 \x01(\x08\x12&\n\thandshake\x18\x02 \x01(\x0b\x32\x11.HandshakeMessageH\x00\x12\"\n\x07generic\x18\x03 \x01(\x0b\x32\x0f.GenericMessageH\x00\x12\"\n\x07sendall\x18\x04 \x01(\x0b\x32\x0f.SendallMessageH\x00\x12 \n\x06vector\x18\x05 \x01(\x0b\x32\x0e.VectorMessageH\x00\x12$\n\x08\x66rontier\x18\x06 \x01(\x0b\x32\x10.FrontierMessageH\x00\x42\x0f\n\rmessage_types\"e\n\x07Payload\x12\x0c\n\x04type\x18\x01 \x01(\t\x12+\n\x07message\x18\x02 \x01(\x0b\x32\x18.VegvisirProtocolMessageH\x00\x12\x0e\n\x04info\x18\x03 \x01(\tH\x00\x42\x0f\n\rcontent_oneof\",\n\nIdentifier\x12\x0e\n\x04name\x18\x01 \x01(\tH\x00\x42\x0e\n\x0cidtype_oneof\":\n\x04Peer\x12\x17\n\x02id\x18\x01 \x01(\x0b\x32\x0b.Identifier\x12\x19\n\x04\x63onn\x18\x02 \x01(\x0b\x32\x0b.Connection\"G\n\x08PeerView\x12\x1b\n\x0c\x61\x63tive_peers\x18\x01 \x03(\x0b\x32\x05.Peer\x12\x1e\n\x0f\x63onnected_peers\x18\x02 \x03(\x0b\x32\x05.Peer\"q\n\nConnection\x12\x1e\n\tremote_id\x18\x01 \x01(\x0b\x32\x0b.Identifier\x12\"\n\x0e\x63onnected_time\x18\x02 \x01(\x0b\x32\n.Timestamp\x12\x1f\n\x0bwakeup_time\x18\x03 \x01(\x0b\x32\n.Timestamp\"0\n\x17\x43onnectionCloseResponse\x12\x15\n\rerror_message\x18\x01 \x01(\t\"%\n\x0cSendResponse\x12\x15\n\rerror_message\x18\x01 \x01(\t\"(\n\x0bSendRequest\x12\x19\n\x07payload\x18\x01 \x01(\x0b\x32\x08.Payload\"f\n\x17SendInteruptedException\x12\x33\n\x0flost_connection\x18\x01 \x01(\x0b\x32\x18.ConnectionLostExceptionH\x00\x42\x16\n\x14\x65xception_type_oneof\"f\n\x17RecvInteruptedException\x12\x33\n\x0flost_connection\x18\x01 \x01(\x0b\x32\x18.ConnectionLostExceptionH\x00\x42\x16\n\x14\x65xception_type_oneof\"P\n\x17\x43onnectionLostException\x12\x15\n\rerror_message\x18\x01 \x01(\t\x12\x1e\n\tremote_id\x18\x02 \x01(\x0b\x32\x0b.IdentifierBP\n#com.vegvisir.network.datatype.protoB\x1cVegvisirNetworkDatatypeProtoP\x01\xa2\x02\x08VEGVISIRb\x06proto3')
   ,
   dependencies=[handshake__pb2.DESCRIPTOR,generic__pb2.DESCRIPTOR,vegvisir__pb2.DESCRIPTOR,vector__pb2.DESCRIPTOR,frontier__pb2.DESCRIPTOR,sendall__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -35,48 +35,48 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _VEGVISIRPROTOCOLMESSAGE = _descriptor.Descriptor(
   name='VegvisirProtocolMessage',
-  full_name='vegvisir.network.datatype.VegvisirProtocolMessage',
+  full_name='VegvisirProtocolMessage',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='endProtocol', full_name='vegvisir.network.datatype.VegvisirProtocolMessage.endProtocol', index=0,
+      name='endProtocol', full_name='VegvisirProtocolMessage.endProtocol', index=0,
       number=1, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='handshake', full_name='vegvisir.network.datatype.VegvisirProtocolMessage.handshake', index=1,
+      name='handshake', full_name='VegvisirProtocolMessage.handshake', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='generic', full_name='vegvisir.network.datatype.VegvisirProtocolMessage.generic', index=2,
+      name='generic', full_name='VegvisirProtocolMessage.generic', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='sendall', full_name='vegvisir.network.datatype.VegvisirProtocolMessage.sendall', index=3,
+      name='sendall', full_name='VegvisirProtocolMessage.sendall', index=3,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='vector', full_name='vegvisir.network.datatype.VegvisirProtocolMessage.vector', index=4,
+      name='vector', full_name='VegvisirProtocolMessage.vector', index=4,
       number=5, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='frontier', full_name='vegvisir.network.datatype.VegvisirProtocolMessage.frontier', index=5,
+      name='frontier', full_name='VegvisirProtocolMessage.frontier', index=5,
       number=6, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -94,37 +94,37 @@ _VEGVISIRPROTOCOLMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
     _descriptor.OneofDescriptor(
-      name='message_types', full_name='vegvisir.network.datatype.VegvisirProtocolMessage.message_types',
+      name='message_types', full_name='VegvisirProtocolMessage.message_types',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=146,
-  serialized_end=528,
+  serialized_start=119,
+  serialized_end=366,
 )
 
 
 _PAYLOAD = _descriptor.Descriptor(
   name='Payload',
-  full_name='vegvisir.network.datatype.Payload',
+  full_name='Payload',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='type', full_name='vegvisir.network.datatype.Payload.type', index=0,
+      name='type', full_name='Payload.type', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='message', full_name='vegvisir.network.datatype.Payload.message', index=1,
+      name='message', full_name='Payload.message', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='info', full_name='vegvisir.network.datatype.Payload.info', index=2,
+      name='info', full_name='Payload.info', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -142,23 +142,23 @@ _PAYLOAD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
     _descriptor.OneofDescriptor(
-      name='content_oneof', full_name='vegvisir.network.datatype.Payload.content_oneof',
+      name='content_oneof', full_name='Payload.content_oneof',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=530,
-  serialized_end=657,
+  serialized_start=368,
+  serialized_end=469,
 )
 
 
 _IDENTIFIER = _descriptor.Descriptor(
   name='Identifier',
-  full_name='vegvisir.network.datatype.Identifier',
+  full_name='Identifier',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='vegvisir.network.datatype.Identifier.name', index=0,
+      name='name', full_name='Identifier.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -176,30 +176,30 @@ _IDENTIFIER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
     _descriptor.OneofDescriptor(
-      name='idtype_oneof', full_name='vegvisir.network.datatype.Identifier.idtype_oneof',
+      name='idtype_oneof', full_name='Identifier.idtype_oneof',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=659,
-  serialized_end=703,
+  serialized_start=471,
+  serialized_end=515,
 )
 
 
 _PEER = _descriptor.Descriptor(
   name='Peer',
-  full_name='vegvisir.network.datatype.Peer',
+  full_name='Peer',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='id', full_name='vegvisir.network.datatype.Peer.id', index=0,
+      name='id', full_name='Peer.id', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='conn', full_name='vegvisir.network.datatype.Peer.conn', index=1,
+      name='conn', full_name='Peer.conn', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -217,27 +217,27 @@ _PEER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=705,
-  serialized_end=815,
+  serialized_start=517,
+  serialized_end=575,
 )
 
 
 _PEERVIEW = _descriptor.Descriptor(
   name='PeerView',
-  full_name='vegvisir.network.datatype.PeerView',
+  full_name='PeerView',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='active_peers', full_name='vegvisir.network.datatype.PeerView.active_peers', index=0,
+      name='active_peers', full_name='PeerView.active_peers', index=0,
       number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='connected_peers', full_name='vegvisir.network.datatype.PeerView.connected_peers', index=1,
+      name='connected_peers', full_name='PeerView.connected_peers', index=1,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -255,34 +255,34 @@ _PEERVIEW = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=817,
-  serialized_end=940,
+  serialized_start=577,
+  serialized_end=648,
 )
 
 
 _CONNECTION = _descriptor.Descriptor(
   name='Connection',
-  full_name='vegvisir.network.datatype.Connection',
+  full_name='Connection',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='remote_id', full_name='vegvisir.network.datatype.Connection.remote_id', index=0,
+      name='remote_id', full_name='Connection.remote_id', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='connected_time', full_name='vegvisir.network.datatype.Connection.connected_time', index=1,
+      name='connected_time', full_name='Connection.connected_time', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='wakeup_time', full_name='vegvisir.network.datatype.Connection.wakeup_time', index=2,
+      name='wakeup_time', full_name='Connection.wakeup_time', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -300,20 +300,20 @@ _CONNECTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=943,
-  serialized_end=1128,
+  serialized_start=650,
+  serialized_end=763,
 )
 
 
 _CONNECTIONCLOSERESPONSE = _descriptor.Descriptor(
   name='ConnectionCloseResponse',
-  full_name='vegvisir.network.datatype.ConnectionCloseResponse',
+  full_name='ConnectionCloseResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='error_message', full_name='vegvisir.network.datatype.ConnectionCloseResponse.error_message', index=0,
+      name='error_message', full_name='ConnectionCloseResponse.error_message', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -331,20 +331,20 @@ _CONNECTIONCLOSERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1130,
-  serialized_end=1178,
+  serialized_start=765,
+  serialized_end=813,
 )
 
 
 _SENDRESPONSE = _descriptor.Descriptor(
   name='SendResponse',
-  full_name='vegvisir.network.datatype.SendResponse',
+  full_name='SendResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='error_message', full_name='vegvisir.network.datatype.SendResponse.error_message', index=0,
+      name='error_message', full_name='SendResponse.error_message', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -362,20 +362,20 @@ _SENDRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1180,
-  serialized_end=1217,
+  serialized_start=815,
+  serialized_end=852,
 )
 
 
 _SENDREQUEST = _descriptor.Descriptor(
   name='SendRequest',
-  full_name='vegvisir.network.datatype.SendRequest',
+  full_name='SendRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='payload', full_name='vegvisir.network.datatype.SendRequest.payload', index=0,
+      name='payload', full_name='SendRequest.payload', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -393,20 +393,20 @@ _SENDREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1219,
-  serialized_end=1285,
+  serialized_start=854,
+  serialized_end=894,
 )
 
 
 _SENDINTERUPTEDEXCEPTION = _descriptor.Descriptor(
   name='SendInteruptedException',
-  full_name='vegvisir.network.datatype.SendInteruptedException',
+  full_name='SendInteruptedException',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='lost_connection', full_name='vegvisir.network.datatype.SendInteruptedException.lost_connection', index=0,
+      name='lost_connection', full_name='SendInteruptedException.lost_connection', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -424,23 +424,23 @@ _SENDINTERUPTEDEXCEPTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
     _descriptor.OneofDescriptor(
-      name='exception_type_oneof', full_name='vegvisir.network.datatype.SendInteruptedException.exception_type_oneof',
+      name='exception_type_oneof', full_name='SendInteruptedException.exception_type_oneof',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=1288,
-  serialized_end=1416,
+  serialized_start=896,
+  serialized_end=998,
 )
 
 
 _RECVINTERUPTEDEXCEPTION = _descriptor.Descriptor(
   name='RecvInteruptedException',
-  full_name='vegvisir.network.datatype.RecvInteruptedException',
+  full_name='RecvInteruptedException',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='lost_connection', full_name='vegvisir.network.datatype.RecvInteruptedException.lost_connection', index=0,
+      name='lost_connection', full_name='RecvInteruptedException.lost_connection', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -458,30 +458,30 @@ _RECVINTERUPTEDEXCEPTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
     _descriptor.OneofDescriptor(
-      name='exception_type_oneof', full_name='vegvisir.network.datatype.RecvInteruptedException.exception_type_oneof',
+      name='exception_type_oneof', full_name='RecvInteruptedException.exception_type_oneof',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=1419,
-  serialized_end=1547,
+  serialized_start=1000,
+  serialized_end=1102,
 )
 
 
 _CONNECTIONLOSTEXCEPTION = _descriptor.Descriptor(
   name='ConnectionLostException',
-  full_name='vegvisir.network.datatype.ConnectionLostException',
+  full_name='ConnectionLostException',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='error_message', full_name='vegvisir.network.datatype.ConnectionLostException.error_message', index=0,
+      name='error_message', full_name='ConnectionLostException.error_message', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='remote_id', full_name='vegvisir.network.datatype.ConnectionLostException.remote_id', index=1,
+      name='remote_id', full_name='ConnectionLostException.remote_id', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -499,8 +499,8 @@ _CONNECTIONLOSTEXCEPTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1549,
-  serialized_end=1655,
+  serialized_start=1104,
+  serialized_end=1184,
 )
 
 _VEGVISIRPROTOCOLMESSAGE.fields_by_name['handshake'].message_type = handshake__pb2._HANDSHAKEMESSAGE
@@ -566,84 +566,84 @@ DESCRIPTOR.message_types_by_name['ConnectionLostException'] = _CONNECTIONLOSTEXC
 VegvisirProtocolMessage = _reflection.GeneratedProtocolMessageType('VegvisirProtocolMessage', (_message.Message,), dict(
   DESCRIPTOR = _VEGVISIRPROTOCOLMESSAGE,
   __module__ = 'vegvisirNetwork_pb2'
-  # @@protoc_insertion_point(class_scope:vegvisir.network.datatype.VegvisirProtocolMessage)
+  # @@protoc_insertion_point(class_scope:VegvisirProtocolMessage)
   ))
 _sym_db.RegisterMessage(VegvisirProtocolMessage)
 
 Payload = _reflection.GeneratedProtocolMessageType('Payload', (_message.Message,), dict(
   DESCRIPTOR = _PAYLOAD,
   __module__ = 'vegvisirNetwork_pb2'
-  # @@protoc_insertion_point(class_scope:vegvisir.network.datatype.Payload)
+  # @@protoc_insertion_point(class_scope:Payload)
   ))
 _sym_db.RegisterMessage(Payload)
 
 Identifier = _reflection.GeneratedProtocolMessageType('Identifier', (_message.Message,), dict(
   DESCRIPTOR = _IDENTIFIER,
   __module__ = 'vegvisirNetwork_pb2'
-  # @@protoc_insertion_point(class_scope:vegvisir.network.datatype.Identifier)
+  # @@protoc_insertion_point(class_scope:Identifier)
   ))
 _sym_db.RegisterMessage(Identifier)
 
 Peer = _reflection.GeneratedProtocolMessageType('Peer', (_message.Message,), dict(
   DESCRIPTOR = _PEER,
   __module__ = 'vegvisirNetwork_pb2'
-  # @@protoc_insertion_point(class_scope:vegvisir.network.datatype.Peer)
+  # @@protoc_insertion_point(class_scope:Peer)
   ))
 _sym_db.RegisterMessage(Peer)
 
 PeerView = _reflection.GeneratedProtocolMessageType('PeerView', (_message.Message,), dict(
   DESCRIPTOR = _PEERVIEW,
   __module__ = 'vegvisirNetwork_pb2'
-  # @@protoc_insertion_point(class_scope:vegvisir.network.datatype.PeerView)
+  # @@protoc_insertion_point(class_scope:PeerView)
   ))
 _sym_db.RegisterMessage(PeerView)
 
 Connection = _reflection.GeneratedProtocolMessageType('Connection', (_message.Message,), dict(
   DESCRIPTOR = _CONNECTION,
   __module__ = 'vegvisirNetwork_pb2'
-  # @@protoc_insertion_point(class_scope:vegvisir.network.datatype.Connection)
+  # @@protoc_insertion_point(class_scope:Connection)
   ))
 _sym_db.RegisterMessage(Connection)
 
 ConnectionCloseResponse = _reflection.GeneratedProtocolMessageType('ConnectionCloseResponse', (_message.Message,), dict(
   DESCRIPTOR = _CONNECTIONCLOSERESPONSE,
   __module__ = 'vegvisirNetwork_pb2'
-  # @@protoc_insertion_point(class_scope:vegvisir.network.datatype.ConnectionCloseResponse)
+  # @@protoc_insertion_point(class_scope:ConnectionCloseResponse)
   ))
 _sym_db.RegisterMessage(ConnectionCloseResponse)
 
 SendResponse = _reflection.GeneratedProtocolMessageType('SendResponse', (_message.Message,), dict(
   DESCRIPTOR = _SENDRESPONSE,
   __module__ = 'vegvisirNetwork_pb2'
-  # @@protoc_insertion_point(class_scope:vegvisir.network.datatype.SendResponse)
+  # @@protoc_insertion_point(class_scope:SendResponse)
   ))
 _sym_db.RegisterMessage(SendResponse)
 
 SendRequest = _reflection.GeneratedProtocolMessageType('SendRequest', (_message.Message,), dict(
   DESCRIPTOR = _SENDREQUEST,
   __module__ = 'vegvisirNetwork_pb2'
-  # @@protoc_insertion_point(class_scope:vegvisir.network.datatype.SendRequest)
+  # @@protoc_insertion_point(class_scope:SendRequest)
   ))
 _sym_db.RegisterMessage(SendRequest)
 
 SendInteruptedException = _reflection.GeneratedProtocolMessageType('SendInteruptedException', (_message.Message,), dict(
   DESCRIPTOR = _SENDINTERUPTEDEXCEPTION,
   __module__ = 'vegvisirNetwork_pb2'
-  # @@protoc_insertion_point(class_scope:vegvisir.network.datatype.SendInteruptedException)
+  # @@protoc_insertion_point(class_scope:SendInteruptedException)
   ))
 _sym_db.RegisterMessage(SendInteruptedException)
 
 RecvInteruptedException = _reflection.GeneratedProtocolMessageType('RecvInteruptedException', (_message.Message,), dict(
   DESCRIPTOR = _RECVINTERUPTEDEXCEPTION,
   __module__ = 'vegvisirNetwork_pb2'
-  # @@protoc_insertion_point(class_scope:vegvisir.network.datatype.RecvInteruptedException)
+  # @@protoc_insertion_point(class_scope:RecvInteruptedException)
   ))
 _sym_db.RegisterMessage(RecvInteruptedException)
 
 ConnectionLostException = _reflection.GeneratedProtocolMessageType('ConnectionLostException', (_message.Message,), dict(
   DESCRIPTOR = _CONNECTIONLOSTEXCEPTION,
   __module__ = 'vegvisirNetwork_pb2'
-  # @@protoc_insertion_point(class_scope:vegvisir.network.datatype.ConnectionLostException)
+  # @@protoc_insertion_point(class_scope:ConnectionLostException)
   ))
 _sym_db.RegisterMessage(ConnectionLostException)
 

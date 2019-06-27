@@ -17,9 +17,9 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='handshake.proto',
-  package='vegvisir.protocol.datatype',
+  package='',
   syntax='proto3',
-  serialized_pb=_b('\n\x0fhandshake.proto\x12\x1avegvisir.protocol.datatype\"\xa6\x02\n\x10HandshakeMessage\x12T\n\x0espokenVersions\x18\x01 \x03(\x0e\x32<.vegvisir.protocol.datatype.HandshakeMessage.ProtocolVersion\x12?\n\x04type\x18\x02 \x03(\x0e\x32\x31.vegvisir.protocol.datatype.HandshakeMessage.Type\"F\n\x0fProtocolVersion\x12\x0b\n\x07VERSION\x10\x00\x12\x0c\n\x08SEND_ALL\x10\x01\x12\x0c\n\x08\x46RONTIER\x10\x02\x12\n\n\x06VECTOR\x10\x03\"3\n\x04Type\x12\x10\n\x0c\x44UMMY_STATUS\x10\x00\x12\x0b\n\x07REQUEST\x10\x01\x12\x0c\n\x08RESPONSE\x10\x02\x62\x06proto3')
+  serialized_pb=_b('\n\x0fhandshake.proto\"\xf0\x01\n\x10HandshakeMessage\x12\x39\n\x0espokenVersions\x18\x01 \x03(\x0e\x32!.HandshakeMessage.ProtocolVersion\x12$\n\x04type\x18\x02 \x03(\x0e\x32\x16.HandshakeMessage.Type\"F\n\x0fProtocolVersion\x12\x0b\n\x07VERSION\x10\x00\x12\x0c\n\x08SEND_ALL\x10\x01\x12\x0c\n\x08\x46RONTIER\x10\x02\x12\n\n\x06VECTOR\x10\x03\"3\n\x04Type\x12\x10\n\x0c\x44UMMY_STATUS\x10\x00\x12\x0b\n\x07REQUEST\x10\x01\x12\x0c\n\x08RESPONSE\x10\x02\x62\x06proto3')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -27,7 +27,7 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _HANDSHAKEMESSAGE_PROTOCOLVERSION = _descriptor.EnumDescriptor(
   name='ProtocolVersion',
-  full_name='vegvisir.protocol.datatype.HandshakeMessage.ProtocolVersion',
+  full_name='HandshakeMessage.ProtocolVersion',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -50,14 +50,14 @@ _HANDSHAKEMESSAGE_PROTOCOLVERSION = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=219,
-  serialized_end=289,
+  serialized_start=137,
+  serialized_end=207,
 )
 _sym_db.RegisterEnumDescriptor(_HANDSHAKEMESSAGE_PROTOCOLVERSION)
 
 _HANDSHAKEMESSAGE_TYPE = _descriptor.EnumDescriptor(
   name='Type',
-  full_name='vegvisir.protocol.datatype.HandshakeMessage.Type',
+  full_name='HandshakeMessage.Type',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -76,28 +76,28 @@ _HANDSHAKEMESSAGE_TYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=291,
-  serialized_end=342,
+  serialized_start=209,
+  serialized_end=260,
 )
 _sym_db.RegisterEnumDescriptor(_HANDSHAKEMESSAGE_TYPE)
 
 
 _HANDSHAKEMESSAGE = _descriptor.Descriptor(
   name='HandshakeMessage',
-  full_name='vegvisir.protocol.datatype.HandshakeMessage',
+  full_name='HandshakeMessage',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='spokenVersions', full_name='vegvisir.protocol.datatype.HandshakeMessage.spokenVersions', index=0,
+      name='spokenVersions', full_name='HandshakeMessage.spokenVersions', index=0,
       number=1, type=14, cpp_type=8, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='type', full_name='vegvisir.protocol.datatype.HandshakeMessage.type', index=1,
+      name='type', full_name='HandshakeMessage.type', index=1,
       number=2, type=14, cpp_type=8, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -117,8 +117,8 @@ _HANDSHAKEMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=48,
-  serialized_end=342,
+  serialized_start=20,
+  serialized_end=260,
 )
 
 _HANDSHAKEMESSAGE.fields_by_name['spokenVersions'].enum_type = _HANDSHAKEMESSAGE_PROTOCOLVERSION
@@ -130,7 +130,7 @@ DESCRIPTOR.message_types_by_name['HandshakeMessage'] = _HANDSHAKEMESSAGE
 HandshakeMessage = _reflection.GeneratedProtocolMessageType('HandshakeMessage', (_message.Message,), dict(
   DESCRIPTOR = _HANDSHAKEMESSAGE,
   __module__ = 'handshake_pb2'
-  # @@protoc_insertion_point(class_scope:vegvisir.protocol.datatype.HandshakeMessage)
+  # @@protoc_insertion_point(class_scope:HandshakeMessage)
   ))
 _sym_db.RegisterMessage(HandshakeMessage)
 
