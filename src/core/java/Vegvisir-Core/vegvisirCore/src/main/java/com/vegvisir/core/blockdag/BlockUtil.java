@@ -46,22 +46,7 @@ public class BlockUtil {
     public static com.vegvisir.core.datatype.proto.Block.VectorClock
     incrementClock(com.isaacsheff.charlotte.proto.CryptoId my_id,
                    com.vegvisir.core.datatype.proto.Block.VectorClock clock) {
-//        List<com.vegvisir.core.datatype.proto.Block.VectorClock.Value> value =
-//                com.vegvisir.core.datatype.proto.Block.VectorClock.newBuilder(clock)
-//                .getValuesList();
-//        List<com.vegvisir.core.datatype.proto.Block.VectorClock.Value> _values = new ArrayList<>();
-//        value.forEach( v -> {
-//            if (v.getCryptoId().equals(my_id)) {
-//               _values.add(com.vegvisir.core.datatype.proto.Block.VectorClock.Value.newBuilder(v)
-//                        .setIndex(v.getIndex() + 1).build());
-//            } else {
-//                _values.add(v);
-//            }
-//        });
-//        com.vegvisir.core.datatype.proto.Block.VectorClock.Builder builder =
-//                com.vegvisir.core.datatype.proto.Block.VectorClock.newBuilder(clock);
-//        builder.getValuesList().clear();
-//        builder.addAllValues(_values);
+
         Map<String, com.vegvisir.core.datatype.proto.Block.VectorClock.Value> valueMap = clock.getValuesMap();
         com.vegvisir.core.datatype.proto.Block.VectorClock.Value _value = valueMap.get(cryptoId2Str(my_id));
         _value = com.vegvisir.core.datatype.proto.Block.VectorClock.Value.newBuilder(_value)
@@ -80,7 +65,9 @@ public class BlockUtil {
      * @return a string format of given id.
      */
     public static String cryptoId2Str(com.isaacsheff.charlotte.proto.CryptoId id) {
-        return id.getHash().getSha3().toStringUtf8();
+        if (id.hasHash())
+            return id.getHash().getSha3().toStringUtf8();
+        else
+            return id.getPublicKey().getEllipticCurveP256().getByteString().toStringUtf8();
     }
-
 }

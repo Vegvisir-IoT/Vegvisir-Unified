@@ -103,14 +103,14 @@ Also, for each well-behaved device, we will call the most recent block added by 
 We are now going to constrain which devices are allowed to add blocks to a VBG $B$ by constraining
 the set of parents a block signed by a particular device is allowed to have.
 We define two special transactions $\mathtt{delegate(d)}$ and $\mathtt{revoke}(d)$.
-We say that a device $d$ is authorized in block $b$ iff both the following
+We say that a device $d$ is authorized for block $b$ iff both the following
 conditions hold:
 \begin{itemize}
 \item $\exists b': b' \leq b \wedge \mathtt{delegate}(d) \in b'.\mathit{txs} \wedge (b'.\mathit{owner} \ne d \vee b'.\mathit{parents} = \emptyset)$
 \item $\forall b': b' \leq b \implies \mathtt{revoke}(d) \notin b.\mathit{txs}$
 \end{itemize}
 (Note that only a genesis block can, and should, delegate to its owner.)
-We call a block \emph{legal} if its owner is authorized by the block.
+We call a block \emph{legal} if its owner is authorized for the block.
 A VBG $B$ then has the additional constraint that all blocks owned by correct devices be legal and
 only depend on legal blocks.
 

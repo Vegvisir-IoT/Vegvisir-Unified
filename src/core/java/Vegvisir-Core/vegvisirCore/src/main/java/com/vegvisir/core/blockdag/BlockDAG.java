@@ -30,6 +30,12 @@ public abstract class BlockDAG {
 
 
     /**
+     * A Listener which gets called when a new block arrived. This allows upper layers get notified for new blocks.
+     */
+    protected NewBlockListener newBlockListener;
+
+
+    /**
      * This is constructor might need to be changed due to it contains genesis block.
      * @param genesisBlock
      * @param config
@@ -84,6 +90,7 @@ public abstract class BlockDAG {
     public Reference putBlock(Block block) {
         Reference ref = BlockUtil.byRef(block);
         if (blockStorage.putIfAbsent(ref, block) == null) {
+            newBlockListener.onNewBlock(block);
             return ref;
         }
         return null;
@@ -132,7 +139,7 @@ public abstract class BlockDAG {
      */
     public void addAllBlocks(Iterable<Block> blocks) {
         blocks.forEach(b -> {
-            addBlock(b);
+            putBlock(b);
         });
     }
 
@@ -154,6 +161,24 @@ public abstract class BlockDAG {
         return null;
     }
 
+
+    public void setNewBlockListener(NewBlockListener newBlockListener) {
+        this.newBlockListener = newBlockListener;
+    }
+
+    public abstract void createBlock(Iterable<com.vegvisir.core.datatype.proto.Block.Transaction> transactions,
+                                     Iterable<Reference> parents);
+
+    public Set<Reference> getFrontierBlocks() {
+        return Collections.emptySet();
+    }
+
+    public Set<String> computeWitness(Reference ref) {
+        return Collections.emptySet();
+    };
+
+    public void witness(Block block, String remoteId) {}
+  
     /**
      * [V2 Feature]
      * @param remoteVC

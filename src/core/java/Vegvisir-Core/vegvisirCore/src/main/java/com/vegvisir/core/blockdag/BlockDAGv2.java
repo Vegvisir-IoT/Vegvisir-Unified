@@ -2,6 +2,7 @@ package com.vegvisir.core.blockdag;
 
 import com.isaacsheff.charlotte.proto.Block;
 import com.isaacsheff.charlotte.proto.Reference;
+
 import com.isaacsheff.charlotte.proto.CryptoId;
 import com.vegvisir.core.config.Config;
 import com.vegvisir.core.datatype.proto.Block.VectorClock;
@@ -216,5 +217,10 @@ public class BlockDAGv2 extends BlockDAG {
             leadingSet.add(ref);
         }
         return  ref;
+    }
+
+    @Override
+    public void createBlock(Iterable<com.vegvisir.core.datatype.proto.Block.Transaction> transactions, Iterable<Reference> parents) {
+
     }
 }
