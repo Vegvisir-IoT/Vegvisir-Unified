@@ -26,6 +26,7 @@ import java.security.SignatureException;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ServiceConfigurationError;
 import java.util.logging.Logger;
@@ -303,9 +304,9 @@ public class Config {
         }
     }
 
-    public static PrivateKey bytes2prk(byte[] pub) {
+    public static PrivateKey bytes2prk(byte[] prv) {
         try {
-            return KeyFactory.getInstance("EC").generatePrivate(new X509EncodedKeySpec(pub));
+            return KeyFactory.getInstance("EC").generatePrivate(new PKCS8EncodedKeySpec(prv));
         } catch (GeneralSecurityException ex) {
             throw new RuntimeException(ex.getLocalizedMessage());
         }
