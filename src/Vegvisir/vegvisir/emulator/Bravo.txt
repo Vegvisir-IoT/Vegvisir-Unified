@@ -1,0 +1,301 @@
+Protocol VECTOR
+
+Username Bravo found!
+
+Vector clock {'Bravo': {'block': 0, 'bhash': b' G\xd0\xfb\xe1\xd5#.\xed\\}\xf9bL\xc5P\xdd\xbd\x19\x7f\xa3\xdd\xa1*\x0fL\x8bo\x1ci\xf8\x1b'}, 'Alpha': {'block': 0, 'bhash': b' G\xd0\xfb\xe1\xd5#.\xed\\}\xf9bL\xc5P\xdd\xbd\x19\x7f\xa3\xdd\xa1*\x0fL\x8bo\x1ci\xf8\x1b'}, 'Charlie': {'block': 0, 'bhash': b' G\xd0\xfb\xe1\xd5#.\xed\\}\xf9bL\xc5P\xdd\xbd\x19\x7f\xa3\xdd\xa1*\x0fL\x8bo\x1ci\xf8\x1b'}}
+
+Readables [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>]
+
+INCOMING AT SERVER SOCKET Bravo
+
+Bravo : New connection with peer 127.0.0.1 at port 57998
+
+Added <socket.socket fd=5, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 57998)> to inputs
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=5, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 57998)>]
+
+Readables [<socket.socket fd=5, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 57998)>]
+
+INCOMING DATA TO Bravo SERVER
+
+Client socket None
+
+SERVER READING FROM BUFFER
+
+Server about to recv 5 missing bytes
+
+SUCCESSFUL PARSING ON Bravo SERVER
+
+For Server: MESSAGE SIZE 7
+
+Server Bravo rcvd rqst 2 start protocol
+
+Server, List received from client [3]
+
+SERVER PROTOCOL CHOICE 3
+
+Serializing a response for the server
+
+Bravo Server sent 8 bytes
+
+Protocol choice is vector!
+
+VECTOR PROTOCOL STILL GOING at Bravo
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=5, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 57998)>]
+
+Readables [<socket.socket fd=5, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 57998)>]
+
+INCOMING DATA TO Bravo SERVER
+
+Client socket None
+
+SERVER READING FROM BUFFER
+
+Server about to recv 35 missing bytes
+
+SUCCESSFUL PARSING ON Bravo SERVER
+
+For Server: MESSAGE SIZE 37
+
+Peer vector clock: vector_clocks {
+  name: "Alpha"
+  leader: 6
+}
+vector_clocks {
+  name: "Charlie"
+}
+vector_clocks {
+  name: "Bravo"
+}
+send_limit: 5
+
+
+
+
+COMPUTING DEPENDENCIES
+
+
+My view of the world
+
+['Bravo0\n', 'Alpha0\n', 'Charlie0\n']
+Peer's view
+Name: Alpha, Block: 6
+Name: Charlie, Block: 0
+Name: Bravo, Block: 0
+Differences {}
+
+MISSING HASHES None
+
+Bravo Server sent 5 bytes
+
+Bravo sent an END PROTOCOL request
+
+PROTOCOL RUN WAS SUCCESSFUL AT Bravo                       SERVER
+
+Bravo closing socket connection....
+
+Bravo is generating 2 new blocks!
+
+Block generation took 0.0024144649505615234 secs!
+
+Newly minted block hash b"\x08t\x1b\x8d\x88\x1c\x1eI.\xb8\xfe\xfa#l\xf5kz\xd5%'y:k\xc8\x92\x04\xa2\xae\n\xb6h,"
+
+New children tag map {'bhash': b' G\xd0\xfb\xe1\xd5#.\xed\\}\xf9bL\xc5P\xdd\xbd\x19\x7f\xa3\xdd\xa1*\x0fL\x8bo\x1ci\xf8\x1b', 'children': ['Bravo1']}
+
+Newly minted block hash b'-\xe5\xfa["#;\xa7\xa2_$\xeb$\t\x18\xbfc\x85\xc4\xc2\xe4\x0b\x84q\x8ca\x01\xf2o\xc8P\x0c'
+
+New children tag map {'bhash': b"\x08t\x1b\x8d\x88\x1c\x1eI.\xb8\xfe\xfa#l\xf5kz\xd5%'y:k\xc8\x92\x04\xa2\xae\n\xb6h,", 'children': ['Bravo2']}
+
+Bravo is ready to gossip!
+
+User Bravo, successfully connected to peer at                       port 9001
+
+Bravo Client sent a 8 byte message
+
+Bravo sent PROTOCOL START message
+CLIENT READING FROM BUFFER
+
+Bravo Client, Receipt failed with socket error -> timed out
+
+Bravo Client could not received protocol list
+Bravo Gossip status -> ProtocolStatus.REQUEST_DELAY_PROTOCOL_LIST
+
+Bravo GOSSIPING FAILED, STATUS ProtocolStatus.REQUEST_DELAY_PROTOCOL_LIST, INPUT
+
+Readables [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>]
+
+INCOMING AT SERVER SOCKET Bravo
+
+Bravo : New connection with peer 127.0.0.1 at port 58000
+
+Added <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)> to inputs
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables [<socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+INCOMING DATA TO Bravo SERVER
+
+Client socket <socket.socket fd=5, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 57999), raddr=('127.0.0.1', 9001)>
+
+SERVER READING FROM BUFFER
+
+Server about to recv 5 missing bytes
+
+SUCCESSFUL PARSING ON Bravo SERVER
+
+For Server: MESSAGE SIZE 7
+
+Server Bravo rcvd rqst 2 start protocol
+
+Server, List received from client [3]
+
+SERVER PROTOCOL CHOICE 3
+
+Serializing a response for the server
+
+Bravo Server sent 8 bytes
+
+Protocol choice is vector!
+
+VECTOR PROTOCOL STILL GOING at Bravo
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
+Readables []
+
+INPUTS [<socket.socket fd=4, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002)>, <socket.socket fd=6, family=AddressFamily.AF_INET, type=2049, proto=0, laddr=('127.0.0.1', 9002), raddr=('127.0.0.1', 58000)>]
+
