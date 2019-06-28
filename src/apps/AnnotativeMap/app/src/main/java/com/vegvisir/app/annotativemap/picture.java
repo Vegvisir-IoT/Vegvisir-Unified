@@ -4,28 +4,15 @@ package com.vegvisir.app.annotativemap;
  * Created by jiangyi on 09/07/2017.
  */
 
-import com.vegvisir.app.annotativemap.PictureTagView.Status;
-//import com.vegvisir.core.datatype.proto.Block;
 import com.vegvisir.pub_sub.TransactionID;
 
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import android.util.Log;
 
 import java.util.*;
 

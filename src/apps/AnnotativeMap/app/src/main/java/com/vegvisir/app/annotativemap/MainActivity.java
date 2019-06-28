@@ -4,28 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Button;
-import android.app.Activity;
-import android.net.Uri;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import java.io.IOException;
-import android.os.ParcelFileDescriptor;
-import java.io.FileDescriptor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import android.util.Log;
 
-import com.vegvisir.app.annotativemap.PictureTagView.Status;
 import com.vegvisir.application.VegvisirInstanceV1;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
 import com.vegvisir.pub_sub.VegvisirInstance;
-import com.vegvisir.pub_sub.VirtualVegvisirInstance;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -85,90 +73,87 @@ public class MainActivity extends AppCompatActivity {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                MainActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(currentPicture != null) {
-                            Log.i("annosatstart",annotations.toString());
-                            Set<Coordinates> entriesToRemove = new HashSet<>();
+                MainActivity.this.runOnUiThread(() -> {
+                    if(currentPicture != null) {
+                        Log.i("annosatstart",annotations.toString());
+                        Set<Coordinates> entriesToRemove = new HashSet<>();
 
 //                            Log.i("before",annotations.toString());
-                            for(Map.Entry<Coordinates, Annotation> entry : annotations.entrySet()) {
+                        for(Map.Entry<Coordinates, Annotation> entry : annotations.entrySet()) {
 
-                                Coordinates coords = entry.getKey();
-                                Log.i("coords",coords.getX() + "," + coords.getY());
+                            Coordinates coords = entry.getKey();
+                            Log.i("coords",coords.getX() + "," + coords.getY());
 //                                Log.i("shouldRemove",entry.getValue().getShouldRemove().toString());
-                                Log.i("alreadyAdded",entry.getValue().getAlreadyAdded().toString());
+                            Log.i("alreadyAdded",entry.getValue().getAlreadyAdded().toString());
 
-                                Annotation annoObj = entry.getValue();
+                            Annotation annoObj = entry.getValue();
 //                            PictureTagLayout image = annoObj.getLayout();
-                                anno = annoObj.getAnnotation();
-                                PictureTagLayout image = currentPicture.findViewById(R.id.image);
+                            anno = annoObj.getAnnotation();
+                            PictureTagLayout image = currentPicture.findViewById(R.id.image);
 
 
-                                if (annoObj.getShouldRemove()) {
-                                    Log.i("Should remove","reached");
-                                    entriesToRemove.add(coords);
-                                    View v = image.clickView;
-                                    image.removeView(v);
-                                    image.clickView = null;
+                            if (annoObj.getShouldRemove()) {
+                                Log.i("Should remove","reached");
+                                entriesToRemove.add(coords);
+                                View v = image.clickView;
+                                image.removeView(v);
+                                image.clickView = null;
 
+                            }
+                            else {
+                                Log.i("annoobj",annoObj.toString());
+                                if (!annoObj.getAlreadyAdded()){
+//
+                                    PictureTagView view = image.justHasView(coords.getX(),coords.getY());
+                                    if (view == null) {
+                                        view = (PictureTagView) image.addItem(coords.getX(), coords.getY());
+                                    }
+                                        view.setAnnotation(anno);
+                                        Log.i("ok","nice");
+                                        annoObj.setAlreadyAdded(true);
                                 }
                                 else {
-                                    Log.i("annoobj",annoObj.toString());
-                                    if (!annoObj.getAlreadyAdded()){
-//
-                                        PictureTagView view = image.justHasView(coords.getX(),coords.getY());
-                                        if (view == null) {
-                                            view = (PictureTagView) image.addItem(coords.getX(), coords.getY());
-                                        }
-                                            view.setAnnotation(anno);
-                                            Log.i("ok","nice");
-                                            annoObj.setAlreadyAdded(true);
-                                    }
-                                    else {
-                                        PictureTagView view = image.justHasView(coords.getX(),coords.getY());
-                                        if (view != null) {
-                                            view.setAnnotation(anno);
-                                        }
+                                    PictureTagView view = image.justHasView(coords.getX(),coords.getY());
+                                    if (view != null) {
+                                        view.setAnnotation(anno);
                                     }
                                 }
-
                             }
-
-                            for (Coordinates coords: entriesToRemove) {
-                                annotations.remove(coords);
-                            }
-
-                            Log.i("annos",annotations.toString());
-
-
-
-                            Random rand = new Random();
-                            int rand1 = rand.nextInt(500);
-                            int rand2 = rand.nextInt(500);
-
-                            String payloadString = "1" + 500 + "," + 500 + "," + "abcdef";
-                            byte[] payload = payloadString.getBytes();
-                            count+=1;
-                            Set<String> topics = new HashSet<>();
-                            topics.add(topic);
-                            Set<TransactionID> dependencies = new HashSet<>();
-                            Coordinates c = new Coordinates(500,500);
-                            if (dependencySets.containsKey(c)) {
-                                Iterator<TransactionTuple> it = dependencySets.get(c).iterator();
-                                while(it.hasNext()) {
-                                    TransactionTuple x = (TransactionTuple) ((Iterator)it).next();
-                                    dependencies.add(x.transaction);
-                                }
-                            }
-                            if (latestTransactions.containsKey("DeviceB")) {
-                                dependencies.add(latestTransactions.get("DeviceB"));
-                            }
-
-                            instance.addTransaction(context, topics, payload, dependencies);
 
                         }
+
+                        for (Coordinates coords: entriesToRemove) {
+                            annotations.remove(coords);
+                        }
+
+                        Log.i("annos",annotations.toString());
+
+
+
+//                            Random rand = new Random();
+//                            int rand1 = rand.nextInt(500);
+//                            int rand2 = rand.nextInt(500);
+//
+//                            String payloadString = "1" + 500 + "," + 500 + "," + "abcdef";
+//                            byte[] payload = payloadString.getBytes();
+//                            count+=1;
+//                            Set<String> topics = new HashSet<>();
+//                            topics.add(topic);
+//                            Set<TransactionID> dependencies = new HashSet<>();
+//                            Coordinates c = new Coordinates(500,500);
+//                            if (dependencySets.containsKey(c)) {
+//                                Iterator<TransactionTuple> it = dependencySets.get(c).iterator();
+//                                while(it.hasNext()) {
+//                                    TransactionTuple x = (TransactionTuple) ((Iterator)it).next();
+//                                    dependencies.add(x.transaction);
+//                                }
+//                            }
+//                            if (latestTransactions.containsKey("DeviceB")) {
+//                                dependencies.add(latestTransactions.get("DeviceB"));
+//                            }
+//
+//                            instance.addTransaction(context, topics, payload, dependencies);
+
                     }
                 });
             }

@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
     private Timer timer;
     public static VegvisirInstance instance = null;
 
-//    public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
+    public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,8 +82,8 @@ public class LoginActivity extends AppCompatActivity {
         instance.registerApplicationDelegator(context, delegator);
         this.deviceId = instance.getThisDeviceID();
 
-        instance.registerApplicationDelegator(context, delegator);
 //        virtual.registerApplicationDelegator(context, delegator);
+        this.deviceId = instance.getThisDeviceID();
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
