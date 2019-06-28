@@ -365,6 +365,7 @@ public class ByteStream {
      * @param remoteID a string format of remote public key
      */
     public void disconnect(String remoteID) {
+        Log.d(TAG, "disconnect: DISCONNECT CALLED");
         String id = connections.get(remoteID).getEndPointId();
         if (id.equals(getActiveEndPoint())) {
             connections.get(remoteID).waitUntilFlushAllData();
@@ -387,8 +388,10 @@ public class ByteStream {
 
     private void restart() {
         synchronized (this) {
-            if (activeEndPoint != null)
+            if (activeEndPoint != null) {
+                Log.d(TAG, "restart: return from restart");
                 return;
+            }
             isDiscovering = false;
             client.stopDiscovery();
             client.stopAdvertising();

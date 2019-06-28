@@ -36,7 +36,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
 
 
     public View getView(final int position, View convertView, ViewGroup parent){
-        Log.i("getView","is called");
+//        Log.i("getView","is called");
         View listItemView = convertView;
         if(listItemView == null){
             listItemView = LayoutInflater.from(getContext()).inflate(

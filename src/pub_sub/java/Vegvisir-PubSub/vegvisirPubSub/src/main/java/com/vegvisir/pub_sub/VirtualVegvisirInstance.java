@@ -124,7 +124,7 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
                 if (random.nextBoolean())
                     delegator.onNewReconciliationFinished();
             } catch (InterruptedException ex) {
-                System.err.println("Interrupted transaction polling thread! Will exit.");
+//                System.err.println("Interrupted transaction polling thread! Will exit.");
                 break;
             }
         }
