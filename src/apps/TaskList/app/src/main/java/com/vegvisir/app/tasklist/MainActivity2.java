@@ -1,5 +1,6 @@
 package com.vegvisir.app.tasklist;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -12,17 +13,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import com.vegvisir.pub_sub.*;
-import java.util.Timer;
-import java.util.TimerTask;
+
+import com.vegvisir.pub_sub.TransactionID;
+import com.vegvisir.pub_sub.VegvisirApplicationContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
-import android.content.Intent;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity2 extends AppCompatActivity {
 
@@ -68,7 +69,7 @@ public class MainActivity2 extends AppCompatActivity {
         channels.add(topic);
         context = new VegvisirApplicationContext(appID, desc, channels);
 
-        MainActivity.virtual.registerApplicationDelegator(context, delegator);
+        //MainActivity.virtual.registerApplicationDelegator(context, delegator);
 
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1){
             @Override
@@ -174,11 +175,11 @@ public class MainActivity2 extends AppCompatActivity {
                     dependencies.add(latestTransactions.get(deviceId));
                 }
 
-                try {
-                    MainActivity.virtual.addTransaction(context, topics, payload, dependencies);
-                } catch (NullPointerException e) {
-                    MainActivity.virtual.addTransactionByDeviceAndHeight(deviceId, 1, topics, payload, dependencies);
-                }
+//                try {
+//                    MainActivity.virtual.addTransaction(context, topics, payload, dependencies);
+//                } catch (NullPointerException e) {
+//                    MainActivity.virtual.addTransactionByDeviceAndHeight(deviceId, 1, topics, payload, dependencies);
+//                }
 
 
                 MainActivity2.this.runOnUiThread(new Runnable() {
@@ -222,12 +223,12 @@ public class MainActivity2 extends AppCompatActivity {
                             dependencies.add(latestTransactions.get(deviceId));
                         }
 //
-                        try {
-                            MainActivity.virtual.addTransaction(context, topics, payload, dependencies);
-                        } catch (NullPointerException e) {
-                            MainActivity.virtual.addTransactionByDeviceAndHeight(deviceId, 1, topics, payload, dependencies);
-                        }
-
+//                        try {
+//                            MainActivity.virtual.addTransaction(context, topics, payload, dependencies);
+//                        } catch (NullPointerException e) {
+//                            MainActivity.virtual.addTransactionByDeviceAndHeight(deviceId, 1, topics, payload, dependencies);
+//                        }
+//
 
 
                         MainActivity2.this.runOnUiThread(new Runnable() {

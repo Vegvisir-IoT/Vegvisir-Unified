@@ -92,7 +92,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
                     dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
                 }
 
-                MainActivity.virtual.addTransaction(MainActivity.context, topics, payload, dependencies);
+                MainActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
 //                clear();
 //                addAll(MainActivity.items);
 //                notifyDataSetChanged();
@@ -122,7 +122,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
                     dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
                 }
 
-                MainActivity.virtual.addTransaction(MainActivity.context, topics, payload, dependencies);
+                MainActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
 //                clear();
 //                addAll(MainActivity.items);
 //                notifyDataSetChanged();
@@ -152,7 +152,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
                     dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
                 }
 
-                MainActivity.virtual.addTransaction(MainActivity.context, topics, payload, dependencies);
+                MainActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
 //                clear();
 //                addAll(MainActivity.items);
 //                notifyDataSetChanged();
@@ -182,7 +182,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
                     dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
                 }
 
-                MainActivity.virtual.addTransaction(MainActivity.context, topics, payload, dependencies);
+                MainActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
 //                clear();
 //                addAll(MainActivity.items);
 //                notifyDataSetChanged();

@@ -20,7 +20,6 @@ import com.vegvisir.application.VegvisirInstanceV1;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
 import com.vegvisir.pub_sub.VegvisirInstance;
-import com.vegvisir.pub_sub.VirtualVegvisirInstance;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private Timer timer;
     public static VegvisirInstance instance = null;
 
-    public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
+    //public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
 
 
 
@@ -104,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         this.deviceId = instance.getThisDeviceID();
 
         //this.deviceId = virtual.getThisDeviceID();
-        virtual.registerApplicationDelegator(context, delegator);
+        //virtual.registerApplicationDelegator(context, delegator);
 
 //        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1){
 //            @Override
@@ -213,8 +212,9 @@ public class MainActivity extends AppCompatActivity {
                     dependencies.add(latestTransactions.get(deviceId));
                 }
 
+
+                //virtual.addTransaction(context, topics, payload, dependencies);
                 instance.addTransaction(context, topics, payload, dependencies);
-                //instance.addTransaction(context, topics, payload, dependencies);
 
 
                 MainActivity.this.runOnUiThread(new Runnable() {

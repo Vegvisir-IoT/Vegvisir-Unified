@@ -1,8 +1,6 @@
 package com.vegvisir.application;
 
-import android.app.Application;
 import android.content.Context;
-import android.util.Pair;
 
 import com.google.protobuf.ByteString;
 import com.isaacsheff.charlotte.proto.Block;
@@ -10,24 +8,20 @@ import com.vegvisir.VegvisirCore;
 import com.vegvisir.core.blockdag.NewBlockListener;
 import com.vegvisir.core.blockdag.ReconciliationEndListener;
 import com.vegvisir.core.config.Config;
+import com.vegvisir.core.datatype.proto.Block.Transaction;
 import com.vegvisir.core.reconciliation.ReconciliationV1;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
 import com.vegvisir.pub_sub.VegvisirApplicationDelegator;
 import com.vegvisir.pub_sub.VegvisirInstance;
-import com.vegvisir.core.datatype.proto.Block.Transaction;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
