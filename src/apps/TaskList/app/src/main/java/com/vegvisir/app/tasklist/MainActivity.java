@@ -99,8 +99,8 @@ public class MainActivity extends AppCompatActivity {
 
         instance = VegvisirInstanceV1.getInstance(androidContext);
         instance.registerApplicationDelegator(context, delegator);
-//        this.deviceId = instance.getThisDeviceID();
-        this.deviceId = virtual.getThisDeviceID();
+        this.deviceId = instance.getThisDeviceID();
+//        this.deviceId = virtual.getThisDeviceID();
         virtual.registerApplicationDelegator(context, delegator);
 
 //        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1){
