@@ -220,25 +220,16 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
             MainActivity.annotations.put(coords,new Annotation(anno));
         }
 
-//        for (FullAnnotation fa: addSetTop) {
-//            Log.i("fa",fa.toString());
-//            Coordinates c = fa.getCoords();
-////            boolean exists = false;
-//
-////            PictureTagView view = image.justHasView(c.getX(),c.getY());
-//            if (view != null) {
-//                c = new Coordinates(view.getXVal(),view.getYVal());
-//            }
-//
-//            if (MainActivity.annotations.containsKey(c)) {
-//                MainActivity.annotations.get(c).setAnnotation(anno);
-//            }
-//            else {
-//                MainActivity.annotations.put(c,new Annotation(fa.getAnnotation()));
-//            }
-//        }
+        for (FullAnnotation fa: addSetTop) {
+            Coordinates c = fa.getCoords();
+            String annotation = fa.getAnnotation();
 
-        Log.i("annosinimpl",MainActivity.annotations.toString());
+            if (!MainActivity.annotations.containsKey(c)) {
+                Log.i("hashmap","doesn't contain anno");
+                MainActivity.annotations.put(c, new Annotation(annotation));
+            }
+
+        }
 
 //        for (Map.Entry<Coordinates, PictureTagLayout> entry : MainActivity.imageAtCoords.entrySet()) {
 //
@@ -270,6 +261,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 //            }
         }
 
+        Log.i("annosinimpl",MainActivity.annotations.toString());
 
 
     }

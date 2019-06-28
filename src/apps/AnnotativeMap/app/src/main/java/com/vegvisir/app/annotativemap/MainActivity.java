@@ -91,9 +91,6 @@ public class MainActivity extends AppCompatActivity {
 //                                Log.i("shouldRemove",entry.getValue().getShouldRemove().toString());
                                 Log.i("alreadyAdded",entry.getValue().getAlreadyAdded().toString());
 
-//                            picture pic = layoutCoords.get(coords);
-//                            PictureTagLayout image = pic.findViewById(R.id.image);
-
                                 Annotation annoObj = entry.getValue();
 //                            PictureTagLayout image = annoObj.getLayout();
                                 anno = annoObj.getAnnotation();
@@ -111,16 +108,14 @@ public class MainActivity extends AppCompatActivity {
                                 else {
                                     Log.i("annoobj",annoObj.toString());
                                     if (!annoObj.getAlreadyAdded()){
-//                                        PictureTagView view = (PictureTagView) image.addItem(coords.getX(), coords.getY());
+//
                                         PictureTagView view = image.justHasView(coords.getX(),coords.getY());
-                                        if (view != null) {
+                                        if (view == null) {
+                                            view = (PictureTagView) image.addItem(coords.getX(), coords.getY());
+                                        }
                                             view.setAnnotation(anno);
                                             Log.i("ok","nice");
                                             annoObj.setAlreadyAdded(true);
-                                        }
-                                        else {
-                                            Log.i("View","was not created");
-                                        }
                                     }
                                     else {
                                         PictureTagView view = image.justHasView(coords.getX(),coords.getY());
@@ -129,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
                                         }
                                     }
                                 }
-//                                image.justHasView(-1,-1);
 
                             }
 
@@ -141,29 +135,29 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-//                            Random rand = new Random();
-//                            int rand1 = rand.nextInt(500);
-//                            int rand2 = rand.nextInt(500);
-//
-//                            String payloadString = "1" + rand1 + "," + rand2 + "," + "abcdef";
-//                            byte[] payload = payloadString.getBytes();
-//                            count+=1;
-//                            Set<String> topics = new HashSet<>();
-//                            topics.add(topic);
-//                            Set<TransactionID> dependencies = new HashSet<>();
-//                            Coordinates c = new Coordinates(500,500);
-//                            if (dependencySets.containsKey(c)) {
-//                                Iterator<TransactionTuple> it = dependencySets.get(c).iterator();
-//                                while(it.hasNext()) {
-//                                    TransactionTuple x = (TransactionTuple) ((Iterator)it).next();
-//                                    dependencies.add(x.transaction);
-//                                }
-//                            }
-//                            if (latestTransactions.containsKey("DeviceB")) {
-//                                dependencies.add(latestTransactions.get("DeviceB"));
-//                            }
-//
-//                            virtual.addTransaction(context, topics, payload, dependencies);
+                            Random rand = new Random();
+                            int rand1 = rand.nextInt(500);
+                            int rand2 = rand.nextInt(500);
+
+                            String payloadString = "1" + 500 + "," + 500 + "," + "abcdef";
+                            byte[] payload = payloadString.getBytes();
+                            count+=1;
+                            Set<String> topics = new HashSet<>();
+                            topics.add(topic);
+                            Set<TransactionID> dependencies = new HashSet<>();
+                            Coordinates c = new Coordinates(500,500);
+                            if (dependencySets.containsKey(c)) {
+                                Iterator<TransactionTuple> it = dependencySets.get(c).iterator();
+                                while(it.hasNext()) {
+                                    TransactionTuple x = (TransactionTuple) ((Iterator)it).next();
+                                    dependencies.add(x.transaction);
+                                }
+                            }
+                            if (latestTransactions.containsKey("DeviceB")) {
+                                dependencies.add(latestTransactions.get("DeviceB"));
+                            }
+
+                            virtual.addTransaction(context, topics, payload, dependencies);
 
                         }
                     }
