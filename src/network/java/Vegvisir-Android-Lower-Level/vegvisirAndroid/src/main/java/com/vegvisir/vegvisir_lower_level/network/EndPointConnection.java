@@ -1,7 +1,7 @@
 package com.vegvisir.vegvisir_lower_level.network;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.Task;
 import com.vegvisir.vegvisir_lower_level.utils.Utils;

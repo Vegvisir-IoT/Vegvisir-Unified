@@ -9,6 +9,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".ui.login.LoginActivity"
+            android:label="@string/title_activity_login">
+            <intent-filter>
+                <action android:name="android.intent.action.LoginActivity" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -16,24 +24,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".picture"
-            android:label="pic">
-        </activity>
-
-        <activity android:name=".add_annotation"
-            android:label="add_annotation">
-        </activity>
-
-        <activity android:name=".send"
-            android:label="send">
-        </activity>
-        <!-- <activity android:name=".RemoveActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity> -->
+        <activity
+            android:name=".picture"
+            android:label="pic"></activity>
+        <activity
+            android:name=".add_annotation"
+            android:label="add_annotation"></activity>
+        <activity
+            android:name=".send"
+            android:label="send"></activity>
     </application>
 
 </manifest>

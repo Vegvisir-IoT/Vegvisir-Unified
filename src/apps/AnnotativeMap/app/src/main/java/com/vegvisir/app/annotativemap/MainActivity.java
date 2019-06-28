@@ -1,9 +1,10 @@
 package com.vegvisir.app.annotativemap;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,8 +21,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import android.util.Log;
 
 import com.vegvisir.app.annotativemap.PictureTagView.Status;
+import com.vegvisir.application.VegvisirInstanceV1;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
+import com.vegvisir.pub_sub.VegvisirInstance;
 import com.vegvisir.pub_sub.VirtualVegvisirInstance;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
     private static Set<String> channels = new HashSet<>();
     private String anno;
 
-    public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
+//    public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
+    public static VegvisirInstance instance = null;
     private Timer timer;
 
     public static String deviceID2 = "DeviceB";
@@ -58,7 +62,12 @@ public class MainActivity extends AppCompatActivity {
         channels.add(topic);
         context = new VegvisirApplicationContext(appID,desc,channels);
 
-        virtual.registerApplicationDelegator(context,delegator);
+//        virtual.registerApplicationDelegator(context,delegator);
+        Context androidContext = getApplicationContext();
+
+        instance = VegvisirInstanceV1.getInstance(androidContext);
+        instance.registerApplicationDelegator(context, delegator);
+        this.deviceId = instance.getThisDeviceID();
 
         editButton = findViewById(R.id.editimg);
 
@@ -157,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                                 dependencies.add(latestTransactions.get("DeviceB"));
                             }
 
-                            virtual.addTransaction(context, topics, payload, dependencies);
+                            instance.addTransaction(context, topics, payload, dependencies);
 
                         }
                     }

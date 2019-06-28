@@ -1,6 +1,6 @@
 package com.vegvisir.vegvisir_lower_level.network;
 
-import android.support.v4.util.Pair;
+import androidx.core.util.Pair;
 
 import com.vegvisir.vegvisir_lower_level.network.Exceptions.HandlerAlreadyExistsException;
 import com.vegvisir.network.datatype.proto.Payload;

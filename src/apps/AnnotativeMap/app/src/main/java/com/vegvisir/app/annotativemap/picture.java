@@ -10,7 +10,7 @@ import com.vegvisir.pub_sub.TransactionID;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -111,7 +111,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 
                 String payloadString = "1" + coords.getX() + "," + coords.getY() + "," + anno;
                 byte[] payload = payloadString.getBytes();
-                MainActivity.virtual.addTransaction(MainActivity.context,topics,payload,dependencies);
+                MainActivity.instance.addTransaction(MainActivity.context,topics,payload,dependencies);
 //                MainActivity.annotations.put(coords,new Annotation(anno));
 //                MainActivity.imageAtCoords.put(coords,image);
                 //image.setStatus(Status.Normal,anno);
@@ -170,7 +170,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 //            }
                 String payloadString = "0" + view.getXVal() + "," + view.getYVal() + "," + anno;
                 byte[] payload = payloadString.getBytes();
-                MainActivity.virtual.addTransaction(MainActivity.context, topics, payload, dependencies);
+                MainActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
                 Log.i("In the try","");
                 super.onActivityResult(requestCode, resultCode, annotation);
             } catch (Exception e) {
