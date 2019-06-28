@@ -90,6 +90,7 @@ public abstract class BlockDAG {
     public Reference putBlock(Block block) {
         Reference ref = BlockUtil.byRef(block);
         if (blockStorage.putIfAbsent(ref, block) == null) {
+            witness(block, config.getDeviceID());
             newBlockListener.onNewBlock(block);
             return ref;
         }

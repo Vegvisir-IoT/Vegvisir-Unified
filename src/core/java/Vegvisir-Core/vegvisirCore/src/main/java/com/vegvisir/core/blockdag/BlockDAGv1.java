@@ -105,7 +105,7 @@ public class BlockDAGv1 extends BlockDAG {
 
     @Override
     public Set<String> computeWitness(Reference ref) {
-        return witnessMap.get(ref);
+        return witnessMap.getOrDefault(ref, Collections.emptySet());
     }
 
     public void witness(Reference ref, String remoteId) {
