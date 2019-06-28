@@ -72,7 +72,7 @@ public class LoginDataSource {
                 dependencies.add(LoginActivity.latestTransactions.get(LoginActivity.deviceId));
             }
 
-            LoginActivity.virtual.addTransaction(LoginActivity.context, topics, payload, dependencies);
+            LoginActivity.instance.addTransaction(LoginActivity.context, topics, payload, dependencies);
             //instance.addTransaction(context, topics, payload, dependencies);
             return new Result.Success<>(user);
         }

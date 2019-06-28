@@ -24,10 +24,10 @@ import androidx.lifecycle.ViewModelProviders;
 import com.vegvisir.app.tasklist.MainActivity;
 import com.vegvisir.app.tasklist.R;
 import com.vegvisir.app.tasklist.TransactionTuple;
+import com.vegvisir.application.VegvisirInstanceV1;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
 import com.vegvisir.pub_sub.VegvisirInstance;
-import com.vegvisir.pub_sub.VirtualVegvisirInstance;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -55,9 +55,9 @@ public class LoginActivity extends AppCompatActivity {
     private  String desc = "task list";
     private Set<String> channels = new HashSet<String>();
     private Timer timer;
-    private static VegvisirInstance instance = null;
+    public static VegvisirInstance instance = null;
 
-    public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
+    //public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,11 +76,11 @@ public class LoginActivity extends AppCompatActivity {
         context = new VegvisirApplicationContext(appID, desc, channels);
         Context androidContext = getApplicationContext();
 
-        //instance = VegvisirInstanceV1.getInstance(androidContext);
-        //instance.registerApplicationDelegator(context, delegator);
-        //this.deviceId = instance.getThisDeviceID();
+        instance = VegvisirInstanceV1.getInstance(androidContext);
+        instance.registerApplicationDelegator(context, delegator);
+        this.deviceId = instance.getThisDeviceID();
 
-        virtual.registerApplicationDelegator(context, delegator);
+        //virtual.registerApplicationDelegator(context, delegator);
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
