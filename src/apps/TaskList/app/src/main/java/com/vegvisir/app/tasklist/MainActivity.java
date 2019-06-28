@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
                     dependencies.add(latestTransactions.get(deviceId));
                 }
 
-                virtual.addTransaction(context, topics, payload, dependencies);
+                instance.addTransaction(context, topics, payload, dependencies);
                 //instance.addTransaction(context, topics, payload, dependencies);
 
 

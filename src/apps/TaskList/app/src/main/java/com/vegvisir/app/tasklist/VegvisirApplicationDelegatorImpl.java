@@ -166,7 +166,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 
     public void onNewReconciliationFinished(){
         for (TransactionID tid: MainActivity.notWitnessedTransactions){
-            Set<String> witnesses = MainActivity.virtual.getWitnessForTransaction(tid);
+            Set<String> witnesses = MainActivity.instance.getWitnessForTransaction(tid);
             if (witnesses.size() >= 3){
                 MainActivity.witnessedTransactions.add(tid);
             }
