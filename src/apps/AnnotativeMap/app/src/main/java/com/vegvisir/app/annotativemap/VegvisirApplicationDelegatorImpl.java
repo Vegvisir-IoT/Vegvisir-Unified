@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 package com.vegvisir.app.annotativemap;
 
@@ -9,18 +10,34 @@ import java.util.Map;
 import java.util.Set;
 import android.util.Log;
 import android.app.Activity;
+=======
+//import com.vegvisir.core.datatype.proto.Block;
+package com.vegvisir.app.annotativemap;
+
+import java.util.Set;
+
+import com.vegvisir.pub_sub.*;
+>>>>>>> tasklist
 
 /**
  * Ideally, all applications should implement this interface.
  */
+<<<<<<< HEAD
 public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDelegator {
 
+=======
+public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDelegator{
+>>>>>>> tasklist
 
     /**
      * Vegvisir will call this function to init and run application.
      * @param instance a underlying Vegvisir instance for application use.
      */
+<<<<<<< HEAD
     public void init(VegvisirInstance instance) {
+=======
+    public void init(VegvisirInstance instance){
+>>>>>>> tasklist
 
     }
 
@@ -39,6 +56,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
             TransactionID tx_id,
             Set<TransactionID> deps) {
 
+<<<<<<< HEAD
         String payloadString = new String(payload);
         Log.i("payload",payloadString);
 
@@ -271,4 +289,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
     }
 
 
+=======
+    }
+>>>>>>> tasklist
 }

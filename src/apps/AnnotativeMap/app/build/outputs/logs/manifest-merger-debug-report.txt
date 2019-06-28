@@ -1,0 +1,172 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-39:12
+INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-39:12
+INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-39:12
+INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-39:12
+MERGED from [com.android.support:appcompat-v7:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/042daf3ce8cbb88de66c3c030569ca81/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/e48ea77275f096a822e9f71306551997/AndroidManifest.xml:2:1-11:12
+MERGED from [com.android.support:support-fragment:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/38a5fa7a28aa5cfd20809f378f67f224/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:animated-vector-drawable:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/5ebe8d8ac3540fc4a203770a2a3b5aa0/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-core-ui:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/faed389e32d73ad29c49dbeb45fc7781/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-core-utils:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/09e88c19f8de4df713d03a954e65411c/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-vector-drawable:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/6c58832317adca3dba82bda85e56f5c1/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:loader:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/431d4daa4965388fb7309894a808d4eb/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:viewpager:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/33fcb75cee9a0bd11f1652ff8a3e1930/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:coordinatorlayout:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/8a06318d458dba4da9875e80a51deb07/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:drawerlayout:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/1f67b3a72d5c19d61e6b7343f77ad407/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:slidingpanelayout:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/e059505fbcff336e48cfe8e7af664033/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:customview:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/735690c9ac3b44dec326434f05b788a2/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:swiperefreshlayout:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/c48e80b1a51300138ed268b5ecf78e5d/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:asynclayoutinflater:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/29c38a39cc1edf4444871b404fb1c298/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-compat:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/c71d4189763fcc090e31ccfe7a5542ce/AndroidManifest.xml:17:1-24:12
+MERGED from [com.android.support:versionedparcelable:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/18d7e870555fb5857084386dd5917694/AndroidManifest.xml:17:1-25:12
+MERGED from [com.android.support:cursoradapter:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/dad2fcdf75601602a45738aafe233e42/AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:runtime:1.1.1] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/601cb889bae87395bea2d1a7488e8372/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:documentfile:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/3b07a0e685eb30265b8ae2401fbf4981/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:localbroadcastmanager:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/c5d69744181b97d726756beeaea0610b/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:print:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/af422d44338c347795a2331fd1ea2d08/AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:viewmodel:1.1.1] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/e851bb69fbb6dcd90cc39bcb44ced904/AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:livedata:1.1.1] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/060c76fc4956f9461648cba916bbf5ee/AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:livedata-core:1.1.1] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/2030151c314614b865f32675c88a4531/AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.core:runtime:1.1.1] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/ca7bab8627bfb99599a744849b4a7ec0/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:interpolator:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/b6e165d5d8f628e4b31680faf18c010d/AndroidManifest.xml:17:1-22:12
+INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-39:12
+INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-39:12
+INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-39:12
+	package
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:3:5-45
+		INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-39:12
+		INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
+	android:versionCode
+		INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-39:12
+		INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:11-69
+application
+ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:5:5-37:19
+MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/e48ea77275f096a822e9f71306551997/AndroidManifest.xml:9:5-20
+MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/e48ea77275f096a822e9f71306551997/AndroidManifest.xml:9:5-20
+MERGED from [com.android.support:support-compat:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/c71d4189763fcc090e31ccfe7a5542ce/AndroidManifest.xml:22:5-94
+MERGED from [com.android.support:support-compat:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/c71d4189763fcc090e31ccfe7a5542ce/AndroidManifest.xml:22:5-94
+MERGED from [com.android.support:versionedparcelable:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/18d7e870555fb5857084386dd5917694/AndroidManifest.xml:22:5-23:19
+MERGED from [com.android.support:versionedparcelable:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/18d7e870555fb5857084386dd5917694/AndroidManifest.xml:22:5-23:19
+	android:appComponentFactory
+		ADDED from [com.android.support:support-compat:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/c71d4189763fcc090e31ccfe7a5542ce/AndroidManifest.xml:22:18-91
+	android:supportsRtl
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:10:9-35
+	android:label
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:8:9-41
+	android:roundIcon
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:9:9-54
+	android:icon
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:7:9-43
+	android:allowBackup
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:6:9-35
+	android:theme
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:11:9-40
+activity#com.vegvisir.app.annotativemap.MainActivity
+ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:12:9-18:20
+	android:name
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:12:19-47
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:13:13-17:29
+action#android.intent.action.MAIN
+ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:14:17-69
+	android:name
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:14:25-66
+category#android.intent.category.LAUNCHER
+ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:16:17-77
+	android:name
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:16:27-74
+activity#com.vegvisir.app.annotativemap.picture
+ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:19:9-21:20
+	android:label
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:20:13-32
+	android:name
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:19:19-42
+activity#com.vegvisir.app.annotativemap.add_annotation
+ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:23:9-25:20
+	android:label
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:24:13-43
+	android:name
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:23:19-49
+activity#com.vegvisir.app.annotativemap.send
+ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:27:9-29:20
+	android:label
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:28:13-33
+	android:name
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:27:19-39
+uses-sdk
+INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
+INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
+MERGED from [com.android.support:appcompat-v7:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/042daf3ce8cbb88de66c3c030569ca81/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:appcompat-v7:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/042daf3ce8cbb88de66c3c030569ca81/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/e48ea77275f096a822e9f71306551997/AndroidManifest.xml:5:5-7:41
+MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/e48ea77275f096a822e9f71306551997/AndroidManifest.xml:5:5-7:41
+MERGED from [com.android.support:support-fragment:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/38a5fa7a28aa5cfd20809f378f67f224/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-fragment:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/38a5fa7a28aa5cfd20809f378f67f224/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:animated-vector-drawable:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/5ebe8d8ac3540fc4a203770a2a3b5aa0/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:animated-vector-drawable:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/5ebe8d8ac3540fc4a203770a2a3b5aa0/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-ui:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/faed389e32d73ad29c49dbeb45fc7781/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-ui:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/faed389e32d73ad29c49dbeb45fc7781/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-utils:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/09e88c19f8de4df713d03a954e65411c/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-utils:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/09e88c19f8de4df713d03a954e65411c/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/6c58832317adca3dba82bda85e56f5c1/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/6c58832317adca3dba82bda85e56f5c1/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:loader:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/431d4daa4965388fb7309894a808d4eb/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:loader:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/431d4daa4965388fb7309894a808d4eb/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:viewpager:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/33fcb75cee9a0bd11f1652ff8a3e1930/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:viewpager:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/33fcb75cee9a0bd11f1652ff8a3e1930/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:coordinatorlayout:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/8a06318d458dba4da9875e80a51deb07/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:coordinatorlayout:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/8a06318d458dba4da9875e80a51deb07/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:drawerlayout:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/1f67b3a72d5c19d61e6b7343f77ad407/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:drawerlayout:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/1f67b3a72d5c19d61e6b7343f77ad407/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:slidingpanelayout:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/e059505fbcff336e48cfe8e7af664033/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:slidingpanelayout:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/e059505fbcff336e48cfe8e7af664033/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:customview:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/735690c9ac3b44dec326434f05b788a2/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:customview:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/735690c9ac3b44dec326434f05b788a2/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:swiperefreshlayout:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/c48e80b1a51300138ed268b5ecf78e5d/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:swiperefreshlayout:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/c48e80b1a51300138ed268b5ecf78e5d/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:asynclayoutinflater:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/29c38a39cc1edf4444871b404fb1c298/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:asynclayoutinflater:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/29c38a39cc1edf4444871b404fb1c298/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-compat:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/c71d4189763fcc090e31ccfe7a5542ce/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-compat:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/c71d4189763fcc090e31ccfe7a5542ce/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:versionedparcelable:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/18d7e870555fb5857084386dd5917694/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:versionedparcelable:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/18d7e870555fb5857084386dd5917694/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:cursoradapter:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/dad2fcdf75601602a45738aafe233e42/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:cursoradapter:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/dad2fcdf75601602a45738aafe233e42/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:runtime:1.1.1] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/601cb889bae87395bea2d1a7488e8372/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:runtime:1.1.1] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/601cb889bae87395bea2d1a7488e8372/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:documentfile:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/3b07a0e685eb30265b8ae2401fbf4981/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:documentfile:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/3b07a0e685eb30265b8ae2401fbf4981/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:localbroadcastmanager:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/c5d69744181b97d726756beeaea0610b/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:localbroadcastmanager:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/c5d69744181b97d726756beeaea0610b/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:print:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/af422d44338c347795a2331fd1ea2d08/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:print:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/af422d44338c347795a2331fd1ea2d08/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:viewmodel:1.1.1] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/e851bb69fbb6dcd90cc39bcb44ced904/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:viewmodel:1.1.1] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/e851bb69fbb6dcd90cc39bcb44ced904/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:livedata:1.1.1] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/060c76fc4956f9461648cba916bbf5ee/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:livedata:1.1.1] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/060c76fc4956f9461648cba916bbf5ee/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:livedata-core:1.1.1] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/2030151c314614b865f32675c88a4531/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:livedata-core:1.1.1] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/2030151c314614b865f32675c88a4531/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.core:runtime:1.1.1] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/ca7bab8627bfb99599a744849b4a7ec0/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.core:runtime:1.1.1] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/ca7bab8627bfb99599a744849b4a7ec0/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:interpolator:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/b6e165d5d8f628e4b31680faf18c010d/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:interpolator:28.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/b6e165d5d8f628e4b31680faf18c010d/AndroidManifest.xml:20:5-44
+INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
+INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml

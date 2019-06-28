@@ -2,7 +2,11 @@ package com.vegvisir.vegvisir_lower_level.network;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+<<<<<<< HEAD
 import androidx.core.util.Pair;
+=======
+import android.util.Pair;
+>>>>>>> tasklist
 import android.util.Log;
 
 import com.google.android.gms.nearby.Nearby;
@@ -30,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -217,6 +222,7 @@ public class ByteStream {
         cachePayload = new LinkedBlockingQueue<>();
         self = this;
         disconnectedId = new LinkedBlockingQueue<>();
+        endpoint2id = new ConcurrentHashMap<>();
     }
 
     public EndPointConnection getConnectionByID(String id) {

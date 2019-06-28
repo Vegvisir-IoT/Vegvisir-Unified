@@ -2,8 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ba6b81ae-d7f5-46d6-b154-07111cdf0c7e" name="Default Changelist" comment="">
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/AnnotativeMap/app/src/main/java/com/vegvisir/app/annotativemap/add_annotation.java" beforeDir="false" afterPath="$PROJECT_DIR$/apps/AnnotativeMap/app/src/main/java/com/vegvisir/app/annotativemap/add_annotation.java" afterDir="false" />
+=======
+      <change afterPath="$PROJECT_DIR$/apps/AnnotativeMap/.idea/libraries/Gradle__hamcrest_core_1_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/AnnotativeMap/.idea/libraries/Gradle__junit_4_12.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/AnnotativeMap/.idea/libraries/Gradle__protobuf_java_3_6_1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/AnnotativeMap/vegvisirCore/vegvisirCore.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/AnnotativeMap/vegvisirGossip/vegvisirGossip.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/AnnotativeMap/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/apps/AnnotativeMap/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/AnnotativeMap/app/src/main/java/com/vegvisir/app/annotativemap/VegvisirApplicationDelegatorImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/apps/AnnotativeMap/app/src/main/java/com/vegvisir/app/annotativemap/VegvisirApplicationDelegatorImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/AnnotativeMap/app/src/main/java/com/vegvisir/app/annotativemap/picture.java" beforeDir="false" afterPath="$PROJECT_DIR$/apps/AnnotativeMap/app/src/main/java/com/vegvisir/app/annotativemap/picture.java" afterDir="false" />
+>>>>>>> tasklist
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
