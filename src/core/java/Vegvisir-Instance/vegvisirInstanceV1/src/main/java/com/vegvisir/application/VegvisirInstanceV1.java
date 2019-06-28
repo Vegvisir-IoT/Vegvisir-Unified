@@ -1,10 +1,7 @@
 package com.vegvisir.application;
 
 import android.content.Context;
-<<<<<<< HEAD
 import androidx.core.util.Pair;
-=======
->>>>>>> tasklist
 
 import com.google.protobuf.ByteString;
 import com.isaacsheff.charlotte.proto.Block;

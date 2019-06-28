@@ -4,7 +4,7 @@
             "outputFile": "/Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v23/values-v23.xml",
             "map": [
                 {
-                    "source": "/Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/042daf3ce8cbb88de66c3c030569ca81/res/values-v23/values-v23.xml",
+                    "source": "/Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/d4bdc15f75a0f6ca3dd03299b40f719f/res/values-v23/values-v23.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,19,32,33,34,35,36",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4",
@@ -12,6 +12,25 @@
                         "endLines": "2,3,4,5,18,31,32,33,34,35,36",
                         "endColumns": "134,134,74,86,12,12,126,104,114,106,112",
                         "endOffsets": "185,320,395,482,1272,2074,2201,2306,2421,2528,2641"
+                    }
+                },
+                {
+                    "source": "/Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/1b8ea435dbd49587823fe9ab4960072d/res/values-v23/values-v23.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "4",
+                        "endColumns": "12",
+                        "endOffsets": "200"
+                    },
+                    "to": {
+                        "startLines": "37",
+                        "startColumns": "4",
+                        "startOffsets": "2646",
+                        "endLines": "39",
+                        "endColumns": "12",
+                        "endOffsets": "2791"
                     }
                 }
             ]

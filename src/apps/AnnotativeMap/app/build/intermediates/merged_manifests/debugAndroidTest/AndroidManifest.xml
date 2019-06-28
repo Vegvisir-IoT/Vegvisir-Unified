@@ -3,11 +3,11 @@
     package="com.vegvisir.app.annotativemap.test" >
 
     <uses-sdk
-        android:minSdkVersion="15"
-        android:targetSdkVersion="28" />
+        android:minSdkVersion="25"
+        android:targetSdkVersion="29" />
 
     <instrumentation
-        android:name="android.support.test.runner.AndroidJUnitRunner"
+        android:name="androidx.test.runner.AndroidJUnitRunner"
         android:functionalTest="false"
         android:handleProfiling="false"
         android:label="Tests for com.vegvisir.app.annotativemap"

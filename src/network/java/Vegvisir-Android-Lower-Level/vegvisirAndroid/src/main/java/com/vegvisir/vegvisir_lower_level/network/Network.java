@@ -2,11 +2,7 @@ package com.vegvisir.vegvisir_lower_level.network;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
-<<<<<<< HEAD
 import androidx.core.util.Pair;
-=======
-import android.util.Pair;
->>>>>>> tasklist
 import android.util.Log;
 
 import com.vegvisir.vegvisir_lower_level.network.Exceptions.ConnectionNotAvailableException;

@@ -4,7 +4,26 @@
             "outputFile": "/Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-land/values-land.xml",
             "map": [
                 {
-                    "source": "/Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/042daf3ce8cbb88de66c3c030569ca81/res/values-land/values-land.xml",
+                    "source": "/Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/e1f604620695c3c55a27f9f3d3b0e1e3/res/values-land/values-land.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "5",
+                        "endColumns": "10",
+                        "endOffsets": "222"
+                    },
+                    "to": {
+                        "startLines": "5",
+                        "startColumns": "4",
+                        "startOffsets": "264",
+                        "endLines": "8",
+                        "endColumns": "10",
+                        "endOffsets": "431"
+                    }
+                },
+                {
+                    "source": "/Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/d4bdc15f75a0f6ca3dd03299b40f719f/res/values-land/values-land.xml",
                     "from": {
                         "startLines": "2,3,4",
                         "startColumns": "4,4,4",

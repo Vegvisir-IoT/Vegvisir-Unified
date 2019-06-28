@@ -1,11 +1,7 @@
 package com.vegvisir.application;
 
 import android.content.Context;
-<<<<<<< HEAD
 import androidx.core.util.Pair;
-=======
-import android.util.Pair;
->>>>>>> tasklist
 
 import com.vegvisir.gossip.adapter.NetworkAdapter;
 import com.vegvisir.network.datatype.proto.Payload;
