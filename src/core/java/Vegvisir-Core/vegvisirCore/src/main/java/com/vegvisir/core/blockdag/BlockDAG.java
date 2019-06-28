@@ -5,6 +5,8 @@ import com.isaacsheff.charlotte.proto.Reference;
 import com.vegvisir.core.config.Config;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -25,6 +27,12 @@ public abstract class BlockDAG {
      * related jobs as well, such as signing blocks, verify signatures and calculating hashes.
      */
     protected Config config;
+
+
+    /**
+     * A Listener which gets called when a new block arrived. This allows upper layers get notified for new blocks.
+     */
+    protected NewBlockListener newBlockListener;
 
 
     /**
@@ -82,6 +90,7 @@ public abstract class BlockDAG {
     public Reference putBlock(Block block) {
         Reference ref = BlockUtil.byRef(block);
         if (blockStorage.putIfAbsent(ref, block) == null) {
+            newBlockListener.onNewBlock(block);
             return ref;
         }
         return null;
@@ -130,7 +139,7 @@ public abstract class BlockDAG {
      */
     public void addAllBlocks(Iterable<Block> blocks) {
         blocks.forEach(b -> {
-            addBlock(b);
+            putBlock(b);
         });
     }
 
@@ -151,4 +160,21 @@ public abstract class BlockDAG {
     public com.vegvisir.core.datatype.proto.Block.VectorClock computeFrontierSet() {
         return null;
     }
+
+    public void setNewBlockListener(NewBlockListener newBlockListener) {
+        this.newBlockListener = newBlockListener;
+    }
+
+    public abstract void createBlock(Iterable<com.vegvisir.core.datatype.proto.Block.Transaction> transactions,
+                                     Iterable<Reference> parents);
+
+    public Set<Reference> getFrontierBlocks() {
+        return Collections.emptySet();
+    }
+
+    public Set<String> computeWitness(Reference ref) {
+        return Collections.emptySet();
+    };
+
+    public void witness(Block block, String remoteId) {}
 }
