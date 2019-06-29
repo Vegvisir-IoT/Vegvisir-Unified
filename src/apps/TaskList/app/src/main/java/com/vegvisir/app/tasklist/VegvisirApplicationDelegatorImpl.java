@@ -1,5 +1,7 @@
 package com.vegvisir.app.tasklist;
 
+import android.util.Log;
+
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationDelegator;
 import com.vegvisir.pub_sub.VegvisirInstance;
@@ -37,9 +39,8 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
             TransactionID tx_id,
             Set<TransactionID> deps) {
 
-
-
         String payloadString = new String(payload);
+        Log.i("appimpl",payloadString);
 
         int transactionType = Integer.parseInt(payloadString.substring(0,1));
         String item = payloadString.substring(1);

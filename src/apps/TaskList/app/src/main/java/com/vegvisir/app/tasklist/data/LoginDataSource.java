@@ -55,7 +55,7 @@ public class LoginDataSource {
         else{
             //usernames.put(username, password);
             int hash = (username + password).hashCode();
-            String payloadString = "1" +  username + "," + hash;
+            String payloadString = "5" +  username + "," + hash;
             byte[] payload = payloadString.getBytes();
             Set<String> topics = new HashSet<String>();
             topics.add(LoginActivity.topic);
