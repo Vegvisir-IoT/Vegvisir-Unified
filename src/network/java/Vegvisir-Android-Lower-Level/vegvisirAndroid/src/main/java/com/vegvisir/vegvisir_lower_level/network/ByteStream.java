@@ -114,6 +114,7 @@ public class ByteStream {
                 requestTask.addOnFailureListener((t) -> {
                     Log.e(TAG, "onEndpointFound: ", t);
                     Log.d(TAG, "onEndpointFound: " + t.getMessage());
+//                    restart();
                     if (t.getMessage().equals("8012: STATUS_ENDPOINT_IO_ERROR")) {
                         restart();
                     }
@@ -182,6 +183,7 @@ public class ByteStream {
                             isDiscovering = false;
                         }
                         connections.put(endpoint2id.get(endPoint), new EndPointConnection(endPoint,
+                                endpoint2id.get(endPoint),
                                 appContext,
                                 self));
                         connections.get(endpoint2id.get(endPoint)).setConnected(true);
@@ -200,9 +202,9 @@ public class ByteStream {
             synchronized (lock) {
                 activeEndPoint = null;
                 connections.get(endpoint2id.get(endPoint)).setConnected(false);
-                disconnectedId.add(endPoint);
+                disconnectedId.add(endpoint2id.get(endPoint));
             }
-            Log.d(TAG, "disconnect: Disconnected with " + endPoint);
+            Log.d(TAG, "disconnect: Disconnected with " + endpoint2id.get(endPoint));
             start();
         }
     };
@@ -343,14 +345,14 @@ public class ByteStream {
                 isDiscovering = true;
             }
         } else {
-            String endPoint = "testConn";
-            connections.putIfAbsent(endPoint, new
-                    EndPointConnection(endPoint,
-                    appContext,
-                    self));
-            activeEndPoint = endPoint;
-            connections.get(activeEndPoint).setConnected(true);
-            establishedConnection.add(connections.get(activeEndPoint));
+//            String endPoint = "testConn";
+//            connections.putIfAbsent(endPoint, new
+//                    EndPointConnection(endPoint,
+//                    appContext,
+//                    self));
+//            activeEndPoint = endPoint;
+//            connections.get(activeEndPoint).setConnected(true);
+//            establishedConnection.add(connections.get(activeEndPoint));
         }
     }
 
@@ -360,21 +362,22 @@ public class ByteStream {
 
     /**
      * Disconnect from particular endpoint.
-     * @param id
+     * @param remoteID a string format of remote public key
      */
-    public void disconnect(String id) {
+    public void disconnect(String remoteID) {
+        Log.d(TAG, "disconnect: DISCONNECT CALLED");
+        String id = connections.get(remoteID).getEndPointId();
         if (id.equals(getActiveEndPoint())) {
-            String remoteId = endpoint2id.get(id);
-            connections.get(remoteId).waitUntilFlushAllData();
+            connections.get(remoteID).waitUntilFlushAllData();
 //            client.disconnectFromEndpoint(id);
             synchronized (lock) {
-                connections.get(remoteId).setConnected(false);
-                disconnectedId.add(remoteId);
+                connections.get(remoteID).setConnected(false);
+                disconnectedId.add(remoteID);
                 activeEndPoint = null;
                 start();
             }
         }
-        Log.d(TAG, "disconnect: Disconnected with " + id);
+        Log.d(TAG, "disconnect: Disconnected with " + remoteID);
     }
 
     public void pause() {
@@ -385,6 +388,10 @@ public class ByteStream {
 
     private void restart() {
         synchronized (this) {
+            if (activeEndPoint != null) {
+                Log.d(TAG, "restart: return from restart");
+                return;
+            }
             isDiscovering = false;
             client.stopDiscovery();
             client.stopAdvertising();

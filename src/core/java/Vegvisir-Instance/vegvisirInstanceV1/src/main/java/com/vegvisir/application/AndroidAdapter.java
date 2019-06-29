@@ -114,11 +114,11 @@ public class AndroidAdapter implements NetworkAdapter {
     /**
      * Disconnect to a particular endpoint. Disconnecting should only happen after all data have been sent to the remote side.
      *
-     * @param endpoint
+     * @param remoteID
      */
     @Override
-    public void disconnect(String endpoint) {
-        network.disconnect(endpoint);
+    public void disconnect(String remoteID) {
+        network.disconnect(remoteID);
     }
 
     public Deque<String> getConnectionHistory() {

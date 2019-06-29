@@ -4,6 +4,7 @@ import com.google.protobuf.ByteString;
 import com.vegvisir.core.blockdag.BlockDAG;
 import com.vegvisir.core.blockdag.BlockDAGv1;
 import com.vegvisir.core.blockdag.BlockUtil;
+import com.vegvisir.core.blockdag.DataManager;
 import com.vegvisir.core.blockdag.NewBlockListener;
 import com.vegvisir.core.blockdag.ReconciliationEndListener;
 import com.vegvisir.core.config.Config;
@@ -78,6 +79,7 @@ public class VegvisirCore implements Runnable {
      */
     public VegvisirCore(NetworkAdapter adapter,
                         Class<? extends ReconciliationProtocol> protocol,
+                        DataManager manager,
                         Block genesisBlock,
                         KeyPair keyPair,
                         String userid) {
@@ -90,7 +92,7 @@ public class VegvisirCore implements Runnable {
             userid = ByteString.copyFrom(keyPair.getPublic().getEncoded()).toString();
 
         config = new Config(userid, keyPair);
-        dag = new BlockDAGv1(genesisBlock, config);
+        dag = new BlockDAGv1(genesisBlock, config, manager);
         this.protocol = protocol;
         service = Executors.newCachedThreadPool();
         transactionBuffer = new HashSet<>();
@@ -98,13 +100,13 @@ public class VegvisirCore implements Runnable {
         adapter.onConnectionLost(this::onLostConnection);
     }
 
-    public VegvisirCore(NetworkAdapter adapter, Class<ReconciliationProtocol> protocol) {
-        this(adapter, protocol, null, null, null);
-    }
-
-    public VegvisirCore(NetworkAdapter adapter) {
-        this(adapter, ReconciliationV1.class, null, null, null);
-    }
+//    public VegvisirCore(NetworkAdapter adapter, Class<ReconciliationProtocol> protocol) {
+//        this(adapter, protocol, null, null, null, null);
+//    }
+//
+//    public VegvisirCore(NetworkAdapter adapter) {
+//        this(adapter, ReconciliationV1.class, null, null, null);
+//    }
 
     public void updateProtocol(Class<? extends ReconciliationProtocol> newProtocol)
     {

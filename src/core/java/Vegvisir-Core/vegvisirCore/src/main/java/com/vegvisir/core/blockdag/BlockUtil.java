@@ -4,7 +4,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.Value;
 import com.isaacsheff.charlotte.proto.Reference;
 import com.isaacsheff.charlotte.proto.Block;
-import com.vegvisir.common.datatype.proto.ControlSignal;
+import com.isaacsheff.charlotte.proto.Hash;
 import com.vegvisir.core.config.Config;
 
 import java.util.ArrayList;
@@ -69,5 +69,18 @@ public class BlockUtil {
             return id.getHash().getSha3().toStringUtf8();
         else
             return id.getPublicKey().getEllipticCurveP256().getByteString().toStringUtf8();
+    }
+
+    public static String ref2Str(Reference ref) {
+        return hash2Str(ref.getHash());
+    }
+
+    public static String hash2Str(Hash hash) {
+        return hash.getSha3().toStringUtf8();
+    }
+
+    public static Reference refStr2Ref(String refStr) {
+        Hash hash = Hash.newBuilder().setSha3(ByteString.copyFromUtf8(refStr)).build();
+        return byRef(hash);
     }
 }
