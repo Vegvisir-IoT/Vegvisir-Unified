@@ -4,6 +4,7 @@ package com.vegvisir.app.annotativemap;
  * Created by jiangyi on 09/07/2017.
  */
 
+import com.vegvisir.app.annotativemap.ui.login.LoginActivity;
 import com.vegvisir.pub_sub.TransactionID;
 
 import android.content.Intent;
@@ -35,7 +36,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 //        Log.i("Before click","3");
         PictureTagLayout image = findViewById(R.id.image);
 //        Log.i("Before click","4");
-        image.setBackgroundResource(R.drawable.example_map);
+        image.setBackgroundResource(R.drawable.large_search_1);
 //        Log.i("Before click","5");
         image.load(); //read /sdcard/info.txt and init the subviews(annotations)
 //        image.write();
@@ -97,7 +98,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 
                 String payloadString = "1" + coords.getX() + "," + coords.getY() + "," + anno;
                 byte[] payload = payloadString.getBytes();
-                MainActivity.instance.addTransaction(MainActivity.context,topics,payload,dependencies);
+                LoginActivity.instance.addTransaction(MainActivity.context,topics,payload,dependencies);
 //                MainActivity.annotations.put(coords,new Annotation(anno));
 //                MainActivity.imageAtCoords.put(coords,image);
                 //image.setStatus(Status.Normal,anno);
@@ -156,7 +157,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 //            }
                 String payloadString = "0" + view.getXVal() + "," + view.getYVal() + "," + anno;
                 byte[] payload = payloadString.getBytes();
-                MainActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
+                LoginActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
                 Log.i("In the try","");
                 super.onActivityResult(requestCode, resultCode, annotation);
             } catch (Exception e) {

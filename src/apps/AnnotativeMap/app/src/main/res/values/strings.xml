@@ -2,7 +2,7 @@
     <string name="app_name">Annotative Map</string>
     <string name="remove_button_text">Remove</string>
     <string name="item_editText_hint">Write the name of the item you want to add/remove</string>
-    <string name="title_activity_login">Sign in</string>
+    <string name="title">Annotated Map</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>

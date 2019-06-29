@@ -352,12 +352,12 @@
         "source": "/Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/1f2d78a0ba115b3c0bdcd193265db934/res/drawable-hdpi-v4/notification_bg_low_normal.9.png"
     },
     {
-        "merged": "/Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/build/intermediates/res/merged/debug/layout_notification_template_lines_media.xml.flat",
-        "source": "/Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/1aeeb3657f812f6039c81caa13f25f5c/res/layout/notification_template_lines_media.xml"
-    },
-    {
         "merged": "/Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/build/intermediates/res/merged/debug/drawable_common_google_signin_btn_text_light_normal.xml.flat",
         "source": "/Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/f40838d6e2e4e058e4db2ed53803c956/res/drawable/common_google_signin_btn_text_light_normal.xml"
+    },
+    {
+        "merged": "/Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/build/intermediates/res/merged/debug/layout_notification_template_lines_media.xml.flat",
+        "source": "/Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/1aeeb3657f812f6039c81caa13f25f5c/res/layout/notification_template_lines_media.xml"
     },
     {
         "merged": "/Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/build/intermediates/res/merged/debug/drawable-xxhdpi-v4_common_google_signin_btn_icon_light_normal_background.9.png.flat",
@@ -948,6 +948,10 @@
         "source": "/Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/d4bdc15f75a0f6ca3dd03299b40f719f/res/drawable-xxhdpi-v4/abc_list_longpressed_holo.9.png"
     },
     {
+        "merged": "/Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/build/intermediates/res/merged/debug/drawable_map.xml.flat",
+        "source": "/Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/res/drawable/map.xml"
+    },
+    {
         "merged": "/Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/build/intermediates/res/merged/debug/drawable_abc_ic_voice_search_api_material.xml.flat",
         "source": "/Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/d4bdc15f75a0f6ca3dd03299b40f719f/res/drawable/abc_ic_voice_search_api_material.xml"
     },
@@ -1320,6 +1324,10 @@
         "source": "/Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/f40838d6e2e4e058e4db2ed53803c956/res/drawable-xxhdpi-v4/googleg_standard_color_18.png"
     },
     {
+        "merged": "/Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/build/intermediates/res/merged/debug/drawable_ic_example_map.xml.flat",
+        "source": "/Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/res/drawable/ic_example_map.xml"
+    },
+    {
         "merged": "/Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/build/intermediates/res/merged/debug/layout-v21_notification_action_tombstone.xml.flat",
         "source": "/Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/1f2d78a0ba115b3c0bdcd193265db934/res/layout-v21/notification_action_tombstone.xml"
     },
@@ -1686,6 +1694,10 @@
     {
         "merged": "/Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/build/intermediates/res/merged/debug/drawable-mdpi-v4_abc_ic_star_black_36dp.png.flat",
         "source": "/Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/d4bdc15f75a0f6ca3dd03299b40f719f/res/drawable-mdpi-v4/abc_ic_star_black_36dp.png"
+    },
+    {
+        "merged": "/Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/build/intermediates/res/merged/debug/drawable_large_search_1.png.flat",
+        "source": "/Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/res/drawable/large_search_1.png"
     },
     {
         "merged": "/Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/build/intermediates/res/merged/debug/drawable-mdpi-v4_abc_popup_background_mtrl_mult.9.png.flat",

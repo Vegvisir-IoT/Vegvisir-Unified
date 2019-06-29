@@ -10,7 +10,7 @@
     android:id="@+id/pic"
     android:layout_margin="1dp"
     android:weightSum="1"
-    tools:context=".picture" >
+    tools:context=".picture">
 
     <com.vegvisir.app.annotativemap.PictureTagLayout
         android:id="@+id/image"

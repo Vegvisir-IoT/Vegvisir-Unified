@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-38:12
-INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-38:12
-INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-38:12
-INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-38:12
+ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-37:12
+INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-37:12
+INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-37:12
+INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-37:12
 MERGED from [com.google.android.material:material:1.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/e1f604620695c3c55a27f9f3d3b0e1e3/AndroidManifest.xml:17:1-24:12
 MERGED from [:vegvisirInstanceV1] /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/deps/vegvisirInstanceV1/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-19:12
 MERGED from [androidx.appcompat:appcompat:1.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/d4bdc15f75a0f6ca3dd03299b40f719f/AndroidManifest.xml:17:1-22:12
@@ -46,25 +46,25 @@ MERGED from [androidx.documentfile:documentfile:1.0.0] /Users/aniroodhravikumar/
 MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/ab122070382d92c47b67f9ec3a0bdbd9/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.print:print:1.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/9a359a84efea3bbc01f8a1bd762f0384/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/8994565478be1f599ddcb37372d5c50a/AndroidManifest.xml:17:1-22:12
-INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-38:12
-INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-38:12
-INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-38:12
+INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-37:12
+INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-37:12
+INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-37:12
 	package
 		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:3:5-45
 		INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
 		INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
 	android:versionName
 		INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
-		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-38:12
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-37:12
 		INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
 	android:versionCode
 		INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
-		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-38:12
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:1-37:12
 		INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml
 	xmlns:android
 		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:2:11-69
 application
-ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:5:5-36:19
+ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:5:5-35:19
 MERGED from [com.google.android.material:material:1.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/e1f604620695c3c55a27f9f3d3b0e1e3/AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.0.0] /Users/aniroodhravikumar/.gradle/caches/transforms-2/files-2.1/e1f604620695c3c55a27f9f3d3b0e1e3/AndroidManifest.xml:22:5-20
 MERGED from [:vegvisirInstanceV1] /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/deps/vegvisirInstanceV1/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:5-17:43
@@ -106,7 +106,7 @@ MERGED from [androidx.lifecycle:lifecycle-process:2.0.0] /Users/aniroodhravikuma
 activity#com.vegvisir.app.annotativemap.ui.login.LoginActivity
 ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:12:9-19:20
 	android:label
-		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:14:13-57
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:14:13-42
 	android:name
 		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:13:13-51
 intent-filter#action:name:android.intent.action.LoginActivity+category:name:android.intent.category.LAUNCHER
@@ -120,33 +120,33 @@ ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegv
 	android:name
 		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:17:27-74
 activity#com.vegvisir.app.annotativemap.MainActivity
-ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:20:9-26:20
+ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:20:9-25:20
 	android:name
 		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:20:19-47
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:21:13-25:29
+ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:21:13-24:29
 action#android.intent.action.MAIN
 ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:22:17-69
 	android:name
 		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:22:25-66
 activity#com.vegvisir.app.annotativemap.picture
-ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:27:9-29:44
+ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:26:9-28:44
 	android:label
-		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:29:13-32
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:28:13-32
 	android:name
-		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:28:13-36
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:27:13-36
 activity#com.vegvisir.app.annotativemap.add_annotation
-ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:30:9-32:55
+ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:29:9-31:55
 	android:label
-		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:32:13-43
-	android:name
 		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:31:13-43
-activity#com.vegvisir.app.annotativemap.send
-ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:33:9-35:45
-	android:label
-		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:35:13-33
 	android:name
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:30:13-43
+activity#com.vegvisir.app.annotativemap.send
+ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:32:9-34:45
+	android:label
 		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:34:13-33
+	android:name
+		ADDED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml:33:13-33
 uses-sdk
 INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /Users/aniroodhravikumar/Desktop/University/Summer 2019/Vegvisir/Vegvisir-Unified/src/apps/AnnotativeMap/app/src/main/AndroidManifest.xml

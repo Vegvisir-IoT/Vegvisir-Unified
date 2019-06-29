@@ -1048,11 +1048,14 @@ drawable design_snackbar_background
 drawable example_map
 drawable googleg_disabled_color_18
 drawable googleg_standard_color_18
+drawable ic_example_map
 drawable ic_launcher_background
 drawable ic_launcher_foreground
 drawable ic_mtrl_chip_checked_black
 drawable ic_mtrl_chip_checked_circle
 drawable ic_mtrl_chip_close_circle
+drawable large_search_1
+drawable map
 drawable mtrl_snackbar_background
 drawable mtrl_tabs_default_indicator
 drawable navigation_empty_icon
@@ -1480,7 +1483,7 @@ string prompt_password
 string remove_button_text
 string search_menu_title
 string status_bar_notification_info_overflow
-string title_activity_login
+string title
 string welcome
 style AlertDialog_AppCompat
 style AlertDialog_AppCompat_Light

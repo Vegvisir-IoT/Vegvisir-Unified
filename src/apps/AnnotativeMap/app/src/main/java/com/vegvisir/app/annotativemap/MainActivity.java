@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import android.util.Log;
 
+import com.vegvisir.app.annotativemap.ui.login.LoginActivity;
 import com.vegvisir.application.VegvisirInstanceV1;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
@@ -53,9 +54,9 @@ public class MainActivity extends AppCompatActivity {
 //        virtual.registerApplicationDelegator(context,delegator);
         Context androidContext = getApplicationContext();
 
-        instance = VegvisirInstanceV1.getInstance(androidContext);
-        instance.registerApplicationDelegator(context, delegator);
-        this.deviceId = instance.getThisDeviceID();
+//        instance = VegvisirInstanceV1.getInstance(androidContext);
+//        instance.registerApplicationDelegator(context, delegator);
+        this.deviceId = LoginActivity.instance.getThisDeviceID();
 
         editButton = findViewById(R.id.editimg);
 
