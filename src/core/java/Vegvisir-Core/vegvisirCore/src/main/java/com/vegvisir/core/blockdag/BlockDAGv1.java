@@ -20,14 +20,22 @@ public class BlockDAGv1 extends BlockDAG {
 
     private Set<Reference> frontierReference;
 
+    DataManager manager;
+
     public BlockDAGv1(Block genesisBlock) {
         super(genesisBlock, null);
     }
 
-    public BlockDAGv1(Block genesisBlock, Config config) {
+    public BlockDAGv1(Block genesisBlock, Config config, DataManager manager) {
         super(genesisBlock, config);
+        this.manager = manager;
         frontierReference = new HashSet<>();
-        witnessMap = new HashMap<>();
+        witnessMap = manager.loadWitnessMap();
+        Block oldGenesisBlock = manager.loadGenesisBlock();
+        this.genesisBlock = oldGenesisBlock == null ? genesisBlock : oldGenesisBlock;
+        blockStorage.putIfAbsent(BlockUtil.byRef(this.genesisBlock), this.genesisBlock);
+        manager.saveGenesisBlock(this.genesisBlock);
+        addAllBlocks(manager.loadBlockSet());
     }
 
     public BlockDAGv1() {
@@ -66,6 +74,7 @@ public class BlockDAGv1 extends BlockDAG {
     public synchronized void addAllBlocks(Iterable<Block> blocks) {
         blocks.forEach(b -> {
             putBlock(b);
+            manager.saveBlock(b);
             frontierReference.removeAll(b.getVegvisirBlock().getBlock().getParentsList());
             frontierReference.add(BlockUtil.byRef(b));
         });
@@ -114,10 +123,16 @@ public class BlockDAGv1 extends BlockDAG {
             witnessMap.get(ref).add(config.getDeviceID());
         }
         witnessMap.get(ref).add(remoteId);
+        manager.updateWitnessMap(ref, witnessMap.get(ref));
     }
 
     @Override
     public void witness(Block block, String remoteId) {
         witness(BlockUtil.byRef(block), remoteId);
+    }
+
+
+    void registerDataManager(DataManager manager) {
+        this.manager = manager;
     }
 }

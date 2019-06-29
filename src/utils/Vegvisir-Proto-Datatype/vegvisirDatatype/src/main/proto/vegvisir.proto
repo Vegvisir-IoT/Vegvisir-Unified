@@ -10,6 +10,16 @@ package vegvisir.core.datatype;
 import "common.proto";
 import "vegvisirCommon.proto";
 
+message BlockDAG {
+    message witnesses {
+        repeated string devices = 1;
+    }
+    Block genesis = 1;
+    map<string, Block> blocks = 2;
+    repeated charlotte.Reference frontier_set = 3;
+    map<string, witnesses> witness_map = 4;
+}
+
 message Block {
 
     message VectorClock {
