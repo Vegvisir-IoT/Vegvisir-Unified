@@ -114,6 +114,7 @@ public class ByteStream {
                 requestTask.addOnFailureListener((t) -> {
                     Log.e(TAG, "onEndpointFound: ", t);
                     Log.d(TAG, "onEndpointFound: " + t.getMessage());
+//                    restart();
                     if (t.getMessage().equals("8012: STATUS_ENDPOINT_IO_ERROR")) {
                         restart();
                     }
@@ -203,7 +204,7 @@ public class ByteStream {
                 connections.get(endpoint2id.get(endPoint)).setConnected(false);
                 disconnectedId.add(endpoint2id.get(endPoint));
             }
-            Log.d(TAG, "disconnect: Disconnected with " + endPoint);
+            Log.d(TAG, "disconnect: Disconnected with " + endpoint2id.get(endPoint));
             start();
         }
     };
@@ -364,6 +365,7 @@ public class ByteStream {
      * @param remoteID a string format of remote public key
      */
     public void disconnect(String remoteID) {
+        Log.d(TAG, "disconnect: DISCONNECT CALLED");
         String id = connections.get(remoteID).getEndPointId();
         if (id.equals(getActiveEndPoint())) {
             connections.get(remoteID).waitUntilFlushAllData();
@@ -386,6 +388,10 @@ public class ByteStream {
 
     private void restart() {
         synchronized (this) {
+            if (activeEndPoint != null) {
+                Log.d(TAG, "restart: return from restart");
+                return;
+            }
             isDiscovering = false;
             client.stopDiscovery();
             client.stopAdvertising();

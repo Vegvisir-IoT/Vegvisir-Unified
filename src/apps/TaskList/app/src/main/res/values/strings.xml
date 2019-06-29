@@ -7,7 +7,7 @@
     <string name="switch_button_text">Switch</string>
     <string name="logout_button_text">Log out</string>
     <string name="item_editText_hint">Write the name of the item you want to add/remove</string>
-    <string name="title_activity_login">Sign in</string>
+    <string name="title_activity_login">Task List</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>

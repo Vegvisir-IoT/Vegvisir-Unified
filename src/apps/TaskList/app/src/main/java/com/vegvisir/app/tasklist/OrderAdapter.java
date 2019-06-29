@@ -1,13 +1,13 @@
 package com.vegvisir.app.tasklist;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.vegvisir.app.tasklist.ui.login.LoginActivity;
 import com.vegvisir.pub_sub.TransactionID;
 
 import java.util.HashSet;
@@ -36,7 +36,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
 
 
     public View getView(final int position, View convertView, ViewGroup parent){
-        Log.i("getView","is called");
+//        Log.i("getView","is called");
         View listItemView = convertView;
         if(listItemView == null){
             listItemView = LayoutInflater.from(getContext()).inflate(
@@ -92,7 +92,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
                     dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
                 }
 
-                MainActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
+                LoginActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
 //                clear();
 //                addAll(MainActivity.items);
 //                notifyDataSetChanged();
@@ -122,7 +122,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
                     dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
                 }
 
-                MainActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
+                LoginActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
 //                clear();
 //                addAll(MainActivity.items);
 //                notifyDataSetChanged();
@@ -152,7 +152,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
                     dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
                 }
 
-                MainActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
+                LoginActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
 //                clear();
 //                addAll(MainActivity.items);
 //                notifyDataSetChanged();
@@ -182,7 +182,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
                     dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
                 }
 
-                MainActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
+                LoginActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
 //                clear();
 //                addAll(MainActivity.items);
 //                notifyDataSetChanged();
