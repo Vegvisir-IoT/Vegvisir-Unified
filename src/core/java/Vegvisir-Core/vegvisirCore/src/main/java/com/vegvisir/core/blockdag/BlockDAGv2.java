@@ -25,7 +25,7 @@ public class BlockDAGv2 extends BlockDAG {
     /**
      * A hash map mapping cryptoId -> blockchain.
      */
-    private HashMap<String, Blockchain> blockchains;
+    private HashMap<String, BlockchainV1> blockchains;
 
     private final Set<Reference> leadingSet;
 
@@ -133,7 +133,14 @@ public class BlockDAGv2 extends BlockDAG {
      */
     @Override
     public VectorClock computeFrontierSet() {
-        return blockchains.get(BlockUtil.cryptoId2Str(this.config.getCryptoId())).getLastVectorClock();
+        VectorClock.Builder builder = VectorClock.newBuilder();
+        blockchains.entrySet().forEach(entry -> {
+            VectorClock.Value value = VectorClock.Value.newBuilder()
+                    .setIndex(entry.getValue().getBlockList().size())
+                    .setCryptoId(entry.getValue().getCryptoId()).build();
+            builder.putValues(entry.getKey(), value);
+        });
+        return builder.build();
     }
 
 
@@ -147,13 +154,19 @@ public class BlockDAGv2 extends BlockDAG {
         /* finding the last common frontier set */
         Set<Reference> commonFrontierSet = new HashSet<>();
         VectorClock myClock = computeFrontierSet();
+        int index = 0;
         for (Map.Entry<String, VectorClock.Value> entry: myClock.getValuesMap().entrySet()) {
-            VectorClock.Value value = remoteVC.getValuesMap().get(entry.getKey());
+            index = 0;
+            if (remoteVC.getValuesMap().containsKey(entry.getKey())) {
+                VectorClock.Value value = remoteVC.getValuesMap().get(entry.getKey());
+                index = Math.min(value.getIndex(), entry.getValue().getIndex());
+            }
             commonFrontierSet.add(
                     blockchains.get(entry.getKey())
                             .getBlockList()
-                            .get(Math.min(value.getIndex(), entry.getValue().getIndex()))
+                            .get(index)
             );
+
         }
         Blockchain thisChain = blockchains.get(BlockUtil.cryptoId2Str(this.config.getCryptoId()));
         Reference leadingBlock = thisChain.getBlockList().get(thisChain.getBlockList().size()-1);
@@ -222,5 +235,9 @@ public class BlockDAGv2 extends BlockDAG {
     @Override
     public void createBlock(Iterable<com.vegvisir.core.datatype.proto.Block.Transaction> transactions, Iterable<Reference> parents) {
 
+    }
+
+    public void updateVCForDevice(String deviceID, VectorClock vc) {
+        blockchains.get(deviceID).setLatestVC(vc);
     }
 }

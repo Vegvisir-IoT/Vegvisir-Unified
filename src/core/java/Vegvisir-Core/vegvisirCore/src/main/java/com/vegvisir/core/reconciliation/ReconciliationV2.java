@@ -9,33 +9,48 @@ import com.vegvisir.core.blockdag.BlockDAG;
 import com.vegvisir.network.datatype.proto.Payload;
 import com.vegvisir.network.datatype.proto.VegvisirProtocolMessage;
 
+import javax.management.RuntimeErrorException;
+
 public class ReconciliationV2 extends ReconciliationV1 {
 
     protected Block.VectorClock remoteVector;
 
     boolean connEnded = false;
 
+    BlockDAGv2 dag;
+
+    ReconciliationV2() {
+        super();
+        setVersion(2, 0, 0);
+    }
+
+    @Override
+    public void exchangeBlocks(BlockDAG myDAG, String remoteConnectionID, ReconciliationEndListener listener) {
+        if (!(myDAG instanceof BlockDAGv2))
+            throw new RuntimeException("Reconciliation V2 must use BlockDAGv2 or higher. Got "+myDAG.getClass().getName());
+        exchangeBlocks((BlockDAGv2)myDAG, remoteConnectionID, listener);
+    }
+
     /**
      * This is a pull based reconciliation algorithm.
      * @param myDAG
      * @param remoteConnectionID
      */
-    @Override
-    public void exchangeBlocks(BlockDAG myDAG, String remoteConnectionID, ReconciliationEndListener listener) {
+    public void exchangeBlocks(BlockDAGv2 myDAG, String remoteConnectionID, ReconciliationEndListener listener) {
         /**
          * Send protocol version to the remote side and figure out a version that both can understand.
          * The final version should be the highest one that both can understand.
          */
-        sendVersion();
+//        sendVersion();
 
-        if (this.runningVersion.compareTo(this.getVersion()) < 0) {
-            /*
-             * If current version is higher than running version, then we let parent class handle this.
-             * This will eventually be handled because all nodes should be able to run version 1.
-             */
-            super.exchangeBlocks(myDAG, remoteConnectionID, listener);
-            return;
-        }
+//        if (this.runningVersion.compareTo(this.getVersion()) < 0) {
+//            /*
+//             * If current version is higher than running version, then we let parent class handle this.
+//             * This will eventually be handled because all nodes should be able to run version 1.
+//             */
+//            super.exchangeBlocks(myDAG, remoteConnectionID, listener);
+//            return;
+//        }
 
         this.dag = myDAG;
         this.remoteId = remoteConnectionID;
@@ -60,6 +75,7 @@ public class ReconciliationV2 extends ReconciliationV1 {
             /*TODO: Set error message, remote vector unknown */
             return;
         }
+        dag.updateVCForDevice(remoteConnectionID, remoteVector);
         Iterable<com.isaacsheff.charlotte.proto.Block> blocks =
                 dag.findMissedBlocksByVectorClock(remoteVector);
 
@@ -79,7 +95,7 @@ public class ReconciliationV2 extends ReconciliationV1 {
             /* If connection ended by remote peer */
             dispatchThread.interrupt();
             gossipLayer.disconnect(this.remoteId);
-            dag.addLeadingBlock();
+//            dag.addLeadingBlock();
         }
     }
 
@@ -133,12 +149,12 @@ public class ReconciliationV2 extends ReconciliationV1 {
         Version remoteVersion = new Version(remoteV.getMajor(), remoteV.getMinor(), remoteV.getPatch());
 
         switch (payload.getMessage().getCmd()) {
-            case VERSION:
-                synchronized (lock) {
-                    this.runningVersion = checkVersion(remoteVersion);
-                    lock.notifyAll();
-                }
-                break;
+//            case VERSION:
+//                synchronized (lock) {
+//                    this.runningVersion = checkVersion(remoteVersion);
+//                    lock.notifyAll();
+//                }
+//                break;
 
             case ADD_BLOCKS:
                 synchronized (lock) {
