@@ -1,19 +1,16 @@
 package com.vegvisir.app.tasklist;
 //123456 password
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.vegvisir.app.tasklist.ui.login.LoginActivity;
 import com.vegvisir.application.VegvisirInstanceV1;
@@ -72,19 +69,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        /* Get Permission */
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION)) {
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
-            }
-        } else {
-        }
 
         mAdapter = new OrderAdapter(this, R.layout.swipe, new ArrayList<String>());
 
@@ -97,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         channels.add(topic);
         context = new VegvisirApplicationContext(appID, desc, channels);
         Context androidContext = getApplicationContext();
+        Log.i("arecontextssame",Boolean.toString(androidContext.equals(LoginActivity.androidContext)));
 
         instance = VegvisirInstanceV1.getInstance(androidContext);
         instance.registerApplicationDelegator(context, delegator);
@@ -214,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 //virtual.addTransaction(context, topics, payload, dependencies);
-                instance.addTransaction(context, topics, payload, dependencies);
+                LoginActivity.instance.addTransaction(context, topics, payload, dependencies);
 
 
                 MainActivity.this.runOnUiThread(new Runnable() {
