@@ -1,8 +1,6 @@
 package com.vegvisir.vegvisir_lower_level.network;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.annotation.NonNull;
 import android.util.Pair;
 import android.util.Log;
 
@@ -155,7 +153,7 @@ public class Network {
      * @param handler
      * @return true if register successfully
      */
-    public boolean registerHandler(@NonNull String id, @NonNull PayloadHandler handler) {
+    public boolean registerHandler(String id, PayloadHandler handler) {
         return dispatcher.registerHandler(id, handler);
     }
 

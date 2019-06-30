@@ -1,7 +1,6 @@
 package com.vegvisir.vegvisir_lower_level.network;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 import android.util.Pair;
 import android.util.Log;
 
@@ -78,7 +77,7 @@ public class ByteStream {
     /* Callbacks for receiving payloads */
     private final PayloadCallback payloadCallback = new PayloadCallback() {
         @Override
-        public void onPayloadReceived(@NonNull String endPointId, @NonNull Payload payload) {
+        public void onPayloadReceived(String endPointId, Payload payload) {
             String remoteId = endpoint2id.get(endPointId);
             if (connections.containsKey(remoteId)) {
                 recv(remoteId, payload);
@@ -86,7 +85,7 @@ public class ByteStream {
         }
 
         @Override
-        public void onPayloadTransferUpdate(@NonNull String endPointId, @NonNull
+        public void onPayloadTransferUpdate(String endPointId,
                 PayloadTransferUpdate payloadTransferUpdate) {
         }
     };
@@ -94,7 +93,7 @@ public class ByteStream {
     /* Callbacks for finding other devices */
     private final EndpointDiscoveryCallback endpointDiscoveryCallback = new EndpointDiscoveryCallback() {
         @Override
-        public void onEndpointFound(@NonNull String endPoint, @NonNull DiscoveredEndpointInfo
+        public void onEndpointFound(String endPoint, DiscoveredEndpointInfo
                 discoveredEndpointInfo) {
             String remoteId = discoveredEndpointInfo.getEndpointName();
             Log.i(TAG, "onEndpointFound: "+ discoveredEndpointInfo.getEndpointName() + "/" + endPoint);
@@ -135,7 +134,7 @@ public class ByteStream {
         }
 
         @Override
-        public void onEndpointLost(@NonNull String endpoint) {
+        public void onEndpointLost(String endpoint) {
             Log.d("INFO", "ENDPOINT LOST");
             nearbyEndpoints.remove(endpoint);
         }
@@ -144,7 +143,7 @@ public class ByteStream {
     /* Callbacks for connections to other devices */
     private final ConnectionLifecycleCallback connectionLifecycleCallback = new ConnectionLifecycleCallback() {
         @Override
-        public void onConnectionInitiated(@NonNull String endPoint, @NonNull ConnectionInfo connectionInfo) {
+        public void onConnectionInitiated(String endPoint, ConnectionInfo connectionInfo) {
             Log.d(TAG, "onConnectionInitiated: Received Connection Request");
             endpoint2id.putIfAbsent(endPoint, connectionInfo.getEndpointName());
             if (activeEndPoint != null) {
@@ -166,7 +165,7 @@ public class ByteStream {
         }
 
         @Override
-        public void onConnectionResult(@NonNull String endPoint, @NonNull ConnectionResolution connectionResolution) {
+        public void onConnectionResult(String endPoint, ConnectionResolution connectionResolution) {
 
             Log.d(TAG, "onConnectionResult: " + connectionResolution.getStatus().getStatusMessage());
 
@@ -198,7 +197,7 @@ public class ByteStream {
         }
 
         @Override
-        public void onDisconnected(@NonNull String endPoint) {
+        public void onDisconnected(String endPoint) {
             synchronized (lock) {
                 activeEndPoint = null;
                 connections.get(endpoint2id.get(endPoint)).setConnected(false);

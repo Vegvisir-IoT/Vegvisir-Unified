@@ -174,11 +174,9 @@ public abstract class BlockDAG {
         return Collections.emptySet();
     }
 
-    public Set<String> computeWitness(Reference ref) {
-        return Collections.emptySet();
-    };
+    public abstract Set<String> computeWitness(Reference ref);
 
-    public void witness(Block block, String remoteId) {}
+    public abstract void witness(Block block, String remoteId);
 
 
     public void save() {}

@@ -48,7 +48,7 @@ public class BlockchainV1 extends Blockchain {
         Block.UserBlock content = Block.UserBlock.newBuilder().addAllParents(_parents)
                 .setUserid(_dag.getConfig().getNodeId())
                 .setCryptoID(this.getCryptoId())
-                .setClock(BlockUtil.incrementClock(this.getCryptoId(), this.getLastVectorClock()))
+                .setHeight(_blocks.size()+1)
                 .setTimestamp(com.vegvisir.common.datatype.proto.Timestamp.newBuilder().setUtcTime(new Date().getTime()).build())
                 .addAllTransactions(transactions)
                 .build();

@@ -1,7 +1,6 @@
 package com.vegvisir.vegvisir_lower_level.network;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.Task;
 import com.vegvisir.vegvisir_lower_level.utils.Utils;
@@ -42,10 +41,10 @@ public class EndPointConnection {
 
     private Boolean flushCondition = false;
 
-    public EndPointConnection(@NonNull String endPointId,
-                              @NonNull String remoteID,
-                              @NonNull Context context,
-                              @NonNull ByteStream stream) {
+    public EndPointConnection(String endPointId,
+                              String remoteID,
+                              Context context,
+                              ByteStream stream) {
         this.remoteID = remoteID;
         this.endPointId = endPointId;
         this.stream = stream;

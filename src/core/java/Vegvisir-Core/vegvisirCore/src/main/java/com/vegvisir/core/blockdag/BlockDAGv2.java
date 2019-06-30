@@ -12,6 +12,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -239,5 +240,17 @@ public class BlockDAGv2 extends BlockDAG {
 
     public void updateVCForDevice(String deviceID, VectorClock vc) {
         blockchains.get(deviceID).setLatestVC(vc);
+    }
+
+    @Override
+    public Set<String> computeWitness(Reference ref) {
+        Block block = blockStorage.get(ref);
+        block.getVegvisirBlock().getBlock().getHeight();
+        return Collections.emptySet();
+    }
+
+    @Override
+    public void witness(Block block, String remoteId) {
+
     }
 }
