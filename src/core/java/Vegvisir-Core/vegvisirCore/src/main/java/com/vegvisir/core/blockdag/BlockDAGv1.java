@@ -63,6 +63,7 @@ public class BlockDAGv1 extends BlockDAG {
      * Helper method for version 0.1
      * @param blocks a collection of blocks to be append to the block dag.
      */
+    @Override
     public synchronized void addAllBlocks(Iterable<Block> blocks) {
         blocks.forEach(b -> {
             putBlock(b);

@@ -13,6 +13,9 @@ import java.util.Set;
 
 public class BlockchainV1 extends Blockchain {
 
+
+    Block.VectorClock latestVC;
+
     /**
      * Constructor for a blockchain.
      * @param dag the DAG owns this blockchain.
@@ -98,5 +101,13 @@ public class BlockchainV1 extends Blockchain {
     protected boolean IntegrityCheck(com.isaacsheff.charlotte.proto.Block block) {
         /* TODO: Implement this */
         return true;
+    }
+
+    public void setLatestVC(Block.VectorClock latestVC) {
+        this.latestVC = latestVC;
+    }
+
+    public Block.VectorClock getLatestVC() {
+        return latestVC;
     }
 }
