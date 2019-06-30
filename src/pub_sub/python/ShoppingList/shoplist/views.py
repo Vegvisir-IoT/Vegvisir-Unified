@@ -24,3 +24,6 @@ def index(request):
     shoplist.people = [user1]
     
     return render(request, 'index.html', {'shoplist' : shoplist})
+
+def apply(request):
+    return
