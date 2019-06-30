@@ -1,33 +1,29 @@
 package com.vegvisir.application;
 
-import android.app.Application;
 import android.content.Context;
-import android.support.v4.util.Pair;
 
 import com.google.protobuf.ByteString;
 import com.isaacsheff.charlotte.proto.Block;
+import com.isaacsheff.charlotte.proto.Reference;
 import com.vegvisir.VegvisirCore;
+import com.vegvisir.core.blockdag.DataManager;
 import com.vegvisir.core.blockdag.NewBlockListener;
 import com.vegvisir.core.blockdag.ReconciliationEndListener;
 import com.vegvisir.core.config.Config;
+import com.vegvisir.core.datatype.proto.Block.Transaction;
 import com.vegvisir.core.reconciliation.ReconciliationV1;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
 import com.vegvisir.pub_sub.VegvisirApplicationDelegator;
 import com.vegvisir.pub_sub.VegvisirInstance;
-import com.vegvisir.core.datatype.proto.Block.Transaction;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -66,6 +62,11 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
 
     private String deviceID;
 
+    private DataManager dataManager;
+
+    private int appCount = 0;
+    private int backupCount = 0;
+
     private static String PUB_FILENAME = "pub";
     private static String PRV_FILENAME = "prv";
 
@@ -84,20 +85,24 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
     }
 
     private VegvisirInstanceV1(Context ctx) {
-        keyPair = getKeyPair(ctx);
-        deviceID = Config.pk2str(keyPair.getPublic());
-        core = new VegvisirCore(new AndroidAdapter(ctx, deviceID),
-                ReconciliationV1.class,
-                createGenesisBlock(keyPair),
-                keyPair,
-                deviceID
-        );
-        core.registerNewBlockListener(this);
-        core.registerReconciliationEndListener(this);
         transactionQueue = new LinkedBlockingDeque<>();
         topic2app = new ConcurrentHashMap<>();
         app2handler = new ConcurrentHashMap<>();
         tx2block = new ConcurrentHashMap<>();
+        keyPair = getKeyPair(ctx);
+        deviceID = Config.pk2str(keyPair.getPublic());
+        dataManager = VegvisirDataManager.getDataManager(ctx);
+        backupCount = dataManager.loadAppCount();
+        core = new VegvisirCore(new AndroidAdapter(ctx, deviceID),
+                ReconciliationV1.class,
+                dataManager,
+                this,
+                createGenesisBlock(keyPair),
+                keyPair,
+                deviceID
+        );
+        core.registerReconciliationEndListener(this);
+
         new Thread(this::pollTransactions).start();
         new Thread(core).start();
     }
@@ -166,7 +171,7 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
 
                 });
             } catch (InterruptedException ex) {
-                System.err.println("Interrupted transaction polling thread! Will exit.");
+//                System.err.println("Interrupted transaction polling thread! Will exit.");
                 break;
             }
         }
@@ -218,6 +223,11 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
             topic2app.get(t).add(context.getAppID());
         });
         app2handler.put(context.getAppID(), delegator);
+        appCount ++;
+        dataManager.updateAppCount(appCount);
+        if (appCount >= backupCount) {
+            core.tryRecoverBlocks();
+        }
         return true;
     }
 
@@ -283,7 +293,7 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
      */
     private Block createGenesisBlock(KeyPair keyPair) {
         com.vegvisir.core.datatype.proto.Block.GenesisBlock genesis =
-                                com.vegvisir.core.datatype.proto.Block.GenesisBlock.newBuilder() .build();
+                                com.vegvisir.core.datatype.proto.Block.GenesisBlock.newBuilder().build();
         return Block.newBuilder().setVegvisirBlock(
                 com.vegvisir.core.datatype.proto.Block.newBuilder()
                 .setGenesisBlock(genesis)
@@ -301,5 +311,4 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
         return Transaction.TransactionId.newBuilder().setDeviceId(id.getDeviceID()).setTransactionHeight(id.getTransactionHeight())
                 .build();
     }
-
 }
