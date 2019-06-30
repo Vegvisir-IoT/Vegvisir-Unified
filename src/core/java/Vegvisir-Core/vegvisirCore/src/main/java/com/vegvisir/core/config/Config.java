@@ -8,7 +8,7 @@ import com.vegvisir.core.blockdag.BlockUtil;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.jce.spec.ECPublicKeySpec;
+import org.bouncycastle.jce.spec.ECPrivateKeySpec;
 
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
@@ -24,6 +24,7 @@ import java.security.Security;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.spec.ECGenParameterSpec;
+import java.security.spec.ECPublicKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;

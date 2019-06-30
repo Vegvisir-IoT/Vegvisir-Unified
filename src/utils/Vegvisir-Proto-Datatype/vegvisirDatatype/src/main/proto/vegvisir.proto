@@ -10,6 +10,7 @@ package vegvisir.core.datatype;
 import "common.proto";
 import "vegvisirCommon.proto";
 
+
 message Block {
 
     message VectorClock {
