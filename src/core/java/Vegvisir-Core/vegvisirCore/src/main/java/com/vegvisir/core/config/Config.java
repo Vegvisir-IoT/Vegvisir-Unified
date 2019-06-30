@@ -217,6 +217,7 @@ public class Config {
             return false;
 //        } catch(NoSuchProviderException e) {
 //            return false;
+
         } catch (InvalidKeySpecException e) {
             logger.info("tried to verify a signature which had an invalid key");
             return false; // the key was invalid

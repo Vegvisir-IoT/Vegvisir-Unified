@@ -8,8 +8,13 @@ import com.isaacsheff.charlotte.proto.Reference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class BlockchainV1 extends Blockchain {
+
+
+    Block.VectorClock latestVC;
 
     /**
      * Constructor for a blockchain.
@@ -38,7 +43,9 @@ public class BlockchainV1 extends Blockchain {
      */
     @Override
     public synchronized Reference createBlock(Iterable<Block.Transaction> transactions, Iterable<Reference> parents) {
-        Block.UserBlock content = Block.UserBlock.newBuilder().addAllParents(parents)
+        Set<Reference> _parents = new HashSet<>();
+        parents.forEach(_parents::add);
+        Block.UserBlock content = Block.UserBlock.newBuilder().addAllParents(_parents)
                 .setUserid(_dag.getConfig().getNodeId())
                 .setCryptoID(this.getCryptoId())
                 .setClock(BlockUtil.incrementClock(this.getCryptoId(), this.getLastVectorClock()))
@@ -94,5 +101,13 @@ public class BlockchainV1 extends Blockchain {
     protected boolean IntegrityCheck(com.isaacsheff.charlotte.proto.Block block) {
         /* TODO: Implement this */
         return true;
+    }
+
+    public void setLatestVC(Block.VectorClock latestVC) {
+        this.latestVC = latestVC;
+    }
+
+    public Block.VectorClock getLatestVC() {
+        return latestVC;
     }
 }
