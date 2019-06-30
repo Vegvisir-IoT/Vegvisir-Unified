@@ -42,7 +42,7 @@ public class VegvisirCore implements Runnable {
     private Gossip gossipLayer;
 
     /* Block DAG containing real blocks */
-    private final BlockDAG dag;
+    private final BlockDAGv1 dag;
 
     /* Protocol that this instance will use for reconciliation with peers */
     private Class<? extends ReconciliationProtocol> protocol;
@@ -80,6 +80,7 @@ public class VegvisirCore implements Runnable {
     public VegvisirCore(NetworkAdapter adapter,
                         Class<? extends ReconciliationProtocol> protocol,
                         DataManager manager,
+                        NewBlockListener listener,
                         Block genesisBlock,
                         KeyPair keyPair,
                         String userid) {
@@ -92,7 +93,7 @@ public class VegvisirCore implements Runnable {
             userid = ByteString.copyFrom(keyPair.getPublic().getEncoded()).toString();
 
         config = new Config(userid, keyPair);
-        dag = new BlockDAGv1(genesisBlock, config, manager);
+        dag = new BlockDAGv1(genesisBlock, config, manager, listener);
         this.protocol = protocol;
         service = Executors.newCachedThreadPool();
         transactionBuffer = new HashSet<>();
@@ -199,5 +200,9 @@ public class VegvisirCore implements Runnable {
 
     private long getNIncTransactionHeight() {
         return transactionHeight++;
+    }
+
+    public void tryRecoverBlocks() {
+        dag.recoverBlocks();
     }
 }
