@@ -81,6 +81,7 @@ public class BlockDAGv1 extends BlockDAG {
         });
     }
 
+    @Override
     public void recoverBlocks() {
         manager.loadBlockSet().forEach(b -> {
             blockStorage.putIfAbsent(BlockUtil.byRef(b), b);

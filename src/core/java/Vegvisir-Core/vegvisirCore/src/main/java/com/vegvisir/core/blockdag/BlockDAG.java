@@ -47,6 +47,11 @@ public abstract class BlockDAG {
 //        blockStorage.put(BlockUtil.byRef(genesisBlock), genesisBlock);
     }
 
+    public BlockDAG(Block genesisBlock, Config config, NewBlockListener listener) {
+        this(genesisBlock, config);
+        this.newBlockListener = listener;
+    }
+
 
     /**
      * A default constructor.
@@ -198,5 +203,7 @@ public abstract class BlockDAG {
     public Reference  createBlock(String cryptoID, Iterable<com.vegvisir.core.datatype.proto.Block.Transaction> transactions, Iterable<Reference> parents) {
         return null;
     }
+
+    public abstract void recoverBlocks();
 
 }

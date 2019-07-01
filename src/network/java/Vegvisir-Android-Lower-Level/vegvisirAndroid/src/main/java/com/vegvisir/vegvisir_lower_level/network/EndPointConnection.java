@@ -99,6 +99,7 @@ public class EndPointConnection {
      * @return the arrived payload.
      * @throws InterruptedException
      */
+    @Deprecated
     public Payload blockingRecv() throws InterruptedException {
         return recvQueue.take();
     }

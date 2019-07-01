@@ -23,6 +23,8 @@ public class AndroidAdapter implements NetworkAdapter {
 
     private Deque<String> connectionHistory;
 
+    private static final long INTERVAL = 1000L;
+
 
     public AndroidAdapter(Context context, String id) {
         network = new Network(context, id);
@@ -119,6 +121,7 @@ public class AndroidAdapter implements NetworkAdapter {
     @Override
     public void disconnect(String remoteID) {
         network.disconnect(remoteID);
+        network.ignore(remoteID, INTERVAL);
     }
 
     public Deque<String> getConnectionHistory() {

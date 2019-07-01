@@ -38,6 +38,7 @@ public class Network {
      * Start dispatching arrived payload by running a separate polling thread whose job is
      * keeping blocking reading input from current connection.
      */
+    @Deprecated
     private void startDispatcher() {
         pollingThread = new Thread(() -> {
             for (;;) {
@@ -66,6 +67,7 @@ public class Network {
      * Blocking wait for a new connection
      * @return a id for the incoming connection
      */
+    @Deprecated
     public String onConnection() {
         try {
             return activeConnection.take();
@@ -90,6 +92,7 @@ public class Network {
         byteStream.getConnectionByID(id).send(payload);
     }
 
+    @Deprecated
     public void send(Payload payload) throws ConnectionNotAvailableException {
         send(getActiveRemoteID(), payload);
     }
@@ -99,6 +102,7 @@ public class Network {
      * @param id connection id
      * @return
      */
+    @Deprecated
     public Payload recv(String id) {
         try {
             return byteStream.getConnectionByID(id).blockingRecv();
@@ -112,6 +116,7 @@ public class Network {
      * @param id the connection id
      * @param callback the callback function taking received payload.
      */
+    @Deprecated
     public void recv(final String id, Function<Payload, Void> callback) {
         new Thread(() -> {
             try {
@@ -153,6 +158,7 @@ public class Network {
      * @param handler
      * @return true if register successfully
      */
+    @Deprecated
     public boolean registerHandler(String id, PayloadHandler handler) {
         return dispatcher.registerHandler(id, handler);
     }

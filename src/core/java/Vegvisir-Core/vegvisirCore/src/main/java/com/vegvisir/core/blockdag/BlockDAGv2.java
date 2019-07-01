@@ -30,10 +30,17 @@ public class BlockDAGv2 extends BlockDAG {
 
     private final Set<Reference> leadingSet;
 
-    public BlockDAGv2() {
-        super();
+    private DataManager manager;
+
+    public BlockDAGv2(Block genesisBlock, Config config, DataManager manager, NewBlockListener listener) {
+        super(genesisBlock, config, listener);
+        this.manager = manager;
         blockchains = new HashMap<>();
         leadingSet = new HashSet<>();
+        Block oldGenesisBlock = manager.loadGenesisBlock();
+        this.genesisBlock = oldGenesisBlock == null ? genesisBlock : oldGenesisBlock;
+        blockStorage.putIfAbsent(BlockUtil.byRef(this.genesisBlock), this.genesisBlock);
+        manager.saveGenesisBlock(this.genesisBlock);
     }
 
     /**
@@ -170,8 +177,8 @@ public class BlockDAGv2 extends BlockDAG {
 
         }
         Blockchain thisChain = blockchains.get(BlockUtil.cryptoId2Str(this.config.getCryptoId()));
-        Reference leadingBlock = thisChain.getBlockList().get(thisChain.getBlockList().size()-1);
-        return _findMissedBlocks(commonFrontierSet, leadingBlock);
+//        Reference leadingBlock = thisChain.getBlockList().get(thisChain.getBlockList().size()-1);
+        return _findMissedBlocks(commonFrontierSet, leadingSet);
     }
 
 
@@ -182,14 +189,13 @@ public class BlockDAGv2 extends BlockDAG {
      * happens before), then, indexOf(Block A) > indexOf(Block B).
      *
      * @param commonFrontierSet
-     * @param leader
+     * @param leaderSet
      * @return a list of blocks preserving the partial order of blocks based on their dependencies.
      */
-    private List<Block> _findMissedBlocks(Set<Reference> commonFrontierSet, Reference leader) {
-        Deque<Reference> references = new ArrayDeque<>();
+    private List<Block> _findMissedBlocks(Set<Reference> commonFrontierSet, Set<Reference> leaderSet) {
+        Deque<Reference> references = new ArrayDeque<>(leaderSet);
         Set<Reference> dupRefs = new HashSet<>();
         List<Block> blocks = new ArrayList<>();
-        references.add(leader);
         while (!references.isEmpty()) {
             Reference next = references.poll();
             if (!dupRefs.add(next) || commonFrontierSet.contains(next))
@@ -204,6 +210,7 @@ public class BlockDAGv2 extends BlockDAG {
 
 
     @Override
+    @Deprecated
     public void addLeadingBlock() {
         createBlock(BlockUtil.cryptoId2Str(config.getCryptoId()), Collections.emptyList(), Collections.emptyList());
     }
@@ -213,6 +220,7 @@ public class BlockDAGv2 extends BlockDAG {
     }
 
     @Override
+    @Deprecated
     public Set<Reference> getLeadingBlocks() {
         return leadingSet;
     }
@@ -242,15 +250,36 @@ public class BlockDAGv2 extends BlockDAG {
         blockchains.get(deviceID).setLatestVC(vc);
     }
 
+    /**
+     * Compute how many witness for a particular block.
+     * @param ref the reference for the block
+     * @return a set of device ids who have seen the given block(reference).
+     */
     @Override
     public Set<String> computeWitness(Reference ref) {
+        Set<String> witnessDevices = new HashSet<>();
         Block block = blockStorage.get(ref);
-        block.getVegvisirBlock().getBlock().getHeight();
-        return Collections.emptySet();
+        long height = block.getVegvisirBlock().getBlock().getHeight();
+        String id = BlockUtil.cryptoId2Str(block.getVegvisirBlock().getBlock().getCryptoID());
+        blockchains.entrySet().forEach(bc -> {
+            VectorClock.Value vc = bc.getValue().getLatestVC().getValuesMap().getOrDefault(id, null);
+            if (vc != null && vc.getIndex() >= height) {
+                witnessDevices.add(bc.getKey());
+            }
+        });
+        return witnessDevices;
     }
 
     @Override
-    public void witness(Block block, String remoteId) {
+    public void witness(Block block, String remoteId) {}
 
+    @Override
+    public void recoverBlocks() {
+        manager.loadBlockSet().forEach(b -> {
+            blockStorage.putIfAbsent(BlockUtil.byRef(b), b);
+            newBlockListener.onNewBlock(b);
+            leadingSet.removeAll(b.getVegvisirBlock().getBlock().getParentsList());
+            leadingSet.add(BlockUtil.byRef(b));
+        });
     }
 }
