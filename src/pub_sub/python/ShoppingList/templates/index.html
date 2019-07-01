@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Shopping List</title>
 </head>
 <body>
     <center>
@@ -14,6 +14,13 @@
                 <p>{{item.name}}</p>
             {% endif %}
         {% endfor %}
+
+        <form action="add" method='POST'>
+
+            {% csrf_token %}
+            <input placeholder="Add to list" type="text" name="newitem"><br>
+            <input type="submit">
+        </form>
     </div>
 </center>
 </body>
