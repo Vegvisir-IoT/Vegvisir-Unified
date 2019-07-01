@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import android.util.Log;
 
 import com.vegvisir.app.annotativemap.ui.login.LoginActivity;
+import com.vegvisir.app.annotativemap.ui.login.LoginImpl;
 import com.vegvisir.application.VegvisirInstanceV1;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
@@ -29,15 +30,15 @@ public class MainActivity extends AppCompatActivity {
 
     public static String deviceId = "deviceA";
     public static VegvisirApplicationContext context = null;
-    private static VegvisirApplicationDelegatorImpl delegator = new VegvisirApplicationDelegatorImpl();
-    public static String topic = "Map";
+    private static LoginImpl delegator = new LoginImpl();
+    public static String topic = "Red team";
     private static String appID = "456";
     private static String desc = "Annotated map";
     private static Set<String> channels = new HashSet<>();
     private String anno;
 
 //    public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
-//    public static VegvisirInstance instance = null;
+    public static VegvisirInstance instance = null;
     private Timer timer;
 
     @Override
@@ -51,9 +52,9 @@ public class MainActivity extends AppCompatActivity {
 //        virtual.registerApplicationDelegator(context,delegator);
         Context androidContext = getApplicationContext();
 
-//        instance = VegvisirInstanceV1.getInstance(androidContext);
-//        instance.registerApplicationDelegator(context, delegator);
-        this.deviceId = LoginActivity.instance.getThisDeviceID();
+        instance = VegvisirInstanceV1.getInstance(androidContext);
+        instance.registerApplicationDelegator(context, delegator);
+        this.deviceId = instance.getThisDeviceID();
 
         editButton = findViewById(R.id.editimg);
 

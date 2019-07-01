@@ -113,9 +113,9 @@ public class PictureTagLayout extends RelativeLayout implements OnTouchListener 
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                Log.i("Action","move");
-                moveView((int) event.getX(),
-                        (int) event.getY());
+//                Log.i("Action","move");
+//                moveView((int) event.getX(),
+//                        (int) event.getY());
                 break;
             case MotionEvent.ACTION_UP:
                 Log.i("Action","up");

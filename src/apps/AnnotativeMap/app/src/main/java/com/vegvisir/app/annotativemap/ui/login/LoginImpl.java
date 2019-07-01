@@ -135,6 +135,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 
             Coordinates coords = new Coordinates(x,y);
 
+            while (MainActivity.currentPicture == null);
             PictureTagLayout image = MainActivity.currentPicture.findViewById(R.id.image);
             PictureTagView pointView = image.justHasView(x,y);
             if (pointView != null) {
