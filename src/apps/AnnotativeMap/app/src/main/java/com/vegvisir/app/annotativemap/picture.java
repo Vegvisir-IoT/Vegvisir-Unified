@@ -36,7 +36,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 //        Log.i("Before click","3");
         PictureTagLayout image = findViewById(R.id.image);
 //        Log.i("Before click","4");
-        image.setBackgroundResource(R.drawable.large_search_1);
+        image.setBackgroundResource(R.drawable.example_map);
 //        Log.i("Before click","5");
         image.load(); //read /sdcard/info.txt and init the subviews(annotations)
 //        image.write();
@@ -98,7 +98,9 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 
                 String payloadString = "1" + coords.getX() + "," + coords.getY() + "," + anno;
                 byte[] payload = payloadString.getBytes();
-                LoginActivity.instance.addTransaction(MainActivity.context,topics,payload,dependencies);
+                Log.i("gets","here");
+                LoginActivity.instance.addTransaction(LoginActivity.context,topics,payload,dependencies);
+                Log.i("gets","after");
 //                MainActivity.annotations.put(coords,new Annotation(anno));
 //                MainActivity.imageAtCoords.put(coords,image);
                 //image.setStatus(Status.Normal,anno);
@@ -157,7 +159,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 //            }
                 String payloadString = "0" + view.getXVal() + "," + view.getYVal() + "," + anno;
                 byte[] payload = payloadString.getBytes();
-                LoginActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
+                LoginActivity.instance.addTransaction(LoginActivity.context, topics, payload, dependencies);
                 Log.i("In the try","");
                 super.onActivityResult(requestCode, resultCode, annotation);
             } catch (Exception e) {

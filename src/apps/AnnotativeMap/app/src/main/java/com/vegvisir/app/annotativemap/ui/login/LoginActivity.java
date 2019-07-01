@@ -1,8 +1,10 @@
 package com.vegvisir.app.annotativemap.ui.login;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,6 +20,8 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -56,7 +60,6 @@ public class LoginActivity extends AppCompatActivity {
     private String appID = "123";
     private  String desc = "task list";
     private Set<String> channels = new HashSet<String>();
-    private Timer timer;
     public static VegvisirInstance instance = null;
 
     public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
@@ -67,6 +70,18 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
+            }
+        }
 
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
@@ -83,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
         this.deviceId = instance.getThisDeviceID();
 
 //        virtual.registerApplicationDelegator(context, delegator);
-        this.deviceId = instance.getThisDeviceID();
+//        this.deviceId = virtual.getThisDeviceID();
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override

@@ -37,11 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private String anno;
 
 //    public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
-    public static VegvisirInstance instance = null;
+//    public static VegvisirInstance instance = null;
     private Timer timer;
-
-    public static String deviceID2 = "DeviceB";
-    private int count = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
