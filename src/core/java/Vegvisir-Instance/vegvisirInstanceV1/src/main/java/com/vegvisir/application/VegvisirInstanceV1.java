@@ -65,6 +65,9 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
 
     private DataManager dataManager;
 
+    private int appCount = 0;
+    private int backupCount = 0;
+
     private static String PUB_FILENAME = "pub";
     private static String PRV_FILENAME = "prv";
 
@@ -81,22 +84,24 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
     }
 
     private VegvisirInstanceV1(Context ctx) {
-        keyPair = getKeyPair(ctx);
-        deviceID = Config.pk2str(keyPair.getPublic());
-        dataManager = VegvisirDataManager.getDataManager(ctx);
-        core = new VegvisirCore(new AndroidAdapter(ctx, deviceID),
-                ReconciliationV1.class,
-                dataManager,
-                createGenesisBlock(keyPair),
-                keyPair,
-                deviceID
-        );
-        core.registerNewBlockListener(this);
-        core.registerReconciliationEndListener(this);
         transactionQueue = new LinkedBlockingDeque<>();
         topic2app = new ConcurrentHashMap<>();
         app2handler = new ConcurrentHashMap<>();
         tx2block = new ConcurrentHashMap<>();
+        keyPair = getKeyPair(ctx);
+        deviceID = Config.pk2str(keyPair.getPublic());
+        dataManager = VegvisirDataManager.getDataManager(ctx);
+        backupCount = dataManager.loadAppCount();
+        core = new VegvisirCore(new AndroidAdapter(ctx, deviceID),
+                ReconciliationV1.class,
+                dataManager,
+                this,
+                createGenesisBlock(keyPair),
+                keyPair,
+                deviceID
+        );
+        core.registerReconciliationEndListener(this);
+
         new Thread(this::pollTransactions).start();
         new Thread(core).start();
     }
@@ -217,6 +222,11 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
             topic2app.get(t).add(context.getAppID());
         });
         app2handler.put(context.getAppID(), delegator);
+        appCount ++;
+        dataManager.updateAppCount(appCount);
+        if (appCount >= backupCount) {
+            core.tryRecoverBlocks();
+        }
         return true;
     }
 

@@ -2,7 +2,8 @@ package com.vegvisir.vegvisir_lower_level.network;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
-import androidx.core.util.Pair;
+import androidx.annotation.NonNull;
+import android.util.Pair;
 import android.util.Log;
 
 import com.vegvisir.vegvisir_lower_level.network.Exceptions.ConnectionNotAvailableException;
