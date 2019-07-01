@@ -1,13 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.contrib import messages
 from django.contrib.auth.models import User, auth
 
-from .models import Item, Person, ShoppingList, Transaction
+from .models import Item, Person, ShoppingList, Transaction, Mock
 
 
 # Create your views here.
 
 def login(request):
+    return redirect('')
+'''
     if(request.method == 'POST'):
         userid = request.POST['userid']
 
@@ -18,26 +21,16 @@ def login(request):
             return redirect('/')
         else:    
             messages.info(request, 'invalid credentials')
+            return redirect('login.html')
+
     else:
         return render(request, 'login.html')
+'''
+
 def index(request):
-    item1 = Item()
-    item1.name = "apples"
-    item1.isOn = True
-
-    item2 = Item()
-    item2.name = "bananas"
-    item2.isOn = True
-
-    user1 = Person()
-    user1.name = "Me"
-    user1.deviceID = "123"
-    user1.transactionHeight = 1
-
-    shoplist = ShoppingList()
-    shoplist.items = [item1, item2]
-    shoplist.people = [user1]
-    return render(request, 'index.html', {'shoplist' : shoplist})
+   
+    applist = Mock.applist
+    return render(request, 'index.html', {'shoplist' : applist})
 
 def add(request):
     newTxn = Transaction()
@@ -46,14 +39,27 @@ def add(request):
     #push transaction to blockchain
     #shoplist = shoplist + newitem
     
-    apply(request) #because only 1 witness is necessary
-    return render(request, 'index.html')
+    apply(newTxn) #because only 1 witness is necessary
+
+    applist = Mock.applist
+    for x in applist.items:
+        print(x.name)
+    return redirect('index')
 
 
-def apply(request):
+def apply(newTxn):
 
-    txn = Transaction #valid transaction from blockchain
+    txns = Mock.txns
+    txn = Mock.txns[0] #valid transaction from blockchain
     newItem = Item()
-    newItem.name = txn.payload
+    newItem.name = newTxn.payload
+    
+    applist = Mock.applist
 
-    return render(request, 'index.html', {'shoplist' : shoplist})
+    num = 0
+    for item in applist.items:
+        if item.name == newItem.name:
+            num += 1
+
+    newItem.isOn = not (num % 2)
+    applist.items = applist.items + [newItem]

@@ -8,20 +8,30 @@
 </head>
 <body>
     <center>
-    <div class = "list" style="border: solid black; margin: 10%;">
-        {% for item in shoplist.items %}
-            {% if item.isOn %}
-                <p>{{item.name}}</p>
-            {% endif %}
-        {% endfor %}
+    <div class = "list" style="border: solid black; margin: 10%; padding: 10%;">
+       
+            {% for item in shoplist.items %}
+                {% if item.isOn %}
+                    <p>{{item.name}}</p>
+                {% endif %}
+            {% endfor %}
 
-        <form action="add" method='POST'>
+            <form action="add" method='POST'>
 
-            {% csrf_token %}
-            <input placeholder="Add to list" type="text" name="newitem"><br>
-            <input type="submit">
-        </form>
+                {% csrf_token %}
+                <input placeholder="Add to list" type="text" name="newitem"><br>
+                <input type="submit" value="add">
+            </form>
+        <!-- {% if user.is_authenticated %}
+            <h1> {{user.username}} </h1> -->
+        <!--    
+        {% else %}
+            <form action="login">
+                <button type="submit">log in</button>
+            </form>
+        {% endif %}
+        -->
     </div>
-</center>
+    </center>
 </body>
 </html>
