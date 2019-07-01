@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -55,12 +56,14 @@ public class LoginActivity extends AppCompatActivity {
     public static Set<TransactionID> topDeps = new HashSet<>();
     public static TransactionID top = new TransactionID("", -1);
     public static  VegvisirApplicationContext context = null;
-    private LoginImpl delegator = new LoginImpl();
+    public static LoginImpl delegator;
     public static String topic = "Blue team";
     private String appID = "123";
     private  String desc = "task list";
     private Set<String> channels = new HashSet<String>();
     public static VegvisirInstance instance = null;
+    public static Button loginButton;
+    public static Button registerButton;
 
     public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
 
@@ -85,20 +88,22 @@ public class LoginActivity extends AppCompatActivity {
 
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
-        final Button loginButton = findViewById(R.id.login);
-        final Button registerButton = findViewById(R.id.register);
+        loginButton = findViewById(R.id.login);
+        registerButton = findViewById(R.id.register);
+//        loginButton.setEnabled(false);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
         channels.add(topic);
         context = new VegvisirApplicationContext(appID, desc, channels);
         Context androidContext = getApplicationContext();
+        delegator = new LoginImpl(this);
 
         instance = VegvisirInstanceV1.getInstance(androidContext);
         instance.registerApplicationDelegator(context, delegator);
         this.deviceId = instance.getThisDeviceID();
 
-//        virtual.registerApplicationDelegator(context, delegator);
-//        this.deviceId = virtual.getThisDeviceID();
+        virtual.registerApplicationDelegator(context, delegator);
+        this.deviceId = virtual.getThisDeviceID();
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override

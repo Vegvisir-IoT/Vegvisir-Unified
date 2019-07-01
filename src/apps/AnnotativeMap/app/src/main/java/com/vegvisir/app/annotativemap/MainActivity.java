@@ -28,13 +28,8 @@ public class MainActivity extends AppCompatActivity {
     public static TransactionID top = new TransactionID("",-1);
     public static picture currentPicture = null;
 
-    public static String deviceId = "deviceA";
-    public static VegvisirApplicationContext context = null;
-    private static LoginImpl delegator = new LoginImpl();
-    public static String topic = "Red team";
-    private static String appID = "456";
-    private static String desc = "Annotated map";
-    private static Set<String> channels = new HashSet<>();
+//    public static VegvisirApplicationContext context = null;
+//    private static LoginImpl delegator = new LoginImpl();
     private String anno;
 
 //    public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
@@ -46,15 +41,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        channels.add(topic);
-        context = new VegvisirApplicationContext(appID,desc,channels);
-
 //        virtual.registerApplicationDelegator(context,delegator);
         Context androidContext = getApplicationContext();
 
         instance = VegvisirInstanceV1.getInstance(androidContext);
-        instance.registerApplicationDelegator(context, delegator);
-        this.deviceId = instance.getThisDeviceID();
+        instance.registerApplicationDelegator(LoginActivity.context, LoginActivity.delegator);
 
         editButton = findViewById(R.id.editimg);
 

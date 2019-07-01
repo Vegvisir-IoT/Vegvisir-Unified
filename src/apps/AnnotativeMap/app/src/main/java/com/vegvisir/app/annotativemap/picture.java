@@ -18,7 +18,7 @@ import android.widget.Button;
 import java.util.*;
 
 public class picture extends AppCompatActivity implements View.OnClickListener{
-    private Button send = null;
+    private Button logout = null;
     public int cur_pic_number = 0;
     final String ANNOTATION = "Annotation";
     final String TIME = "CURRENT";
@@ -42,20 +42,16 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 //        image.write();
         MainActivity.currentPicture = this;
 
-        send = findViewById(R.id.send);
-        send.setOnClickListener(this);
+        logout = findViewById(R.id.logout);
+        logout.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.send:
-                Intent intent = new Intent(picture.this, send.class);
-                PictureTagLayout image = findViewById(R.id.image);
-                String content = image.message();
-                image.write(content);
-                intent.putExtra("CONTENT", content);
-                startActivityForResult(intent,0);
+            case R.id.logout:
+                Intent intent = new Intent(picture.this, LoginActivity.class);
+                startActivity(intent);
                 break;
             default:
                 break;
@@ -82,7 +78,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
                 }
 
                 Set<String> topics = new HashSet<>();
-                topics.add(MainActivity.topic);
+                topics.add(LoginActivity.topic);
                 Set<TransactionID> dependencies = new HashSet<>();
 
                 if (MainActivity.dependencySets.containsKey(coords)) {
@@ -92,8 +88,8 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
                         dependencies.add(tt.transaction);
                     }
                 }
-                if (MainActivity.latestTransactions.containsKey(MainActivity.deviceId)) {
-                    dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
+                if (MainActivity.latestTransactions.containsKey(LoginActivity.deviceId)) {
+                    dependencies.add(MainActivity.latestTransactions.get(LoginActivity.deviceId));
                 }
 
                 String payloadString = "1" + coords.getX() + "," + coords.getY() + "," + anno;
@@ -126,7 +122,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
                     coords = new Coordinates(image.startX, image.startY);
                 }
                 Set<String> topics = new HashSet<>();
-                topics.add(MainActivity.topic);
+                topics.add(LoginActivity.topic);
                 Set<TransactionID> dependencies = new HashSet<>();
 
                 if (MainActivity.dependencySets.containsKey(coords)) {
@@ -136,8 +132,8 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
                         dependencies.add(tt.transaction);
                     }
                 }
-                if (MainActivity.latestTransactions.containsKey(MainActivity.deviceId)) {
-                    dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
+                if (MainActivity.latestTransactions.containsKey(LoginActivity.deviceId)) {
+                    dependencies.add(MainActivity.latestTransactions.get(LoginActivity.deviceId));
                 }
 
                 if (MainActivity.annotations.containsKey(coords)) {

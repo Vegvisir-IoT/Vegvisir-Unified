@@ -53,6 +53,7 @@ public class LoginDataSource {
             throw new IOException("This username already exists");
         }
         else{
+//            LoginActivity.loginButton.setEnabled(false);
             //usernames.put(username, password);
             int hash = (username + password).hashCode();
             String payloadString = "5" +  username + "," + hash;

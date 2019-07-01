@@ -1,5 +1,6 @@
 package com.vegvisir.app.annotativemap.ui.login;
 
+import android.app.Activity;
 import android.util.Log;
 
 import com.vegvisir.app.annotativemap.Annotation;
@@ -18,6 +19,7 @@ import com.vegvisir.pub_sub.VegvisirInstance;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -25,6 +27,11 @@ import java.util.Set;
  */
 public class LoginImpl implements VegvisirApplicationDelegator {
 
+    private Activity loginActivity;
+
+    public LoginImpl(Activity a) {
+        this.loginActivity = a;
+    }
 
     /**
      * Vegvisir will call this function to init and run application.
@@ -51,6 +58,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 
 
         String payloadString = new String(payload);
+        Log.i("payload",payloadString);
         int transactionType = Integer.parseInt(payloadString.substring(0,1));
         if (transactionType > 4) {
             int usernamePos = payloadString.indexOf(",");
@@ -124,6 +132,8 @@ public class LoginImpl implements VegvisirApplicationDelegator {
             for (User u: newSet){
                 LoginActivity.usernames.put(u.getUsername(), u.getPassword());
             }
+
+//            loginActivity.runOnUiThread(() -> LoginActivity.loginButton.setEnabled(true));
         }
 
         else{
@@ -242,7 +252,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
                 }
 
                 else {
-                    addSet.add(new FullAnnotation(coords,anno));
+                    removeSet.add(new FullAnnotation(coords,anno));
                 }
 
             }
@@ -322,28 +332,25 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 
             for (FullAnnotation fa: removeSetTop) {
                 Coordinates c = fa.getCoords();
-
-                PictureTagView view = image.justHasView(c.getX(),c.getY());
-                if (view != null) {
-                    Coordinates adjustedCoords = new Coordinates(view.getXVal(),view.getYVal());
-                    MainActivity.annotations.get(adjustedCoords).setShouldRemove(true);
+                if (MainActivity.annotations.containsKey(c)) {
+                    Log.i("removefound",MainActivity.annotations.get(c).getAnnotation());
+                    MainActivity.annotations.get(c).setShouldRemove(true);
                 }
-                else {
-                    Log.i("Remove view","not found");
+            }
+
+            HashSet<Coordinates> entriesToRemove = new HashSet<>();
+
+            for(Map.Entry<Coordinates, Annotation> entry : MainActivity.annotations.entrySet()) {
+                Coordinates c = entry.getKey();
+                Annotation a = entry.getValue();
+                FullAnnotation annoFa = new FullAnnotation(c,a.getAnnotation());
+                if (!addSetTop.contains(annoFa)) {
+                    entriesToRemove.add(c);
                 }
+            }
 
-//            for (Map.Entry<Coordinates, PictureTagView> entry : MainActivity.imageAtCoords.entrySet()) {
-//                PictureTagView view = entry.getValue();
-//                if (view.justHasView(c.getX(),c.getY())) {
-//                    Log.i("here","comes");
-//                    MainActivity.annotations.get(entry.getKey()).setShouldRemove(true);
-//                }
-//            }
-
-
-//            if (MainActivity.imageAtCoords.containsKey(c)) {
-//                MainActivity.annotations.get(c).setShouldRemove(true);
-//            }
+            for (Coordinates c: entriesToRemove) {
+                MainActivity.annotations.get(c).setShouldRemove(true);
             }
 
             Log.i("annosinimpl",MainActivity.annotations.toString());

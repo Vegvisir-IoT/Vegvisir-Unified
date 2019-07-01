@@ -44,7 +44,7 @@ public class FullAnnotation {
     }
 
     public int hashCode() {
-        return (coords.hashCode() ^ annotation.hashCode());
+        return coords.hashCode();
     }
 
     @Override
