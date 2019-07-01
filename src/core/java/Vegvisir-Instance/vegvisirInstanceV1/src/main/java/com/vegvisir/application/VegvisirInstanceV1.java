@@ -190,6 +190,8 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
     private Map<VegvisirApplicationDelegator, Set<String>> getAppHandlers(Set<String> topics) {
         Map<VegvisirApplicationDelegator, Set<String>> delegatorTopics = new HashMap<>();
         for (String topic : topics) {
+            if (!topic2app.containsKey(topic))
+                continue;
             topic2app.get(topic).forEach(app -> {
                 VegvisirApplicationDelegator delegator = app2handler.get(app);
                 if (!delegatorTopics.containsKey(delegator)) {
