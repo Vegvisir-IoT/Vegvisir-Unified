@@ -44,7 +44,7 @@ public abstract class BlockDAG {
         this.genesisBlock = genesisBlock;
         blockStorage = new ConcurrentHashMap<>();
         this.config = config;
-        blockStorage.put(BlockUtil.byRef(genesisBlock), genesisBlock);
+//        blockStorage.put(BlockUtil.byRef(genesisBlock), genesisBlock);
     }
 
 
@@ -90,6 +90,7 @@ public abstract class BlockDAG {
     public Reference putBlock(Block block) {
         Reference ref = BlockUtil.byRef(block);
         if (blockStorage.putIfAbsent(ref, block) == null) {
+            witness(block, config.getDeviceID());
             newBlockListener.onNewBlock(block);
             return ref;
         }
@@ -177,4 +178,6 @@ public abstract class BlockDAG {
     };
 
     public void witness(Block block, String remoteId) {}
+
+    public void save() {}
 }

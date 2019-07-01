@@ -1,8 +1,10 @@
 package com.vegvisir.app.tasklist.ui.login;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,16 +20,18 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.vegvisir.app.tasklist.MainActivity;
 import com.vegvisir.app.tasklist.R;
 import com.vegvisir.app.tasklist.TransactionTuple;
+import com.vegvisir.application.VegvisirInstanceV1;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
 import com.vegvisir.pub_sub.VegvisirInstance;
-import com.vegvisir.pub_sub.VirtualVegvisirInstance;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -48,16 +52,17 @@ public class LoginActivity extends AppCompatActivity {
     public static HashMap<String, String> usernames = new HashMap<>();
     public static Set<TransactionID> topDeps = new HashSet<>();
     public static TransactionID top = new TransactionID("", -1);
-    public static  VegvisirApplicationContext context = null;
+    public static VegvisirApplicationContext context = null;
     private LoginImpl delegator = new LoginImpl();
     public static String topic = "Blue team";
     private String appID = "123";
     private  String desc = "task list";
     private Set<String> channels = new HashSet<String>();
     private Timer timer;
-    private static VegvisirInstance instance = null;
+    public static VegvisirInstance instance = null;
+    public static Context androidContext;
 
-    public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
+    //public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,6 +70,19 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
+
+        //Get permission
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
+            }
+        }
 
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
@@ -74,13 +92,13 @@ public class LoginActivity extends AppCompatActivity {
 
         channels.add(topic);
         context = new VegvisirApplicationContext(appID, desc, channels);
-        Context androidContext = getApplicationContext();
+        androidContext = getApplicationContext();
 
-        //instance = VegvisirInstanceV1.getInstance(androidContext);
-        //instance.registerApplicationDelegator(context, delegator);
-        //this.deviceId = instance.getThisDeviceID();
+        instance = VegvisirInstanceV1.getInstance(androidContext);
+        instance.registerApplicationDelegator(context, delegator);
+        this.deviceId = instance.getThisDeviceID();
 
-        virtual.registerApplicationDelegator(context, delegator);
+        //virtual.registerApplicationDelegator(context, delegator);
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
