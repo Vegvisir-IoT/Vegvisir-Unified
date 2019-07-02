@@ -227,7 +227,8 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
             topic2app.get(t).add(context.getAppID());
         });
         app2handler.put(context.getAppID(), delegator);
-        dataManager.updateAppCount(app2handler.keySet().size());
+        appCount = app2handler.keySet().size();
+        dataManager.updateAppCount(appCount);
         if (appCount == backupCount && !recovered) {
             recovered = true;
             core.tryRecoverBlocks();
