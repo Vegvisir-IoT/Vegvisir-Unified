@@ -114,10 +114,10 @@ public class ByteStream {
                 requestTask.addOnFailureListener((t) -> {
                     Log.e(TAG, "onEndpointFound: ", t);
                     Log.d(TAG, "onEndpointFound: " + t.getMessage());
-//                    restart();
-                    if (t.getMessage().equals("8012: STATUS_ENDPOINT_IO_ERROR")) {
-                        restart();
-                    }
+                    restart();
+//                    if (t.getMessage().equals("8012: STATUS_ENDPOINT_IO_ERROR")) {
+//                        restart();
+//                    }
                 });
             }
 //            if (discoveredEndpointInfo.getServiceId().equals(SERVICE_ID) &&
