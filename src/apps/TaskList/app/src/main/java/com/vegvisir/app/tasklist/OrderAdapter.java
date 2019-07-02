@@ -75,7 +75,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
                 String payloadString = "1" + item;
                 byte[] payload = payloadString.getBytes();
                 Set<String> topics = new HashSet<>();
-                topics.add(MainActivity.topic);
+                topics.add(LoginActivity.topic);
                 Set<TransactionID> dependencies = new HashSet<>();
 
 //
@@ -92,7 +92,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
                     dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
                 }
 
-                LoginActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
+                LoginActivity.instance.addTransaction(LoginActivity.context, topics, payload, dependencies);
 //                clear();
 //                addAll(MainActivity.items);
 //                notifyDataSetChanged();
@@ -105,7 +105,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
                 String payloadString = "2" + item;
                 byte[] payload = payloadString.getBytes();
                 Set<String> topics = new HashSet<>();
-                topics.add(MainActivity.topic);
+                topics.add(LoginActivity.topic);
                 Set<TransactionID> dependencies = new HashSet<>();
 
 //
@@ -122,7 +122,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
                     dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
                 }
 
-                LoginActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
+                LoginActivity.instance.addTransaction(LoginActivity.context, topics, payload, dependencies);
 //                clear();
 //                addAll(MainActivity.items);
 //                notifyDataSetChanged();
@@ -135,7 +135,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
                 String payloadString = "3" + item;
                 byte[] payload = payloadString.getBytes();
                 Set<String> topics = new HashSet<>();
-                topics.add(MainActivity.topic);
+                topics.add(LoginActivity.topic);
                 Set<TransactionID> dependencies = new HashSet<>();
 
 //
@@ -152,7 +152,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
                     dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
                 }
 
-                LoginActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
+                LoginActivity.instance.addTransaction(LoginActivity.context, topics, payload, dependencies);
 //                clear();
 //                addAll(MainActivity.items);
 //                notifyDataSetChanged();
@@ -165,7 +165,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
                 String payloadString = "0" + item;
                 byte[] payload = payloadString.getBytes();
                 Set<String> topics = new HashSet<>();
-                topics.add(MainActivity.topic);
+                topics.add(LoginActivity.topic);
                 Set<TransactionID> dependencies = new HashSet<>();
 
 //
@@ -182,7 +182,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
                     dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
                 }
 
-                LoginActivity.instance.addTransaction(MainActivity.context, topics, payload, dependencies);
+                LoginActivity.instance.addTransaction(LoginActivity.context, topics, payload, dependencies);
 //                clear();
 //                addAll(MainActivity.items);
 //                notifyDataSetChanged();

@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
     public static Set<TransactionID> topDeps = new HashSet<>();
     public static TransactionID top = new TransactionID("", -1);
     public static VegvisirApplicationContext context = null;
-    private LoginImpl delegator = new LoginImpl();
+    public static LoginImpl delegator = new LoginImpl();
     public static String topic = "Blue team";
     private String appID = "123";
     private  String desc = "task list";

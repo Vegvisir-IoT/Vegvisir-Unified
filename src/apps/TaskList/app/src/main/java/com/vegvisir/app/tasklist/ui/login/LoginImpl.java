@@ -239,6 +239,20 @@ public class LoginImpl implements VegvisirApplicationDelegator {
             }
 
             MainActivity.notWitnessedTransactions.add(tx_id);
+
+            Log.i("lowset",lowSet.toString());
+            Log.i("mediumset",mediumSet.toString());
+            Log.i("highset",highSet.toString());
+            Log.i("removeset",removeSet.toString());
+
+            Log.i("lowsettop",lowSetTop.toString());
+            Log.i("mediumsettop",mediumSetTop.toString());
+            Log.i("highsettop",highSetTop.toString());
+            Log.i("removesettop",removeSetTop.toString());
+
+            Log.i("items",MainActivity.items.toString());
+
+
         }
 
 

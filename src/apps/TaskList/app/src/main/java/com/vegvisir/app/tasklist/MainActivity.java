@@ -1,10 +1,8 @@
 package com.vegvisir.app.tasklist;
 //123456 password
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,10 +11,7 @@ import android.widget.ListView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.vegvisir.app.tasklist.ui.login.LoginActivity;
-import com.vegvisir.application.VegvisirInstanceV1;
 import com.vegvisir.pub_sub.TransactionID;
-import com.vegvisir.pub_sub.VegvisirApplicationContext;
-import com.vegvisir.pub_sub.VegvisirInstance;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,14 +47,14 @@ public class MainActivity extends AppCompatActivity {
     public static Set<TransactionID> notWitnessedTransactions = new HashSet<TransactionID>();
     public static Set<TransactionID> topDeps = new HashSet<>();
     public static TransactionID top = new TransactionID("", -1);
-    public static VegvisirApplicationContext context = null;
-    private VegvisirApplicationDelegatorImpl delegator = new VegvisirApplicationDelegatorImpl();
-    public static String topic = "Red team";
-    private String appID = "123";
-    private  String desc = "task list";
+    //public static VegvisirApplicationContext context = null;
+//    private VegvisirApplicationDelegatorImpl delegator = new VegvisirApplicationDelegatorImpl();
+//    public static String topic = "Red team";
+//    private String appID = "123";
+//    private  String desc = "task list";
     private Set<String> channels = new HashSet<String>();
     private Timer timer;
-    public static VegvisirInstance instance = null;
+//    public static VegvisirInstance instance = null;
 
     //public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
 
@@ -78,14 +73,15 @@ public class MainActivity extends AppCompatActivity {
         mSwitchButton = findViewById(R.id.switch_button);
         mLogoutButton = findViewById(R.id.logout_button);
 
-        channels.add(topic);
-        context = new VegvisirApplicationContext(appID, desc, channels);
-        Context androidContext = getApplicationContext();
-        Log.i("arecontextssame",Boolean.toString(androidContext.equals(LoginActivity.androidContext)));
+//        channels.add(topic);
+//        context = new VegvisirApplicationContext(appID, desc, channels);
+//        Context androidContext = getApplicationContext();
+//        Log.i("arecontextssame",Boolean.toString(androidContext.equals(LoginActivity.androidContext)));
 
-        instance = VegvisirInstanceV1.getInstance(androidContext);
-        instance.registerApplicationDelegator(context, delegator);
-        this.deviceId = instance.getThisDeviceID();
+//        instance = VegvisirInstanceV1.getInstance(androidContext);
+//        instance.registerApplicationDelegator(context, delegator);
+        //this.deviceId = instance.getThisDeviceID();
+        this.deviceId = LoginActivity.deviceId;
 
         //this.deviceId = virtual.getThisDeviceID();
         //virtual.registerApplicationDelegator(context, delegator);
@@ -183,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
                 String payloadString = "2" + item;
                 byte[] payload = payloadString.getBytes();
                 Set<String> topics = new HashSet<String>();
-                topics.add(topic);
+                topics.add(LoginActivity.topic);
                 Set<TransactionID> dependencies = new HashSet<>();
 
                 if (dependencySets.containsKey(item)) {
@@ -199,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 //virtual.addTransaction(context, topics, payload, dependencies);
-                LoginActivity.instance.addTransaction(context, topics, payload, dependencies);
+                LoginActivity.instance.addTransaction(LoginActivity.context, topics, payload, dependencies);
 
 
                 MainActivity.this.runOnUiThread(new Runnable() {
