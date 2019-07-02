@@ -43,7 +43,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
             TransactionID tx_id,
             Set<TransactionID> deps) {
 
-        LoginActivity.delegator.applyTransaction(topics,payload,tx_id,deps);
+//        LoginActivity.delegator.applyTransaction(topics,payload,tx_id,deps);
 
 //        String payloadString = new String(payload);
 //        Log.i("payload",payloadString);

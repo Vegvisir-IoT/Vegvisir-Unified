@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private String anno;
 
 //    public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
-    public static VegvisirInstance instance = null;
+//    public static VegvisirInstance instance = null;
     private Timer timer;
 
     @Override
@@ -44,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
 //        virtual.registerApplicationDelegator(context,delegator);
         Context androidContext = getApplicationContext();
 
-        instance = VegvisirInstanceV1.getInstance(androidContext);
-        instance.registerApplicationDelegator(LoginActivity.context, LoginActivity.delegator);
+//        instance = VegvisirInstanceV1.getInstance(androidContext);
+//        instance.registerApplicationDelegator(LoginActivity.context, LoginActivity.delegator);
 
         editButton = findViewById(R.id.editimg);
 
