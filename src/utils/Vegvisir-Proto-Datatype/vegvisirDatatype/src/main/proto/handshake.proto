@@ -2,14 +2,15 @@ syntax = "proto3";
 
 package vegvisir.proto;
 
+enum ProtocolVersion {
+    VERSION = 0;
+    SEND_ALL = 1;
+    FRONTIER = 2;
+    VECTOR = 3;
+}
+
 message HandshakeMessage {
 
-    enum ProtocolVersion {
-        VERSION = 0;
-        SEND_ALL = 1;
-        FRONTIER = 2;
-        VECTOR = 3;
-    }
 
     enum Type {
         DUMMY_STATUS = 0;
@@ -18,5 +19,5 @@ message HandshakeMessage {
     }
 
     repeated ProtocolVersion spokenVersions = 1;
-    repeated Type type = 2;
+    Type type = 2;
 }

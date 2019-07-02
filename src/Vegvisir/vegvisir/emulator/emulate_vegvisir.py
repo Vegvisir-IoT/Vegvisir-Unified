@@ -1,4 +1,5 @@
 from select import select
+from queue import Empty as queue_is_empty
 
 
 from vegvisir.blockchain.blockdag import GenesisBlock, Blockchain
@@ -12,16 +13,18 @@ from vegvisir.emulator.peer_request_handlers import PeerRequestHandler
 from vegvisir.emulator.protocol_request_handler import ProtocolRequestCreator
 from vegvisir.emulator.emulator import Emulator
 from vegvisir.emulator.emulation_helpers import deserialize_certificate
-from vegvisir.emulator.socket_opcodes import ProtocolStatus as ps
+from vegvisir.emulator.stateless.state_machine import StateMachine
+from vegvisir.emulator.socket_opcodes import (ProtocolStatus as ps,
+                                             CommunicationStatus as comstatus)
 from vegvisir.network.emulation_network import EmulationNetworkOperator
-from vegvisir.protos import charlottewrapper_pb2 as block_wrapper
+from vegvisir.proto import vegvisir_pb2 as vegvisir 
 from vegvisir.protocols.vector.vector import VectorClock
 from vegvisir.protocols.vector.vectorserver import VectorServer
 from vegvisir.protocols.sendall.sendallclient import SendallClient
 from vegvisir.protocols.sendall.sendallserver import SendallServer
-from vegvisir.protocols.frontier.frontierclient import FrontierClient
-from vegvisir.protocols.frontier.frontierserver import FrontierServer
-
+from vegvisir.protocols.frontier.stateless_frontier_client import FrontierClient
+from vegvisir.protocols.frontier.stateless_frontier_server import FrontierServer
+from vegvisir.protocols.frontier.frontier_handler import FrontierHandler
 
 __author__ = "Gloire Rubambiza"
 __email__ = "gbr26@cornell.edu"
@@ -50,20 +53,18 @@ def emulate_vegvisir(args):
     gblock, blockchain, private_key = read_blockchain_file(genesis_block_file,
                                                       my_userid)
 
-    client_controller, server_controller = create_components(my_userid,
-                                                            peer_names,
-                                                            gblock,
-                                                            blockchain,
-                                                            private_key,
-                                                            port,
-                                                            crash_prob,
-                                                            protocol)
+    components = create_components(my_userid, peer_names, gblock, blockchain,
+                                   private_key, port, crash_prob,protocol)
+    client_controller = components[0]
+    server_controller = components[1]
+    state_machine = components[2]
 
     # Create the emulator for sleeping and waking up
-    emulator = Emulator(params, client_controller, block_limit)
+    emulator = Emulator(private_key, params, client_controller, block_limit)
+
 
     # Start the protocol runner
-    spin_server_forever(emulator, server_controller)
+    spin_server_forever(emulator, server_controller, state_machine)
 
 
 
@@ -100,15 +101,23 @@ def create_components(userid, peer_names, gblock, blockchain,
     sendall_server = SendallServer(request_handler, crash_prob)
 
     # Create the frontier protocol client and server.
-    frontier_client =  FrontierClient(private_key, request_handler,
-                                      request_creator, crash_prob)
+    frontier_client =  FrontierClient(request_creator, request_handler,
+                                      crash_prob)
 
-    frontier_server = FrontierServer(private_key, request_handler,
-                                     request_creator, crash_prob)
+    frontier_server = FrontierServer(request_creator, request_handler,
+                                     crash_prob)
+
+    # Create the frontier message handler.
+    frontier_handler = FrontierHandler(private_key, frontier_server,
+                                       frontier_client, request_handler)
 
     # Create the vector server to be used by the server_controllerl.
     vector_server = VectorServer(request_creator, vector_clock,
                                  crash_prob)
+
+    # Create the state machine for processing messages.
+    state_machine = StateMachine(network, frontier_handler, frontier_server,
+                                 vector_server) 
 
     # Create server and client controllers.
     client_controller = ClientController(sendall_client, frontier_client,
@@ -117,7 +126,7 @@ def create_components(userid, peer_names, gblock, blockchain,
     server_controller = ServerController(sendall_server, frontier_server, 
                                          request_handler, vector_server)
 
-    return client_controller, server_controller
+    return client_controller, server_controller, state_machine
     
 
 def read_parameters(paramfile, userid):
@@ -159,16 +168,16 @@ def read_blockchain_file(chainfile, userid):
     
     # Read main blockchain parameters from file
     fd = open(chainfile, "rb")
-    blockchain = block_wrapper.Blockchain()
+    blockchain = vegvisir.Blockchain()
     blockchain.ParseFromString(fd.read())
 
     # Copy genesis parameters and private_key
-    genesis = block_wrapper.Block.GenesisBlock()
+    genesis = vegvisir.Block.GenesisBlock()
     genesis.CopyFrom(blockchain.genesis)
     gblock, my_private_key = recreate_genesis(genesis, userid)
 
     # Copy keystore
-    keystore = block_wrapper.Blockchain.Keystore()
+    keystore = vegvisir.Blockchain.Keystore()
     keystore.CopyFrom(blockchain.keystore)
     ks = recreate_keystore(keystore)
 
@@ -182,11 +191,12 @@ def read_blockchain_file(chainfile, userid):
     return gblock, blockchain, my_private_key 
 
 
-def spin_server_forever(emulator, controller):
+def spin_server_forever(emulator, controller, state_machine):
     """
        Listen for new connections and process new data.
        :param emulator: An Emulator object.
        :param controller: A ServerController object.
+       :param state_machine: A StateMachine object.
     """
     network = controller.request_handler.network
     server = network.server
@@ -194,13 +204,14 @@ def spin_server_forever(emulator, controller):
 
     # Initialize inputs and outputs for selector
     network.inputs.append(network.server.server_socket)
-    outputs = []
+    error_statuses = [comstatus.SOCKET_ERROR, comstatus.NO_DATA]
 
     while network.inputs:
-        readable, _, exceptional = select(network.inputs, outputs, network.inputs, 1)
-        print("Readables %s\n" % readable)
-        client_socket = network.client.client_socket
+        readable, writable, exceptional = select(network.inputs,
+                                                 network.outputs,
+                                                 network.inputs, 1)
         for incoming in readable:
+            print("Readables %s\n" % readable)
             if incoming is server.server_socket:
                 print("INCOMING AT SERVER SOCKET %s\n" % server.userid)
                 connection, client_address = incoming.accept()
@@ -210,69 +221,46 @@ def spin_server_forever(emulator, controller):
                 connection.settimeout(SOCKET_TIMEOUT)
                 network.add_connection(connection, client_address)
                 print("Added %s to inputs\n" % connection)
-            elif incoming is client_socket:
-                # We are receiving from a connection initiated by the client.
-                print("INCOMING DATA FROM %s's client conn" % server.userid)
-                protoc_status = controller.process_incoming_payload(incoming,
-                                                                 network.inputs)
-                if protoc_status == ps.SUCCESS:
-                    print("PROTOCOL RUN WAS SUCCESSFUL AT %s SERVER\n" %
-                          server.userid)
-                elif protoc_status == ps.CONNECTION_FAILURE:
-                    print("%s, PROTOCOL FAILED, CLIENT CLOSED CONNECTION\n" %
-                          server.userid)
-                    network.remove_connection(incoming) 
-                elif protoc_status == ps.ONGOING_VECTOR_PROTOCOL:
-                    print("VECTOR PROTOCOL STILL GOING -> %s\n" % 
-                           server.userid)
-                else:
-                    print("PROTOCOL FAILED ON %s SERVER, STATUS -> %s\n" %
-                         (server.userid, protoc_status))
             else:
-                print("INCOMING DATA TO %s SERVER\n" % server.userid)
-                print("Client socket %s\n" % client_socket)
-                protoc_status = controller.process_incoming_payload(incoming,
-                                                                network.inputs)
-                if protoc_status == ps.SUCCESS:
-                    print("PROTOCOL RUN WAS SUCCESSFUL AT %s\
-                       SERVER\n" % server.userid)
-                    network.remove_connection(incoming)
-                elif protoc_status == ps.CONNECTION_FAILURE:
-                    print("%s, PROTOCOL FAILED, CLIENT CLOSED CONNECTION\n" %
-                          server.userid)
-                    network.remove_connection(incoming) 
-                elif protoc_status == ps.ONGOING_VECTOR_PROTOCOL:
-                    print("VECTOR PROTOCOL STILL GOING at %s\n" % 
-                           server.userid)
+                payload = network.receive(incoming) 
+                print("Payload is %s\n" % payload)
+                if payload in error_statuses:
+                    state_machine.destroy_session(incoming)
+                    if connection in network.outputs:
+                        network.outputs.remove(connection)
                 else:
-                    print("PROTOCOL FAILED ON %s SERVER, STATUS -> %s\n" %
-                         (server.userid, protoc_status))
-                    network.remove_connection(incoming)
+                    if not connection in network.outputs:
+                        network.outputs.append(connection)
+                    state_machine.process_message(payload, connection)
+        for ready in writable:
+            try:
+                outgoing_message = network.message_queues[ready].get_nowait()
+            except queue_is_empty:
+                print("No message in %s's queue atm" % ready)
+                network.outputs.remove(ready)
+            else:
+                status = network.send(outgoing_message, ready)
+                print("Sending status %s\n" % status)
         for exception in exceptional:
             print("Connection to %s ran into an exception\n" % exception.getpeername())
-            network.remove_connection(exception)
+            if exception in network.outputs:
+                network.outputs.remove(exception)
+            state_machine.destroy_session(exception)
 
         # Gossip only if we have not initiated another gossip round.
-        #if not(client_socket in network.inputs):
-        if len(network.inputs) == 1:
+        if len(network.outgoing_connections) < 1:
+            emulator.random_sleep()
             if emulator.block_limit > 0:
                 emulator.generate_new_block()
-               # emulator.random_sleep()
             gossip_status = emulator.wake_up_to_gossip()
             print("%s Gossip status -> %s\n" % (server.userid,
                                                 gossip_status))
             if gossip_status == ps.SUCCESS:
-                print("%s GOSSIPED SUCCESSFULLY!\n" % server.userid)
-            elif gossip_status == ps.ONGOING_VECTOR_PROTOCOL:
-               print("%s LEFT GOSSIPING RND UNFINISHED\n" % server.userid)
-            elif gossip_status == ps.PROTOCOL_DISAGREEMENT:
-              print("%s COULD NOT AGREE ON PROTOCOL W/ PEER\n" %
-                    server.userid)
+                print("%s GOSSIP STARTED SUCCESSFULLY!\n" % server.userid)
             else:
                 print("%s GOSSIPING FAILED, STATUS %s, INPUT\n" %
                       (server.userid, gossip_status))
-        else:
-            print("INPUTS %s\n" % network.inputs)
+
 
 def recreate_genesis(genesis, username):
     """

@@ -1,7 +1,8 @@
 from time import time
 
 
-from vegvisir.emulator.socket_opcodes import FrontierProtocolState as state 
+from vegvisir.emulator.socket_opcodes import ProtocolState as state 
+from vegvisir.protocols.protocol import Protocol
 
 
 __author__ = "Gloire Rubambiza"
@@ -14,8 +15,11 @@ class FrontierServer(Protocol):
     """
        :param request_handler: A PeerRequestHandler object.
        :param request_creator: A ProtocolRequestCreator object.
+       :param crash_prob: A float.
     """
-    def __init__(self, request_creator, request_handler):
+    def __init__(self, request_creator, request_handler, crash_prob):
+        Protocol.__init__(self, request_handler.userid,
+                          request_creator.blockchain, crash_prob)
         self.request_creator = request_creator
         self.request_handler = request_handler
         # State will have a pointer when any function in here is called.
@@ -86,3 +90,15 @@ class FrontierServer(Protocol):
         """
         self.request_handler.handle_add_block_request(message)
 
+
+    def print_reconciliation_stats(self):
+        """ Print the simulated reconciliation times. """
+
+        print("----- %s CLIENT RECONCILIATION RESULTS -----\n\n", self.userid)
+        all_recs = len(self.reconciliations)
+        total_rec = 0
+        for rec in self.reconciliations:
+            total_rec += rec['recon_time']                        
+        if all_recs > 0:
+            avg_rec_time = float(total_rec / all_recs)
+        print("Average rec time %s\n" % avg_rec_time)

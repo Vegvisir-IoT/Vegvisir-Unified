@@ -9,9 +9,10 @@ from .peer_request_handlers import PeerRequestHandler
 from .client import VegvisirClient
 from .server import VegvisirServer
 from .emulation_helpers import (create_blocks, update_local_vector_maps)
-from .socket_opcodes import ProtocolStatus as ps
+from .socket_opcodes import (ProtocolStatus as ps,
+                              CommunicationStatus as comstatus)
 from vegvisir.simulator.opcodes import Operation
-import vegvisir.protos.vegvisirprotocol_pb2 as vgp
+import vegvisir.proto.handshake_pb2 as hs 
 
 
 __author__ = "Gloire Rubambiza"
@@ -24,17 +25,18 @@ class Emulator(object):
 
     """
         The representation of an emulator that contacts peers.
+        :param private_key: An _EllipticCurvePrivateKey for signing blocks.
         :param peers: A list of peers.
         :param clientctrl: A ClientController.
         :param block_limit: An int.
     """
-    def __init__(self, peers, clientctrl, block_limit):
+    def __init__(self, private_key, peers, clientctrl, block_limit):
         self.peers = peers
         self.block_limit = block_limit
         self.clientctrl = clientctrl
         self.userid = clientctrl.userid
         self.blockchain = clientctrl.request_handler.blockchain
-        self.private_key = clientctrl.frontier_client.private_key
+        self.private_key = private_key
         self.network = clientctrl.request_handler.network
         self.vector_clock = clientctrl.vector_clock
 
@@ -59,38 +61,31 @@ class Emulator(object):
 
         print("%s is ready to gossip!\n" % self.userid)
         random_idx = randint(0, (len(self.peers) - 1))
-        random_peer = self.peers[random_idx]
-        active_connections = self.network.client.connections.values()
-        if not (random_peer['port'] in active_connections):
-            conn_status = self.network.client.connect_to_peer(
-                                                  host=random_peer['hostname'],
-                                                      port=random_peer['port'])
+        peer_hostname = self.peers[random_idx]['hostname']
+        peer_port = self.peers[random_idx]['port']
+        active_connections = self.network.outgoing_connections
+        if not (peer_port in active_connections):
+            connection = self.network.client.connect_to_peer(
+                                                  peer_hostname,
+                                                  peer_port)
 
-            if conn_status == True:
+            if connection != comstatus.SOCKET_ERROR:
                 print("User %s, successfully connected to peer at \
-                      port %s\n" % (self.userid, random_peer['port']))
+                      port %s\n" % (self.userid, peer_port))
+                self.network.add_connection(connection,
+                                            port=peer_port,
+                                            outgoing=True)
+                message_queue = self.network.message_queues[connection]
+                self.clientctrl.initiate_any_protocol(message_queue) 
+                return ps.SUCCESS
             else:
-                print("CONNECTION FAILURE %s\n" % conn_status.__str__())
-                print("Connection attempt to %s failed!\n" %
-                       random_peer['port'])
-                self.network.client.shutdown_connection()
+                print("Connection to %s failed.... \n" % peer_port)
                 return ps.CONNECTION_ATTEMPT_FAILURE
         else:
-            for connection, port in self.connections.items():
-                if port == random_peer['port']:
-                    self.network.client.client_socket = connection
-        protocol_status = self.clientctrl.initiate_any_protocol()
-        if protocol_status == ps.ONGOING_VECTOR_PROTOCOL:
-            # Remote client that connected to us can now send us
-            # data.Thus, we need to register the connection
-            # with the server.
-            client_socket = self.network.client.client_socket
-            if not(client_socket in self.network.inputs):
-                self.network.inputs.append(client_socket)
-           # else:
-           #     print("VERY UNLIKELY SCENARIO %s\n" % self.network.inputs)
-            #    inputs.remove(self.clientctrl.client.client_socket)
-        return protocol_status 
+            existing_conn = self.network.outgoing_connections[peer_port]
+            message_queue = self.network.message_queues[existing_conn] 
+            self.clientctrl.initiate_any_protocol(message_queue)
+            return ps.SUCCESS
 
 
     def generate_new_block(self):
@@ -104,7 +99,7 @@ class Emulator(object):
         for block in block_list:
             self.blockchain.add(block, Operation.ADDED_REQUEST)
             print("Newly minted block hash %s\n" % block.hash())
-            if self.clientctrl.protocol == vgp.VECTOR:
+            if self.clientctrl.protocol == hs.VECTOR:
                 update_local_vector_maps(self.vector_clock, block)
             if self.vector_clock.offline_activity == False:
                 self.vector_clock.update_offline_activity(True)

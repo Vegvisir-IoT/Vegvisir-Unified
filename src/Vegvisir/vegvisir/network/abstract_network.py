@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from socket import SHUT_RDWR
+from queue import Queue
 
 
 __author__ = "Gloire Rubambiza"
@@ -11,12 +12,15 @@ __credits__ = ["Gloire Rubambiza"]
 class Network(metaclass=ABCMeta):
 
     """
-       :param active_connections: A dictionary.
+       :param incoming_connections: A dictionary.
     """
-    def __init__(self, userid=None, active_connections={}):
-        self.active_connections = active_connections
+    def __init__(self, userid=None, incoming_connections={}):
+        self.incoming_connections = incoming_connections
+        self.outgoing_connections = {}
         self.userid = userid
         self.inputs = []
+        self.outputs = []
+        self.message_queues = {}
 
     @abstractmethod
     def send(self, payload,  sender=None, destination=None, request_type=None):
@@ -26,14 +30,22 @@ class Network(metaclass=ABCMeta):
     def receive(self, sender=None):
         pass 
 
-    def add_connection(self, connection, address):
+    def add_connection(self, connection, address=None, port=None,
+                       outgoing=False):
         """
            Add an incoming connection to the lookup dictionary.
            :param connection: A socket object.
            :param address: A tuple.
+           :param port: An int.
+           :param outgoinga: A boolean.
         """
         self.inputs.append(connection)
-        self.active_connections[connection] = address
+        self.outputs.append(connection)
+        self.message_queues[connection] = Queue()
+        if outgoing:
+            self.outgoing_connections[port] = connection 
+        else:
+            self.incoming_connections[connection] = address
 
 
     def remove_connection(self, connection):
@@ -41,9 +53,12 @@ class Network(metaclass=ABCMeta):
            Remove an active connection from the lookup table.
            :param connection: A socket object.
         """
-        print("%s closing socket connection....\n" % self.userid)
+        print("Closing socket connection to %s \n" %
+                                        self.incoming_connections[connection])
         connection.shutdown(SHUT_RDWR)
         connection.close()
-        if connection in self.active_connections:
-             del self.active_connections[connection]
-             self.inputs.remove(connection)
+        if connection in self.incoming_connections:
+            del self.incoming_connections[connection]
+            self.inputs.remove(connection)
+        if connection in self.message_queues:
+            del self.message_queues[connection]

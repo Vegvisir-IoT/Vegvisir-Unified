@@ -5,7 +5,7 @@ from random import randint
 from google.protobuf.internal.encoder import _VarintBytes
 
 
-import vegvisir.protos.vegvisirprotocol_pb2 as vgp
+import vegvisir.proto.handshake_pb2 as hs 
 from vegvisir.simulator.opcodes import Operation as op
 from vegvisir.blockchain.block import Block, Transaction
 from vegvisir.blockchain.blockchain_helpers import int_to_bytestring
@@ -36,23 +36,12 @@ class PeerRequestHandler(object):
         self.userid = network.userid
         self.vector_clock = vector_clock
         if protocol_spoken == "VECTOR":
-           self.protocol = vgp.VECTOR 
+           self.protocol = hs.VECTOR 
         elif protocol_spoken == "FRONTIER":
-           self.protocol = vgp.FRONTIER
+           self.protocol = hs.FRONTIER
         else:
-           self.protocol = vgp.SEND_ALL 
+           self.protocol = hs.SEND_ALL 
 
-
-    def __pick_highest_version(self, response, choice):
-        """
-           Fill the protocol list response with the most efficient version
-           spoken by a node.
-           :param response: A vgp.PeerResponse object.
-           :param choice: A vgp.ProtocolVersion object.
-        """
-        versions_spoken = vgp.ProtocolVersions()
-        versions_spoken.protocols.extend([choice])
-        response.protocol_version_response.CopyFrom(versions_spoken)
 
 
     def serialize(self, response):
@@ -90,43 +79,32 @@ class PeerRequestHandler(object):
     def handle_protocol_list_request(self, request, peer_conn):
         """
            handle a request for the list of protocols spoken.
-           :param request: a PeerRequest object. 
+           :param message: a VegvisirProtocolMessage object. 
            :param peer_conn: a socket object.
         """
-        response = vgp.PeerResponse()
         choice = ""
-        sendall = vgp.SEND_ALL
-        vector = vgp.VECTOR
-        frontier = vgp.FRONTIER
-        latest = vgp.LATEST_HAPPENINGS
-        no_choice = vgp.VERSION
+        sendall = hs.SEND_ALL
+        vector = hs.VECTOR
+        frontier = hs.FRONTIER
+        no_choice = hs.VERSION
 
-        if vector in request.protocol_list and self.protocol == vector:
+        request = hs.HandshakeMessage()
+        request.CopyFrom(message.handshake)
+        if vector in request.spokenVersions and self.protocol == vector:
             choice = vector 
-            self.__pick_highest_version(response, choice)
-        elif latest in request.protocol_list and self.protocol == latest:
-            choice = latest 
-            self.__pick_highest_version(response, choice)
-        elif frontier in request.protocol_list and self.protocol == frontier:
+        elif frontier in request.spokenVersions and self.protocol == frontier:
             choice = frontier
-            self.__pick_highest_version(response, choice)
-        elif sendall in request.protocol_list and self.protocol == sendall:
+        elif sendall in request.spokenVersions and self.protocol == sendall:
             choice = sendall 
-            self.__pick_highest_version(response, choice)
         else: # We don't agree on a protocol 
             choice = no_choice 
-            self.__pick_highest_version(response, choice)
 
         print("Server, List received from client %s\n" % 
-              request.protocol_list)
+              request.spokenVersions)
         print("SERVER PROTOCOL CHOICE %s\n" % choice) 
 
-        message = vgp.VegvisirMessage()
-        message.response.CopyFrom(response)
+        return choice, request.type
 
-        # Serialize and send response
-        status = self.serialize_and_send(message, peer_conn)
-        return self.check_status(status, "Protocol"), choice
 
     def handle_add_block_request(self, request):
         """
@@ -178,7 +156,7 @@ class PeerRequestHandler(object):
 
                 if block_not_on_chain:
                     self.blockchain.add(newblock, op.RECEIVED_REGULAR_BLOCK) 
-                if self.protocol == vgp.VECTOR and block_not_on_chain:
+                if self.protocol == hs.VECTOR and block_not_on_chain:
                     update_local_vector_maps(self.vector_clock, newblock)
 
         self.vector_clock.update_offline_activity(False)

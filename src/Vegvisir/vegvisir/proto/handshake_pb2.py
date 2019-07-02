@@ -3,6 +3,7 @@
 
 import sys
 _b=sys.version_info[0]<3 and (lambda x:x) or (lambda x:x.encode('latin1'))
+from google.protobuf.internal import enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
@@ -19,15 +20,13 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='handshake.proto',
   package='vegvisir.proto',
   syntax='proto3',
-  serialized_pb=_b('\n\x0fhandshake.proto\x12\x0evegvisir.proto\"\x8e\x02\n\x10HandshakeMessage\x12H\n\x0espokenVersions\x18\x01 \x03(\x0e\x32\x30.vegvisir.proto.HandshakeMessage.ProtocolVersion\x12\x33\n\x04type\x18\x02 \x03(\x0e\x32%.vegvisir.proto.HandshakeMessage.Type\"F\n\x0fProtocolVersion\x12\x0b\n\x07VERSION\x10\x00\x12\x0c\n\x08SEND_ALL\x10\x01\x12\x0c\n\x08\x46RONTIER\x10\x02\x12\n\n\x06VECTOR\x10\x03\"3\n\x04Type\x12\x10\n\x0c\x44UMMY_STATUS\x10\x00\x12\x0b\n\x07REQUEST\x10\x01\x12\x0c\n\x08RESPONSE\x10\x02\x62\x06proto3')
+  serialized_pb=_b('\n\x0fhandshake.proto\x12\x0evegvisir.proto\"\xb5\x01\n\x10HandshakeMessage\x12\x37\n\x0espokenVersions\x18\x01 \x03(\x0e\x32\x1f.vegvisir.proto.ProtocolVersion\x12\x33\n\x04type\x18\x02 \x01(\x0e\x32%.vegvisir.proto.HandshakeMessage.Type\"3\n\x04Type\x12\x10\n\x0c\x44UMMY_STATUS\x10\x00\x12\x0b\n\x07REQUEST\x10\x01\x12\x0c\n\x08RESPONSE\x10\x02*F\n\x0fProtocolVersion\x12\x0b\n\x07VERSION\x10\x00\x12\x0c\n\x08SEND_ALL\x10\x01\x12\x0c\n\x08\x46RONTIER\x10\x02\x12\n\n\x06VECTOR\x10\x03\x62\x06proto3')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-
-
-_HANDSHAKEMESSAGE_PROTOCOLVERSION = _descriptor.EnumDescriptor(
+_PROTOCOLVERSION = _descriptor.EnumDescriptor(
   name='ProtocolVersion',
-  full_name='vegvisir.proto.HandshakeMessage.ProtocolVersion',
+  full_name='vegvisir.proto.ProtocolVersion',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -50,10 +49,17 @@ _HANDSHAKEMESSAGE_PROTOCOLVERSION = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=183,
-  serialized_end=253,
+  serialized_start=219,
+  serialized_end=289,
 )
-_sym_db.RegisterEnumDescriptor(_HANDSHAKEMESSAGE_PROTOCOLVERSION)
+_sym_db.RegisterEnumDescriptor(_PROTOCOLVERSION)
+
+ProtocolVersion = enum_type_wrapper.EnumTypeWrapper(_PROTOCOLVERSION)
+VERSION = 0
+SEND_ALL = 1
+FRONTIER = 2
+VECTOR = 3
+
 
 _HANDSHAKEMESSAGE_TYPE = _descriptor.EnumDescriptor(
   name='Type',
@@ -76,8 +82,8 @@ _HANDSHAKEMESSAGE_TYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=255,
-  serialized_end=306,
+  serialized_start=166,
+  serialized_end=217,
 )
 _sym_db.RegisterEnumDescriptor(_HANDSHAKEMESSAGE_TYPE)
 
@@ -98,8 +104,8 @@ _HANDSHAKEMESSAGE = _descriptor.Descriptor(
       options=None),
     _descriptor.FieldDescriptor(
       name='type', full_name='vegvisir.proto.HandshakeMessage.type', index=1,
-      number=2, type=14, cpp_type=8, label=3,
-      has_default_value=False, default_value=[],
+      number=2, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -108,7 +114,6 @@ _HANDSHAKEMESSAGE = _descriptor.Descriptor(
   ],
   nested_types=[],
   enum_types=[
-    _HANDSHAKEMESSAGE_PROTOCOLVERSION,
     _HANDSHAKEMESSAGE_TYPE,
   ],
   options=None,
@@ -118,14 +123,14 @@ _HANDSHAKEMESSAGE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=36,
-  serialized_end=306,
+  serialized_end=217,
 )
 
-_HANDSHAKEMESSAGE.fields_by_name['spokenVersions'].enum_type = _HANDSHAKEMESSAGE_PROTOCOLVERSION
+_HANDSHAKEMESSAGE.fields_by_name['spokenVersions'].enum_type = _PROTOCOLVERSION
 _HANDSHAKEMESSAGE.fields_by_name['type'].enum_type = _HANDSHAKEMESSAGE_TYPE
-_HANDSHAKEMESSAGE_PROTOCOLVERSION.containing_type = _HANDSHAKEMESSAGE
 _HANDSHAKEMESSAGE_TYPE.containing_type = _HANDSHAKEMESSAGE
 DESCRIPTOR.message_types_by_name['HandshakeMessage'] = _HANDSHAKEMESSAGE
+DESCRIPTOR.enum_types_by_name['ProtocolVersion'] = _PROTOCOLVERSION
 
 HandshakeMessage = _reflection.GeneratedProtocolMessageType('HandshakeMessage', (_message.Message,), dict(
   DESCRIPTOR = _HANDSHAKEMESSAGE,

@@ -1,3 +1,5 @@
+from vegvisir.proto import handshake as hs
+ 
 
 __author__ = "Gloire Rubambiza"
 __email__ = "gbr26@cornell.edu"
@@ -18,29 +20,36 @@ class HandshakeHandler(object):
 
     def handle_message(self, message, message_queue):
         """
-           :param message: A HandshakeMessage protobuf object.
+           :param message: A VegvisirProtocolMessage protobuf object.
            :param message_queue: A Queue object.
         """
-        choice = self.request_handler.handle_protocol_list_request(payload)
+        choice, rtype = self.request_handler.handle_protocol_list_request(
+                                                                       message)
         
-        if protocol_choice == handshake.SEND_ALL:
+        if protocol_choice == hs.SEND_ALL:
             print("Peer at %s speaks the sendall protocol!\n" %
                                                       connection.getpeername())
             sendall_request = self.request_creator.add_all_blocks_request()
             message_queue.put(sendall_request) 
             return state.RECONCILIATION
-        elif protocol_choice == handshake.FRONTIER:
+        elif protocol_choice == hs.FRONTIER:
             print("Peer at %s speaks the frontier protocol!\n" %
                                                       connection.getpeername())
             fset_request = self.frontier_server.send_set_request(
                                                                 first_run=True)
             message_queue.put(fset_request)
             return state.HANDSHAKE 
-        elif protocol_choice == handshake.VECTOR:
+        elif protocol_choice == hs.VECTOR:
             print("Peer at %s speaks the vector protocol!\n" %
                                                       connection.getpeername())
-            update = self.request_creator.create_update(self.vector_clock)
-            message_queue.put(update)
+            if rtype == hsREQUEST:
+                response = self.request_creator.handshake_request(hsRESPONSE,
+                                        protocol=self.request_handler.protocol) 
+                message_queue.put(response)
+            else:
+                update = self.request_creator.create_update(self.vector_clock)
+                message_queue.put(update)
+               
             return state.RECONCILIATION
         else: # No agreement on a protocol
             handshake_message = self.request_creator.handshake_request(

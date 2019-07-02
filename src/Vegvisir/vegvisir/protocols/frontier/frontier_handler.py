@@ -7,17 +7,18 @@ __credits__ = ["Gloire Rubambiza"]
 class FrontierHandler(object):
 
     """
+       :param private_key: An _EllipticCurvePrivateKey for signing blocks.
        :param frontier_server: A FrontierServer object.
        :param frontier_client: A FrontierClient object.
        :param request_handler: A PeerRequestHandler object.
        :param network: An EmulationNetworkOperator object .
     """
-    def __init__(self, frontier_server, frontier_client, request_handler,
-                 network):
+    def __init__(self, private_key, frontier_server, frontier_client,
+                 request_handler):
+        self.private_key = private_key
         self.frontier_server = frontier_server
         self.frontier_client = frontier_client
         self.request_handler = request_handler
-        self.network = network
 
 
     def handle_message(self, message, state):
@@ -28,7 +29,7 @@ class FrontierHandler(object):
         # Channel the message to the right handler.
         message_type = message.WhichOneof("frontier_message_type")
         if message_type == "request":
-           request = vegvisir.protocol.datatype.Request()
+           request = vegvisir.proto.Request()
            request.CopyFrom(message.request)
            request_type = request.type
            fset_request = vegvisir.protocol.dataype.Request.SEND_FRONTIER_SET
@@ -42,13 +43,13 @@ class FrontierHandler(object):
            if request_type == vegvisir.protocol.dataype.ADD_BLOCK:
                self.request_handler.handle_add_block_request(request)
                return state.EVEN
-           rec_request = vegvisir.protocol.datatype.RECONCILIATION_NEEDED
+           rec_request = vegvisir.proto.RECONCILIATION_NEEDED
            if request_type == rec_request:
                self.frontier_client.handle_reconciliation_request(
                                                            request.send.hashes)
                return state.REMOTE_DOMINATES 
         else: # response
-            response = vegvisir.protocol.datatype.Response()
+            response = vegvisir.proto.Response()
             response.CopyFrom(message.response)
             response_type = response.WhichOneof("response_types")
             if response_type == "hashResponse":
@@ -56,14 +57,14 @@ class FrontierHandler(object):
                                            list(response.hashResponse.hashes),
                                                            response.is_subset)
             if response_type == "blockResponse":
-                block = self.network.sort_response(response)
+                block = self.retrieve_block(response)
                 return self.handle_incoming_missing_block(block)
 
 
     def handle_block_request(self, request):
         """
             Handle a request for a block on the chain.
-            :param request: a vegvisir.protocol.datatype.Request message.
+            :param request: a vegvisir.proto.Request message.
         """
         print("BLOCK REQUEST START\n")
         # Create response
@@ -99,8 +100,7 @@ class FrontierHandler(object):
             charlotte_block = blocks_of_interest.blocksToAdd.add()
             charlotte_block.block = serialized_block 
  
-
-        response = vegvisir.protocol.datatype.Response()
+        response = vegvisir.proto.Response()
         response.blockResponse.CopyFrom(blocks_of_interest)
         message = network.VegvisirProtocolMessage()
         message.frontier.response.CopyFrom(response)
@@ -119,7 +119,7 @@ class FrontierHandler(object):
         for parent_hash in block.parents:
             if not(parent_hash in self.blockchain.blocks):
                 missing_blocks.append(parent_hash)
-        if 'reconciled_blocks' in state.keys():
+        if 'reconciled_blocks' in self.state.keys():
             self.state['reconciled_blocks'] += 1
         else:
             self.state['reconciled_blocks'] = 1
@@ -150,8 +150,8 @@ class FrontierHandler(object):
             
         # Create a request for the peer to add our POW block
         pow_request = self.request_creator.add_blocks_request(
-                                                        blocks=[pow_block],
-                                                        end_protocol)
+                                                                   [pow_block],
+                                                                  end_protocol)
         message_queue.put(pow_request)
         return state.RECONCILIATION
 
@@ -196,3 +196,49 @@ class FrontierHandler(object):
             # Add the request to the message queue for the connection.
             message_queue.put(block_request) 
         return state.REMOTE_DOMINATES
+
+
+
+    def retrieve_block(self, message):
+        """
+             Retrieve the Vegvisir block inside of a charlotte block.
+             :param response: A FrontierMessage protobuf object.
+         """
+         # Check what is set inside the response
+        charlotte_blocks = message.response.blockResponse
+        for block_bytes in charlotte_blocks.blocksToAdd:
+            vegvisir_block = vegvisir.proto.Block()
+            vegvisir_block.CopyFrom(block_bytes.block)
+            user_block = vegvisir.proto.Block.UserBlock()
+            user_block.CopyFrom(vegvisir_block.user_block)
+
+            # Extract the userid and timestamp
+            userid = user_block.userid
+            timestamp = user_block.timestamp.utc_time
+
+            # Worry about location later
+
+            # Add parent list.
+            parent_list = []
+            for parent_hash in user_block.parents:
+                parent_list.append(parent_hash.hash.sha256)
+
+            # Add transaction list.
+            tx_list = []
+            for transaction in user_block.transactions:
+                tx_userid = transaction.userid
+                tx_timestamp = transaction.timestamp
+                tx_recordid = transaction.recordid
+                tx_comment = transaction.comment
+                tx_dict = {'recordid': tx_recordid, 'comment': tx_comment}
+                incoming_tx = Transaction(tx_userid, tx_timestamp, tx_dict)
+                tx_list.append(incoming_tx)
+    
+            # Add the signature
+            sig = vegvisir_block.signature.sha256WithEcdsa.byteString
+ 
+            # Reconstruct the block
+            incoming_block = Block(userid, timestamp, parent_list, tx_list)
+            incoming_block.sig = sig
+            # incoming_block.print_block()
+            return incoming_block

@@ -27,6 +27,7 @@ class MessageTypes(Enum):
 class CommunicationStatus(Enum):
     SOCKET_ERROR = 1
     SUCCESS = 2
+    NO_DATA = 3
 
 # @brief: an enumeration of states for all protocols.
 class ProtocolState(Enum):

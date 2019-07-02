@@ -1,4 +1,8 @@
+from socket import error
+
+
 import vegvisir.protos.vegvisirprotocol_pb2 as vgp
+import vegvisir.proto.vegvisirNetwork_pb2 as network
 from vegvisir.simulator.opcodes import Operation
 from vegvisir.blockchain.block import Block, Transaction
 from vegvisir.emulator.socket_opcodes import (MessageTypes as msgtype,
@@ -6,9 +10,18 @@ from vegvisir.emulator.socket_opcodes import (MessageTypes as msgtype,
                                              CommunicationStatus as comstatus)
 from vegvisir.network.abstract_network import Network
 
+
+from google.protobuf.internal.decoder import _DecodeVarint32
+
+
 __author__ = "Gloire Rubambiza"
 __email__ = "gbr26@cornell.edu"
 __credits__ = ["Gloire Rubambiza"]
+
+
+MESSAGE_SIZE = 3
+BYTE_LIMIT = 1024
+
 
 # @brief: A class that handles emulation network operations.
 class EmulationNetworkOperator(Network):
@@ -21,166 +34,93 @@ class EmulationNetworkOperator(Network):
         Network.__init__(self, userid=server.userid)
         self.server = server
         self.client = client
+        self.buffer = bytearray()
 
 
-    def receive(self, sender=None):
+    def receive(self, conn_socket):
         """
            Receive and deserialize a payload from the wire.
-           :param sender: A Socket object.
-           :param userid: A string.
+           :param conn_socket: A socket object.
         """
-        payload = vgp.VegvisirMessage()
-        if sender:
-            message_len, start = self.server.read_from_buffer(sender)
-            if message_len == None: # Zero bytes received for some of the msg
-                print("Receipt on %s Server failed!, 0 bytes received\n" % self.userid)
-                return None, None
-            elif type(message_len) != int: # Socket error
-                print("%s Server, Receipt failed with socket error -> %s\n" % 
-                      (self.userid, message_len.__str__()))
-                return None, None
-            payload.ParseFromString(self.server.buffer[start:start + message_len])
-            print("SUCCESSFUL PARSING ON %s SERVER\n" % self.userid)
-            self.server.buffer = bytearray()
-            print("For Server: MESSAGE SIZE %s\n" % message_len)
-            payload, payload_type = self.sort_message(payload)
-            if payload_type == msgtype.RESPONSE:
-                return self.sort_response(payload)
-            return payload, payload_type
-        else:
-            message_len, start = self.client.read_from_buffer()
-            if message_len == None: # Zero bytes received for some of the msg
-                print("Receipt on %s Client failed!, 0 bytes received\n" % self.userid)
-                return None, None
-            elif type(message_len) != int: # Socket error
-                print("%s Client, Receipt failed with socket error -> %s\n" % 
-                      (self.userid, message_len.__str__()))
-                return None, None
-            payload.ParseFromString(self.client.buffer[start:start + message_len])
-            print("SUCCESSFUL PARSING ON CLIENT\n")
-            self.client.buffer = bytearray()
-            print("For Client: MESSAGE SIZE %s\n" % message_len)
-            payload, payload_type = self.sort_message(payload)
-            if payload_type == msgtype.RESPONSE:
-                return self.sort_response(payload)
-            return payload, payload_type
-    
-    def sort_message(self, message):
-        """
-            Sort the message received from remote peer.
-            :param message: A vgp.VegvisirMessage.
-        """
-        message_type = message.WhichOneof("message_types")    
-    
-        if message_type == "request":
-            payload = vgp.PeerRequest()
-            payload.CopyFrom(message.request)
-            return payload, msgtype.REQUEST
-        elif message_type == "response":
-            payload = vgp.PeerResponse()
-            payload.CopyFrom(message.response)
-            return payload, msgtype.RESPONSE
-        elif message_type == "update":
-            update = vgp.Update()
-            update.CopyFrom(message.update)
-            return update, msgtype.UPDATE
-    
+        payload = network.VegvisirProtocolMessage()
+        message_len, start = self.read_from_buffer(conn_socket)
+        if start == None:
+             return message_len
+        payload.ParseFromString(self.buffer[start:start + message_len])
+        
+        print("SUCCESSFUL PARSING ON %s\n" % self.userid)
+        print("BUFFER AFTER PARSING %s\n" % self.buffer)
+        self.buffer = bytearray()
+        print("MESSAGE SIZE %s\n" % message_len)
+        print("Start was %s\n" % start)
+        return payload
 
-    def sort_response(self, response):
+
+    def read_from_buffer(self, conn_socket):
         """
-             Sort specific response from peer based on stage of protocol.
-             :param response: A bytestring.
+            Read from the server buffer until end of message.
+            :param conn_socket: A socket.
+        """
+        print("READING FROM BUFFER\n")
+        status = self.check_incoming_bytes(conn_socket, MESSAGE_SIZE)
+        if status != comstatus.SUCCESS: 
+            return status, None
+
+        start = 0
+        message_len, start_pos = _DecodeVarint32(self.buffer, start)
+        message_chunk = len(self.buffer) - start_pos
+        if message_chunk < message_len:
+            missing_bytes = message_len - message_chunk
+            print("Receiving %s missing bytes\n" % missing_bytes)
+            self.buffer = bytearray(self.buffer)
+            if missing_bytes < BYTE_LIMIT:
+                status = self.check_incoming_bytes(conn_socket, missing_bytes)
+                if status != comstatus.SUCCESS: 
+                    return status, None 
+            else:
+                factor = int(missing_bytes/BYTE_LIMIT)
+                remainder = missing_bytes % BYTE_LIMIT
+                for _ in range(factor):
+                    status = self.check_incoming_bytes(conn_socket, BYTE_LIMIT)
+                    if status != comstatus.SUCCESS: 
+                        return status, None 
+                # Receive the remainder.
+                if remainder > 0:
+                    status = self.check_incoming_bytes(conn_socket, remainder)
+                    if status != comstatus.SUCCESS: 
+                        return status, None 
+        self.buffer = bytes(self.buffer)
+        return message_len, start_pos
+
+
+    def check_incoming_bytes(self, conn_socket, size):
          """
-         # Check what is set inside the response
-        response_type = response.WhichOneof("peer_response_types")
-        if response_type == "frontier_set_response":
-            print("SORTING FSET RESPONSE\n")
-            fset_message = vgp.FrontierSet()
-            fset_message.CopyFrom(response.frontier_set_response)
-            frontier_set = []
-            for block_hash in fset_message.block_hashes:
-                frontier_set.append(block_hash.hash)
-            return frontier_set, None
-        elif response_type == "bc_hashes_response":
-            print("SORTING BC HASHES RESPONSE\n")
-            bc_message = vgp.SendBlockchainHashes()
-            bc_message.CopyFrom(response.bc_hashes_response)
-            blockchain_hashes = []
-            for block_hash in bc_message.hash_set:
-                blockchain_hashes.append(block_hash.hash)
-            return blockchain_hashes, None
-        elif response_type == "send_block_response":
-            print("SORTING SEND BLOCK RESPONSE\n")
-            block_message = vgp.SendBlock()
-            block_message.CopyFrom(response.send_block_response)
-            for pointer in block_message.blocks:
-                userid = pointer.vegblock.user_block.userid
-                timestamp = pointer.vegblock.user_block.timestamp.utc_time
-         
-                # Worry about location later
-    
-                # Add parent list.
-                parent_list = []
-                for parent_hash in pointer.vegblock.user_block.parents:
-                    parent_list.append(parent_hash.hash.sha256)
-    
-                # Add transaction list.
-                tx_list = []
-                for transaction in pointer.vegblock.user_block.transactions:
-                    tx_userid = transaction.userid
-                    tx_timestamp = transaction.timestamp
-                    tx_recordid = transaction.recordid
-                    tx_comment = transaction.comment
-                    tx_dict = {'recordid': tx_recordid, 'comment': tx_comment}
-                    incoming_tx = Transaction(tx_userid, tx_timestamp, tx_dict)
-                    tx_list.append(incoming_tx)
-    
-                # Add the signature
-                sig = pointer.vegblock.signature.sha256WithEcdsa.byteString
-    
-                # Reconstruct the block
-                incoming_block = Block(userid, timestamp, parent_list, tx_list)
-                incoming_block.sig = sig
-                # incoming_block.print_block()
-                return incoming_block, None
-        elif response_type == "protocol_version_response":
-            print("SORTING PROTOCOL LIST RESPONSE!\n")
-            protocol_message = vgp.ProtocolVersions()
-            protocol_message.CopyFrom(response.protocol_version_response) 
-            # The None below gets ignored if the choice is received successfully.
-            return protocol_message.protocols[0], None
-        else:
-            print("UNKNOWN RESPONSE TYPE!\n")
+            :param conn_socket: A socket.
+            :param size: An integer.
+         """
+         try:
+             incoming_bytes = conn_socket.recv(size)
+             if len(incoming_bytes) == 0:
+                  print("No data received....\n")  
+                  return comstatus.NO_DATA
+         except error:
+             print("Receiving failed....\n")  
+             return comstatus.SOCKET_ERROR
+         self.buffer += incoming_bytes
+         print("Current buffer %s\n" % self.buffer)
+         return comstatus.SUCCESS 
 
 
-    def send(self, payload, sender=None, destination=None, request_type=None):
+    def send(self, payload, sender):
         """
            :param payload: A serialized bytestring.
-           :param sender: A VegvisirClient or VegvisirServer object.
-           :param destination: A Socket object.
-           :param request_type: A string.
+           :param sender: A Socket object.
         """
-        if destination:
-          status, error = self.server.send(destination, payload)
-          if status == comstatus.SOCKET_ERROR:
-                if request_type:
-                    print("%s Server: Sending %s request failed with error %s\n" % 
-                          (self.userid, request_type, error.__str__()))
-                else:
-                    print("%s Server: Sending response failed with error %s\n" % 
-                          (self.userid, error.__str__()))
-                return comstatus.SOCKET_ERROR 
-          else:
-               return comstatus.SUCCESS
-        else:
-            status, error = self.client.send(payload)
-            if status == comstatus.SOCKET_ERROR:
-                if request_type:
-                    print("%s Client : Sending %s request failed with error %s\n" % 
-                          (self.userid, request_type, error.__str__()))
-                else:
-                    print("%s Client : Sending response failed with error %s\n" % 
-                          (self.userid, error.__str__()))
-                return comstatus.SOCKET_ERROR 
-            else:
-                return comstatus.SUCCESS
+        try:
+            bytes_sent = sender.send(payload)
+            print("%s bytes sent...\n" % bytes_sent)
+            return comstatus.SUCCESS
+        except error as socket_error:
+            print("Sending failed with error %s...\n" %
+                   error.__str__())
+            return comstatus.SOCKET_ERROR

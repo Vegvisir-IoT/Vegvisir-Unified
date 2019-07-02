@@ -1,6 +1,8 @@
 from time import time, sleep
 
-import vegvisir.protos.vegvisirprotocol_pb2 as vgp
+
+from vegvisir.emulator.socket_opcodes import ProtocolState as state
+from vegvisir.proto import handshake_pb2 as hs
 
 
 __author__ = "Gloire Rubambiza"
@@ -13,7 +15,7 @@ class StateMachine(object):
 
     """
        A data structure representing the state of a device with regards
-       to the blockchain.
+       to reconciliation with nearby peers.
        :param network: A EmulationNetworkOperator object.
        :param frontier_handler: a FrontierHandler object.
        :param vector_server: a VectorServer object.
@@ -24,7 +26,7 @@ class StateMachine(object):
         self.network = network
         self.frontier_handler = frontier_handler
         self.frontier_server = frontier_server
-        self.userid = frontier_client.userid 
+        self.userid = network.userid 
         self.vector_server = vector_server 
         # For keeping track of states for each connection.
         self.states = {}
@@ -48,15 +50,13 @@ class StateMachine(object):
            if message.endProtocol:
                self.destroy_session(connection)
            else:
-               payload = vegvisir.protocol.datatype.HandshakeMessage()
+               payload = hs.HandshakeMessage()
                payload.CopyFrom(message.handshake)
                state = self.handshake_handler.handle_message(payload)
-               if state = state.PROTOCOL_DISAGREEMENT:
+               if state == state.PROTOCOL_DISAGREEMENT:
                    self.destroy_session(connection)
                else:
                    self.states[connection]['state'] = state
-        elif message_type == "sendall":
-            continue
         elif message_type == "frontier":
            state = self.frontier_handler.handle_message(message,
                                                        self.states[connection]) 
@@ -82,8 +82,12 @@ class StateMachine(object):
                        self.destroy_session(connection)
                    else: # More missing blocks exist
                        self.states[connection]['state'] = state
-        elif message_type == "vector":
-            continue
+        #elif message_type == "vector":
+        #    continue
+        #elif message_type == "sendall":
+        #    continue
+        if message.endProtocol and connection in self.states: 
+            self.destroy_session(connection)
 
 
     def destroy_session(self, connection):
@@ -91,5 +95,6 @@ class StateMachine(object):
            Remove the connection when devices have reached the same state.
            :param connection: A socket object.
         """
-        del self.states[connection]
+        if connection in self.states:
+            del self.states[connection]
         self.network.remove_connection(connection)

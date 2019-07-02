@@ -30,7 +30,6 @@ class VegvisirClient(object):
         """
         self.userid = userid
         self.client_socket = None
-        self.connections = {}
         self.buffer = bytearray()
 
     def connect_to_peer(self, host, port):
@@ -39,29 +38,13 @@ class VegvisirClient(object):
             :param host: A string of the peer's ip address.
             :param port: An int.
         """
-        new_socket = None
         try:
             new_socket = socket(AF_INET, SOCK_STREAM)
             new_socket.settimeout(SOCKET_TIMEOUT)
-
             new_socket.connect((host, port))
-            self.connections[new_socket] = [port, True]
-            self.client_socket = new_socket
-            return True
+            return new_socket 
         except error as socket_error:
-            self.client_socket = new_socket            
-            self.connections[new_socket] = [port, False]
-            return socket_error
-
-    def shutdown_connection(self):
-        """
-           Shut down the connection no matter the protocol run return.
-        """
-        print("Client %s closing the connection...\n" % self.userid)
-        if self.connections[self.client_socket][1] == True:
-           self.client_socket.shutdown(SHUT_RDWR)
-        del self.connections[self.client_socket]
-        self.client_socket.close()
+            return comstatus.SOCKET_ERROR
 
 
     def send(self, data_bytes):
