@@ -67,6 +67,8 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
     private int appCount = 0;
     private int backupCount = 0;
 
+    private static boolean recovered = false;
+
     private static String PUB_FILENAME = "pub";
     private static String PRV_FILENAME = "prv";
 
@@ -225,9 +227,9 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
             topic2app.get(t).add(context.getAppID());
         });
         app2handler.put(context.getAppID(), delegator);
-        appCount ++;
-        dataManager.updateAppCount(appCount);
-        if (appCount >= backupCount) {
+        dataManager.updateAppCount(app2handler.keySet().size());
+        if (appCount == backupCount && !recovered) {
+            recovered = true;
             core.tryRecoverBlocks();
         }
         return true;
