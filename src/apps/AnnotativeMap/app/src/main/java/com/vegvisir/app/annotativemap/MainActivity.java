@@ -87,7 +87,9 @@ public class MainActivity extends AppCompatActivity {
                                     if (view == null) {
                                         view = (PictureTagView) image.addItem(coords.getX(), coords.getY());
                                     }
+
                                     view.setAnnotation(anno);
+
                                     Log.i("ok", "nice");
                                     annoObj.setAlreadyAdded(true);
                                 } else {

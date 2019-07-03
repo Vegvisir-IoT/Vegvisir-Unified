@@ -138,6 +138,9 @@ public class LoginImpl implements VegvisirApplicationDelegator {
         else{
             Log.i("start","of anno case");
             int first = payloadString.indexOf(",");
+            if (first == -1){
+                return;
+            }
             int x = Integer.parseInt(payloadString.substring(1,first));
             int second = payloadString.indexOf(",", first + 1);
             int y = Integer.parseInt(payloadString.substring(first+1,second));

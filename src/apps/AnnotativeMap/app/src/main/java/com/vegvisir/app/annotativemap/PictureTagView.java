@@ -30,6 +30,7 @@ public class PictureTagView extends RelativeLayout{
     private static final int ViewHeight = 50;
     private int x = -1;
     private int y = -1;
+    public String fullText;
 
     public PictureTagView(Context context,Direction direction) {
         super(context);
@@ -58,12 +59,18 @@ public class PictureTagView extends RelativeLayout{
     /** 初始化 **/
     protected void init(){
         imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        directionChange();
+//        directionChange();
     }
 
 
     public void setAnnotation(String anno) {
-        tvPictureTagLabel.setText(anno);
+        if (anno.length() > 10) {
+            tvPictureTagLabel.setText(anno.substring(0,10)+"...");
+        }
+        else {
+            tvPictureTagLabel.setText(anno);
+        }
+        fullText = anno;
     }
 
 
@@ -90,7 +97,7 @@ public class PictureTagView extends RelativeLayout{
 
                 Intent intent = new Intent();
                 intent.setClass(context,add_annotation.class);
-                intent.putExtra("CUR_ANNO",tvPictureTagLabel.getText());
+                intent.putExtra("CUR_ANNO",fullText);
                 // 把已经添加的tag发送给add_annotation
                 time = getTime();
                 intent.putExtra("TIME",time);
