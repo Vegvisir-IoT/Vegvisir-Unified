@@ -69,7 +69,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 //        }
 //
 //        Set<TransactionTuple> updatedSet = new HashSet<>();
-//        Set<TransactionTuple> prevSets = MainActivity.dependencySets.get(coords);
+//        Set<TransactionTuple> prevSets = MainActivity.mapDependencySets.get(coords);
 //        String deviceId = tx_id.getDeviceID();
 //
 //
@@ -87,21 +87,21 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 //
 //        TransactionTuple t = new TransactionTuple(tx_id, transactionType);
 //        updatedSet.add(t);
-//        MainActivity.dependencySets.put(coords, updatedSet);
+//        MainActivity.mapDependencySets.put(coords, updatedSet);
 //
-//        MainActivity.latestTransactions.put(deviceId, tx_id);
+//        MainActivity.mapLatestTransactions.put(deviceId, tx_id);
 //
 //        for (TransactionID d : deps) {
-//            MainActivity.topDeps.remove(d);
+//            MainActivity.mapTopDeps.remove(d);
 //        }
-//        MainActivity.topDeps.add(tx_id);
+//        MainActivity.mapTopDeps.add(tx_id);
 //        HashSet<FullAnnotation> addSet = new HashSet<>();
 //        HashSet<FullAnnotation> removeSet = new HashSet<>();
 //
 //        for (TransactionID d : deps) {
-//            if (MainActivity.twoPSets.containsKey(d)) {
-//                addSet.addAll(MainActivity.twoPSets.get(d).getAddSet());
-//                removeSet.addAll(MainActivity.twoPSets.get(d).getRemoveSet());
+//            if (MainActivity.mapTwoPSets.containsKey(d)) {
+//                addSet.addAll(MainActivity.mapTwoPSets.get(d).getAddSet());
+//                removeSet.addAll(MainActivity.mapTwoPSets.get(d).getRemoveSet());
 //            }
 //        }
 //
@@ -180,7 +180,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 //            addSet.add(newFa);
 //        }
 //
-//        MainActivity.twoPSets.put(tx_id, new TwoPSet(addSet, removeSet));
+//        MainActivity.mapTwoPSets.put(tx_id, new TwoPSet(addSet, removeSet));
 //
 //        Log.i("addset",addSet.toString());
 //        Log.i("remset",removeSet.toString());
@@ -189,22 +189,22 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 //        HashSet<FullAnnotation> removeSetTop = new HashSet<>();
 //
 ////        Log.i("txid",tx_id.toString());
-////        Log.i("topdeps",MainActivity.topDeps.toString());
-////        Log.i("TwoPSets",MainActivity.twoPSets.toString());
+////        Log.i("topdeps",MainActivity.mapTopDeps.toString());
+////        Log.i("TwoPSets",MainActivity.mapTwoPSets.toString());
 //
-//        for (TransactionID d : MainActivity.topDeps) {
+//        for (TransactionID d : MainActivity.mapTopDeps) {
 ////            Log.i("d",d.toString());
-//            if (MainActivity.twoPSets.containsKey(d)) {
+//            if (MainActivity.mapTwoPSets.containsKey(d)) {
 ////                Log.i("gets here","");
-//                addSetTop.addAll(MainActivity.twoPSets.get(d).getAddSet());
-//                removeSetTop.addAll(MainActivity.twoPSets.get(d).getRemoveSet());
+//                addSetTop.addAll(MainActivity.mapTwoPSets.get(d).getAddSet());
+//                removeSetTop.addAll(MainActivity.mapTwoPSets.get(d).getRemoveSet());
 //            }
 //        }
 //
 //        Log.i("addsettop",addSetTop.toString());
 //        Log.i("remsettop",removeSetTop.toString());
 //
-//        MainActivity.twoPSets.put(MainActivity.top, new TwoPSet(addSetTop, removeSetTop));
+//        MainActivity.mapTwoPSets.put(MainActivity.mapTop, new TwoPSet(addSetTop, removeSetTop));
 //
 ////       c
 //

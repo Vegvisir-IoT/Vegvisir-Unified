@@ -6,7 +6,6 @@ import android.util.Log;
 import com.vegvisir.app.annotativemap.Annotation;
 import com.vegvisir.app.annotativemap.Coordinates;
 import com.vegvisir.app.annotativemap.FullAnnotation;
-import com.vegvisir.app.annotativemap.MainActivity;
 import com.vegvisir.app.annotativemap.PictureTagLayout;
 import com.vegvisir.app.annotativemap.PictureTagView;
 import com.vegvisir.app.annotativemap.R;
@@ -137,6 +136,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
         }
 
         else{
+            Log.i("start","of anno case");
             int first = payloadString.indexOf(",");
             int x = Integer.parseInt(payloadString.substring(1,first));
             int second = payloadString.indexOf(",", first + 1);
@@ -144,21 +144,26 @@ public class LoginImpl implements VegvisirApplicationDelegator {
             String anno = payloadString.substring(second+1);
 
             Coordinates coords = new Coordinates(x,y);
-
-            while (MainActivity.currentPicture == null);
-            PictureTagLayout image = MainActivity.currentPicture.findViewById(R.id.image);
-            PictureTagView pointView = image.justHasView(x,y);
-            if (pointView != null) {
-                Log.i("View","found");
-                x = pointView.getXVal();
-                y = pointView.getYVal();
-            }
-            else {
-                Log.i("View","not found");
+            Log.i("before","while");
+            //while (LoginActivity.currentPicture == null);
+            Log.i("after","while");
+            PictureTagLayout image = null;
+            PictureTagView pointView;
+            if (LoginActivity.currentPicture != null) {
+                image = LoginActivity.currentPicture.findViewById(R.id.image);
+                pointView = image.justHasView(x,y);
+                if (pointView != null) {
+                    Log.i("View","found");
+                    x = pointView.getXVal();
+                    y = pointView.getYVal();
+                }
+                else {
+                    Log.i("View","not found");
+                }
             }
 
             Set<TransactionTuple> updatedSet = new HashSet<>();
-            Set<TransactionTuple> prevSets = MainActivity.dependencySets.get(coords);
+            Set<TransactionTuple> prevSets = LoginActivity.mapDependencySets.get(coords);
             String deviceId = tx_id.getDeviceID();
 
 
@@ -176,26 +181,29 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 
             TransactionTuple t = new TransactionTuple(tx_id, transactionType);
             updatedSet.add(t);
-            MainActivity.dependencySets.put(coords, updatedSet);
+            LoginActivity.mapDependencySets.put(coords, updatedSet);
 
-            MainActivity.latestTransactions.put(deviceId, tx_id);
+            LoginActivity.mapLatestTransactions.put(deviceId, tx_id);
 
             for (TransactionID d : deps) {
-                MainActivity.topDeps.remove(d);
+                LoginActivity.mapTopDeps.remove(d);
             }
-            MainActivity.topDeps.add(tx_id);
+            LoginActivity.mapTopDeps.add(tx_id);
             HashSet<FullAnnotation> addSet = new HashSet<>();
             HashSet<FullAnnotation> removeSet = new HashSet<>();
 
             for (TransactionID d : deps) {
-                if (MainActivity.twoPSets.containsKey(d)) {
-                    addSet.addAll(MainActivity.twoPSets.get(d).getAddSet());
-                    removeSet.addAll(MainActivity.twoPSets.get(d).getRemoveSet());
+                if (LoginActivity.mapTwoPSets.containsKey(d)) {
+                    addSet.addAll(LoginActivity.mapTwoPSets.get(d).getAddSet());
+                    removeSet.addAll(LoginActivity.mapTwoPSets.get(d).getRemoveSet());
                 }
             }
 
             if (transactionType == 1) {
-                PictureTagView view = image.justHasView(x,y);
+                PictureTagView view = null;
+                if (image != null) {
+                    view = image.justHasView(x, y);
+                }
                 if (view != null) {
 
                     boolean doesExist = false;
@@ -225,7 +233,11 @@ public class LoginImpl implements VegvisirApplicationDelegator {
                 }
 
             } else {
-                PictureTagView view = image.justHasView(x,y);
+
+                PictureTagView view = null;
+                if (image != null) {
+                    view = image.justHasView(x,y);
+                }
                 if (view != null) {
 
                     for (FullAnnotation fa: addSet) {
@@ -269,7 +281,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
                 addSet.add(newFa);
             }
 
-            MainActivity.twoPSets.put(tx_id, new TwoPSet(addSet, removeSet));
+            LoginActivity.mapTwoPSets.put(tx_id, new TwoPSet(addSet, removeSet));
 
             Log.i("addset",addSet.toString());
             Log.i("remset",removeSet.toString());
@@ -278,50 +290,54 @@ public class LoginImpl implements VegvisirApplicationDelegator {
             HashSet<FullAnnotation> removeSetTop = new HashSet<>();
 
 //        Log.i("txid",tx_id.toString());
-//        Log.i("topdeps",MainActivity.topDeps.toString());
-//        Log.i("TwoPSets",MainActivity.twoPSets.toString());
+//        Log.i("topdeps",MainActivity.mapTopDeps.toString());
+//        Log.i("TwoPSets",MainActivity.mapTwoPSets.toString());
 
-            for (TransactionID d : MainActivity.topDeps) {
+            for (TransactionID d : LoginActivity.mapTopDeps) {
 //            Log.i("d",d.toString());
-                if (MainActivity.twoPSets.containsKey(d)) {
+                if (LoginActivity.mapTwoPSets.containsKey(d)) {
 //                Log.i("gets here","");
-                    addSetTop.addAll(MainActivity.twoPSets.get(d).getAddSet());
-                    removeSetTop.addAll(MainActivity.twoPSets.get(d).getRemoveSet());
+                    addSetTop.addAll(LoginActivity.mapTwoPSets.get(d).getAddSet());
+                    removeSetTop.addAll(LoginActivity.mapTwoPSets.get(d).getRemoveSet());
                 }
             }
 
             Log.i("addsettop",addSetTop.toString());
             Log.i("remsettop",removeSetTop.toString());
 
-            MainActivity.twoPSets.put(MainActivity.top, new TwoPSet(addSetTop, removeSetTop));
+            LoginActivity.mapTwoPSets.put(LoginActivity.mapTop, new TwoPSet(addSetTop, removeSetTop));
 
 //       c
 
 //        Set<Coordinates> newSet = addSetTop;
 //        newSet.removeAll(removeSetTop);
 
-            PictureTagView v = image.justHasView(coords.getX(),coords.getY());
+            PictureTagView v = null;
+            if (image != null) {
+                v = image.justHasView(coords.getX(), coords.getY());
+            }
             if (v != null) {
-                if (MainActivity.annotations.containsKey(coords)) {
+                if (LoginActivity.annotations.containsKey(coords)) {
                     Log.i("set","case");
-                    MainActivity.annotations.get(coords).setAnnotation(anno);
+                    LoginActivity.annotations.get(coords).setAnnotation(anno);
+
                 }
                 else {
-                    MainActivity.annotations.put(coords,new Annotation(anno));
+                    LoginActivity.annotations.put(coords,new Annotation(anno));
                 }
             }
             else {
                 Log.i("View","does not exist");
-                MainActivity.annotations.put(coords,new Annotation(anno));
+                LoginActivity.annotations.put(coords,new Annotation(anno));
             }
 
             for (FullAnnotation fa: addSetTop) {
                 Coordinates c = fa.getCoords();
                 String annotation = fa.getAnnotation();
 
-                if (!MainActivity.annotations.containsKey(c)) {
+                if (!LoginActivity.annotations.containsKey(c)) {
                     Log.i("hashmap","doesn't contain anno");
-                    MainActivity.annotations.put(c, new Annotation(annotation));
+                    LoginActivity.annotations.put(c, new Annotation(annotation));
                 }
 
             }
@@ -332,15 +348,15 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 
             for (FullAnnotation fa: removeSetTop) {
                 Coordinates c = fa.getCoords();
-                if (MainActivity.annotations.containsKey(c)) {
-                    Log.i("removefound",MainActivity.annotations.get(c).getAnnotation());
-                    MainActivity.annotations.get(c).setShouldRemove(true);
+                if (LoginActivity.annotations.containsKey(c)) {
+                    Log.i("removefound", LoginActivity.annotations.get(c).getAnnotation());
+                    LoginActivity.annotations.get(c).setShouldRemove(true);
                 }
             }
 
             HashSet<Coordinates> entriesToRemove = new HashSet<>();
 
-            for(Map.Entry<Coordinates, Annotation> entry : MainActivity.annotations.entrySet()) {
+            for(Map.Entry<Coordinates, Annotation> entry : LoginActivity.annotations.entrySet()) {
                 Coordinates c = entry.getKey();
                 Annotation a = entry.getValue();
                 FullAnnotation annoFa = new FullAnnotation(c,a.getAnnotation());
@@ -350,10 +366,10 @@ public class LoginImpl implements VegvisirApplicationDelegator {
             }
 
             for (Coordinates c: entriesToRemove) {
-                MainActivity.annotations.get(c).setShouldRemove(true);
+                LoginActivity.annotations.get(c).setShouldRemove(true);
             }
 
-            Log.i("annosinimpl",MainActivity.annotations.toString());
+            Log.i("annosinimpl", LoginActivity.annotations.toString());
 
         }
 

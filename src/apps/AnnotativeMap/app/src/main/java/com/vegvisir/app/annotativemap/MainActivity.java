@@ -7,26 +7,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+
 import android.util.Log;
 
 import com.vegvisir.app.annotativemap.ui.login.LoginActivity;
-import com.vegvisir.app.annotativemap.ui.login.LoginImpl;
-import com.vegvisir.application.VegvisirInstanceV1;
-import com.vegvisir.pub_sub.TransactionID;
-import com.vegvisir.pub_sub.VegvisirApplicationContext;
-import com.vegvisir.pub_sub.VegvisirInstance;
 
 public class MainActivity extends AppCompatActivity {
 
     private Button editButton = null;
-    public static ConcurrentHashMap<Coordinates,Annotation> annotations = new ConcurrentHashMap<>();
-    public static HashMap<Coordinates,Set<TransactionTuple>> dependencySets = new HashMap<>();
-    public static HashMap<String, TransactionID> latestTransactions = new HashMap<>();
-    public static HashMap<TransactionID,TwoPSet> twoPSets = new HashMap<>();
-    public static Set<TransactionID> topDeps = new HashSet<>();
-    public static TransactionID top = new TransactionID("",-1);
-    public static picture currentPicture = null;
     private static TimerTask task;
     public static boolean runningMainActivity;
 
@@ -66,12 +54,12 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 MainActivity.this.runOnUiThread(() -> {
                     Log.i("timer","running");
-                    if (currentPicture != null && runningMainActivity) {
-                        Log.i("annosatstart", annotations.toString());
+                    if (LoginActivity.currentPicture != null && runningMainActivity) {
+                        Log.i("annosatstart", LoginActivity.annotations.toString());
                         Set<Coordinates> entriesToRemove = new HashSet<>();
 
 //                            Log.i("before",annotations.toString());
-                        for (Map.Entry<Coordinates, Annotation> entry : annotations.entrySet()) {
+                        for (Map.Entry<Coordinates, Annotation> entry : LoginActivity.annotations.entrySet()) {
 
                             Coordinates coords = entry.getKey();
                             Log.i("coords", coords.getX() + "," + coords.getY());
@@ -81,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                             Annotation annoObj = entry.getValue();
 //                            PictureTagLayout image = annoObj.getLayout();
                             anno = annoObj.getAnnotation();
-                            PictureTagLayout image = currentPicture.findViewById(R.id.image);
+                            PictureTagLayout image = LoginActivity.currentPicture.findViewById(R.id.image);
 
 
                             if (annoObj.getShouldRemove()) {
@@ -105,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                                 } else {
                                     PictureTagView view = image.justHasView(coords.getX(), coords.getY());
                                     if (view != null) {
+                                        Log.i("edit","case");
                                         view.setAnnotation(anno);
                                     }
                                 }
@@ -113,10 +102,10 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         for (Coordinates coords : entriesToRemove) {
-                            annotations.remove(coords);
+                            LoginActivity.annotations.remove(coords);
                         }
 
-                        Log.i("annos", annotations.toString());
+                        Log.i("annos", LoginActivity.annotations.toString());
 
 
 //                            Random rand = new Random();
@@ -130,15 +119,15 @@ public class MainActivity extends AppCompatActivity {
 //                            topics.add(topic);
 //                            Set<TransactionID> dependencies = new HashSet<>();
 //                            Coordinates c = new Coordinates(500,500);
-//                            if (dependencySets.containsKey(c)) {
-//                                Iterator<TransactionTuple> it = dependencySets.get(c).iterator();
+//                            if (mapDependencySets.containsKey(c)) {
+//                                Iterator<TransactionTuple> it = mapDependencySets.get(c).iterator();
 //                                while(it.hasNext()) {
 //                                    TransactionTuple x = (TransactionTuple) ((Iterator)it).next();
 //                                    dependencies.add(x.transaction);
 //                                }
 //                            }
-//                            if (latestTransactions.containsKey("DeviceB")) {
-//                                dependencies.add(latestTransactions.get("DeviceB"));
+//                            if (mapLatestTransactions.containsKey("DeviceB")) {
+//                                dependencies.add(mapLatestTransactions.get("DeviceB"));
 //                            }
 //
 //                            instance.addTransaction(context, topics, payload, dependencies);

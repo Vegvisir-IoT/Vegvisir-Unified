@@ -26,9 +26,13 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.vegvisir.app.annotativemap.Annotation;
+import com.vegvisir.app.annotativemap.Coordinates;
 import com.vegvisir.app.annotativemap.MainActivity;
 import com.vegvisir.app.annotativemap.R;
 import com.vegvisir.app.annotativemap.TransactionTuple;
+import com.vegvisir.app.annotativemap.TwoPSet;
+import com.vegvisir.app.annotativemap.picture;
 import com.vegvisir.app.annotativemap.ui.login.LoginViewModel;
 import com.vegvisir.application.VegvisirInstanceV1;
 import com.vegvisir.pub_sub.TransactionID;
@@ -41,9 +45,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Timer;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class LoginActivity extends AppCompatActivity {
 
+    public static ConcurrentHashMap<Coordinates, Annotation> annotations = new ConcurrentHashMap<>();
+    public static HashMap<Coordinates,Set<TransactionTuple>> mapDependencySets = new HashMap<>();
+    public static HashMap<String, TransactionID> mapLatestTransactions = new HashMap<>();
+    public static HashMap<TransactionID, TwoPSet> mapTwoPSets = new HashMap<>();
+    public static Set<TransactionID> mapTopDeps = new HashSet<>();
+    public static TransactionID mapTop = new TransactionID("",-1);
+    public static picture currentPicture = null;
     private LoginViewModel loginViewModel;
     public static String deviceId = "";
     // mapping from device ID to Transaction ID

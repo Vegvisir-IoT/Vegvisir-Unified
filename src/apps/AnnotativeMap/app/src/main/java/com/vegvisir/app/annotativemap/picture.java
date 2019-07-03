@@ -40,7 +40,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 //        Log.i("Before click","5");
         image.load(); //read /sdcard/info.txt and init the subviews(annotations)
 //        image.write();
-        MainActivity.currentPicture = this;
+        LoginActivity.currentPicture = this;
         MainActivity.runningMainActivity = true;
 
         logout = findViewById(R.id.logout);
@@ -55,9 +55,9 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
                 startActivity(intent);
 //                MainActivity.pause();
                 MainActivity.runningMainActivity = false;
-                Set<Coordinates> coords = MainActivity.annotations.keySet();
+                Set<Coordinates> coords = LoginActivity.annotations.keySet();
                 for (Coordinates c: coords) {
-                    MainActivity.annotations.get(c).setAlreadyAdded(false);
+                    LoginActivity.annotations.get(c).setAlreadyAdded(false);
                 }
                 break;
             default:
@@ -88,16 +88,16 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
                 topics.add(LoginActivity.topic);
                 Set<TransactionID> dependencies = new HashSet<>();
 
-                if (MainActivity.dependencySets.containsKey(coords)) {
-                    Iterator<TransactionTuple> it = MainActivity.dependencySets.get(coords).iterator();
+                if (LoginActivity.mapDependencySets.containsKey(coords)) {
+                    Iterator<TransactionTuple> it = LoginActivity.mapDependencySets.get(coords).iterator();
                     while (it.hasNext()) {
                         TransactionTuple tt = (TransactionTuple) ((Iterator) it).next();
                         dependencies.add(tt.transaction);
                     }
                 }
-                if (MainActivity.latestTransactions.containsKey(LoginActivity.deviceId)) {
-                    dependencies.add(MainActivity.latestTransactions.get(LoginActivity.deviceId));
-                }
+//                if (MainActivity.mapLatestTransactions.containsKey(LoginActivity.deviceId)) {
+//                    dependencies.add(MainActivity.mapLatestTransactions.get(LoginActivity.deviceId));
+//                }
 
                 String payloadString = "1" + coords.getX() + "," + coords.getY() + "," + anno;
                 byte[] payload = payloadString.getBytes();
@@ -132,19 +132,19 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
                 topics.add(LoginActivity.topic);
                 Set<TransactionID> dependencies = new HashSet<>();
 
-                if (MainActivity.dependencySets.containsKey(coords)) {
-                    Iterator<TransactionTuple> it = MainActivity.dependencySets.get(coords).iterator();
+                if (LoginActivity.mapDependencySets.containsKey(coords)) {
+                    Iterator<TransactionTuple> it = LoginActivity.mapDependencySets.get(coords).iterator();
                     while (it.hasNext()) {
                         TransactionTuple tt = (TransactionTuple) ((Iterator) it).next();
                         dependencies.add(tt.transaction);
                     }
                 }
-                if (MainActivity.latestTransactions.containsKey(LoginActivity.deviceId)) {
-                    dependencies.add(MainActivity.latestTransactions.get(LoginActivity.deviceId));
-                }
+//                if (MainActivity.mapLatestTransactions.containsKey(LoginActivity.deviceId)) {
+//                    dependencies.add(MainActivity.mapLatestTransactions.get(LoginActivity.deviceId));
+//                }
 
-                if (MainActivity.annotations.containsKey(coords)) {
-                    anno = MainActivity.annotations.get(coords).getAnnotation();
+                if (LoginActivity.annotations.containsKey(coords)) {
+                    anno = LoginActivity.annotations.get(coords).getAnnotation();
                 } else {
                     Log.i("How did we", "get here");
                 }

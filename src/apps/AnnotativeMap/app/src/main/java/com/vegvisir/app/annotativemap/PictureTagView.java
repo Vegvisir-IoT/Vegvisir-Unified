@@ -110,13 +110,13 @@ public class PictureTagView extends RelativeLayout{
         View parent = (View) getParent();
         int halfParentW = (int) (parent.getWidth()*0.5);
         int center = (int) (l + (this.getWidth()*0.5));
-        if(center<=halfParentW){
-            direction = Direction.Left;
-        }
-        else{
-            direction = Direction.Right;
-        }
-        directionChange();
+//        if(center<=halfParentW){
+//            direction = Direction.Left;
+//        }
+//        else{
+//            direction = Direction.Right;
+//        }
+//        directionChange();
     }
     private void directionChange(){
         switch(direction){

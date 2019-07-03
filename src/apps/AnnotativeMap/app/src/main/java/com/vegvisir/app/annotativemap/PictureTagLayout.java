@@ -145,7 +145,7 @@ public class PictureTagLayout extends RelativeLayout implements OnTouchListener 
         else getHeight=getHeight();
 
         View view = null;
-        RelativeLayout.LayoutParams params=new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 //        System.out.println("width "+getWidth);
 //        System.out.println("height "+getHeight);
         if(x>getWidth*0.5){
@@ -161,7 +161,9 @@ public class PictureTagLayout extends RelativeLayout implements OnTouchListener 
         params.topMargin = y;
         //上下位置在视图内
         if(params.topMargin<0)params.topMargin =0;
-        else if((params.topMargin+PictureTagView.getViewHeight())>getHeight)params.topMargin = getHeight - PictureTagView.getViewHeight();
+        else if((params.topMargin+PictureTagView.getViewHeight())>getHeight) {
+            params.topMargin = getHeight - PictureTagView.getViewHeight();
+        }
 
         this.addView(view, params);
         view.setLayoutParams(params);
@@ -221,7 +223,7 @@ public class PictureTagLayout extends RelativeLayout implements OnTouchListener 
 //            Log.i("view number",Integer.toString(index));
 //            Log.i("view left",Integer.toString(left));
 //            Log.i("view right",Integer.toString(right));
-//            Log.i("view top",Integer.toString(top));
+//            Log.i("view mapTop",Integer.toString(mapTop));
 //            Log.i("view bottom",Integer.toString(bottom));
 //            Log.i("view x",""+view.getXVal());
 //            Log.i("view y",""+view.getYVal());
