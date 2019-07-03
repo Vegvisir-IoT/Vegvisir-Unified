@@ -52,6 +52,12 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
             case R.id.logout:
                 Intent intent = new Intent(picture.this, LoginActivity.class);
                 startActivity(intent);
+//                MainActivity.pause();
+                MainActivity.runningMainActivity = false;
+                Set<Coordinates> coords = MainActivity.annotations.keySet();
+                for (Coordinates c: coords) {
+                    MainActivity.annotations.get(c).setAlreadyAdded(false);
+                }
                 break;
             default:
                 break;

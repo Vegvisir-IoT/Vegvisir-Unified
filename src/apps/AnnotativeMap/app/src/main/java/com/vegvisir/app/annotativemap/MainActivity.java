@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     public static Set<TransactionID> topDeps = new HashSet<>();
     public static TransactionID top = new TransactionID("",-1);
     public static picture currentPicture = null;
+    private static TimerTask task;
+    public static boolean runningMainActivity;
 
 //    public static VegvisirApplicationContext context = null;
 //    private static LoginImpl delegator = new LoginImpl();
@@ -34,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
 //    public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
 //    public static VegvisirInstance instance = null;
-    private Timer timer;
+    private static Timer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,26 +57,25 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, picture.class);
 //                Log.i("Before starting","1");
                 startActivity(intent);
+                runningMainActivity = true;
             }
         });
 
-        timer = new Timer();
-
-        timer.schedule(new TimerTask() {
+        task = new TimerTask() {
             @Override
             public void run() {
                 MainActivity.this.runOnUiThread(() -> {
-                    if(currentPicture != null) {
-                        Log.i("annosatstart",annotations.toString());
+                    if (currentPicture != null && runningMainActivity) {
+                        Log.i("annosatstart", annotations.toString());
                         Set<Coordinates> entriesToRemove = new HashSet<>();
 
 //                            Log.i("before",annotations.toString());
-                        for(Map.Entry<Coordinates, Annotation> entry : annotations.entrySet()) {
+                        for (Map.Entry<Coordinates, Annotation> entry : annotations.entrySet()) {
 
                             Coordinates coords = entry.getKey();
-                            Log.i("coords",coords.getX() + "," + coords.getY());
+                            Log.i("coords", coords.getX() + "," + coords.getY());
 //                                Log.i("shouldRemove",entry.getValue().getShouldRemove().toString());
-                            Log.i("alreadyAdded",entry.getValue().getAlreadyAdded().toString());
+                            Log.i("alreadyAdded", entry.getValue().getAlreadyAdded().toString());
 
                             Annotation annoObj = entry.getValue();
 //                            PictureTagLayout image = annoObj.getLayout();
@@ -83,27 +84,25 @@ public class MainActivity extends AppCompatActivity {
 
 
                             if (annoObj.getShouldRemove()) {
-                                Log.i("Should remove","reached");
+                                Log.i("Should remove", "reached");
                                 entriesToRemove.add(coords);
                                 View v = image.clickView;
                                 image.removeView(v);
                                 image.clickView = null;
 
-                            }
-                            else {
-                                Log.i("annoobj",annoObj.toString());
-                                if (!annoObj.getAlreadyAdded()){
+                            } else {
+                                Log.i("annoobj", annoObj.toString());
+                                if (!annoObj.getAlreadyAdded()) {
 //
-                                    PictureTagView view = image.justHasView(coords.getX(),coords.getY());
+                                    PictureTagView view = image.justHasView(coords.getX(), coords.getY());
                                     if (view == null) {
                                         view = (PictureTagView) image.addItem(coords.getX(), coords.getY());
                                     }
-                                        view.setAnnotation(anno);
-                                        Log.i("ok","nice");
-                                        annoObj.setAlreadyAdded(true);
-                                }
-                                else {
-                                    PictureTagView view = image.justHasView(coords.getX(),coords.getY());
+                                    view.setAnnotation(anno);
+                                    Log.i("ok", "nice");
+                                    annoObj.setAlreadyAdded(true);
+                                } else {
+                                    PictureTagView view = image.justHasView(coords.getX(), coords.getY());
                                     if (view != null) {
                                         view.setAnnotation(anno);
                                     }
@@ -112,12 +111,11 @@ public class MainActivity extends AppCompatActivity {
 
                         }
 
-                        for (Coordinates coords: entriesToRemove) {
+                        for (Coordinates coords : entriesToRemove) {
                             annotations.remove(coords);
                         }
 
-                        Log.i("annos",annotations.toString());
-
+                        Log.i("annos", annotations.toString());
 
 
 //                            Random rand = new Random();
@@ -147,9 +145,30 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             }
+        };
 
-        },0,2000);
+        timer = new Timer();
+
+        timer.schedule(task,0,2000);
+
+        Intent intent = new Intent(MainActivity.this, picture.class);
+//                Log.i("Before starting","1");
+        startActivity(intent);
+        runningMainActivity = true;
 
     }
+
+//    public static void pause() {
+//        Log.i("timer","cancel");
+//        timer.cancel();
+//    }
+//
+//    public static void resume() {
+//        if (timer != null) {
+//            Log.i("timer","resume");
+//            timer = new Timer();
+//            timer.schedule( task, 0, 2000 );
+//        }
+//    }
 
 }

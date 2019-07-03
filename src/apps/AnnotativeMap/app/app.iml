@@ -183,5 +183,8 @@
     <orderEntry type="module" module-name="vegvisirPubSub" />
     <orderEntry type="module" module-name="vegvisirCore" />
     <orderEntry type="module" module-name="vegvisirInstanceV1" />
+    <orderEntry type="module" module-name="vegvisirPubSub" />
+    <orderEntry type="module" module-name="vegvisirCore" />
+    <orderEntry type="module" module-name="vegvisirInstanceV1" />
   </component>
 </module>

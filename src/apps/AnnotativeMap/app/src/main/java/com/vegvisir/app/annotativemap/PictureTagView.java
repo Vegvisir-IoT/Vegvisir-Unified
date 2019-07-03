@@ -121,9 +121,11 @@ public class PictureTagView extends RelativeLayout{
     private void directionChange(){
         switch(direction){
             case Left:
+//                loTag.setBackgroundResource(R.drawable.fire_left_small);
                 loTag.setBackgroundResource(R.drawable.bg_picturetagview_tagview_left);
                 break;
             case Right:
+//                loTag.setBackgroundResource(R.drawable.fire_right_small);
                 loTag.setBackgroundResource(R.drawable.bg_picturetagview_tagview_right);
                 break;
         }
