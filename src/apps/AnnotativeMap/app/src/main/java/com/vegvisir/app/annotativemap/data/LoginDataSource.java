@@ -25,7 +25,6 @@ public class LoginDataSource {
         // TODO: handle loggedInUser authentication
         LoggedInUser user = null;
         Log.i("usernames",LoginActivity.usernames.toString());
-
         if (LoginActivity.usernames.containsKey(username)){
             String hash = Integer.toString((username + password).hashCode());
 
@@ -53,6 +52,7 @@ public class LoginDataSource {
             throw new IOException("This username already exists");
         }
         else{
+            Log.i("Usernames","doesn't have this");
 //            LoginActivity.loginButton.setEnabled(false);
             //usernames.put(username, password);
             int hash = (username + password).hashCode();
@@ -72,8 +72,9 @@ public class LoginDataSource {
             if (LoginActivity.latestTransactions.containsKey(LoginActivity.deviceId)){
                 dependencies.add(LoginActivity.latestTransactions.get(LoginActivity.deviceId));
             }
-
+            Log.i("before","add");
             LoginActivity.instance.addTransaction(LoginActivity.context, topics, payload, dependencies);
+            Log.i("after","add");
             //instance.addTransaction(context, topics, payload, dependencies);
             return new Result.Success<>(user);
         }

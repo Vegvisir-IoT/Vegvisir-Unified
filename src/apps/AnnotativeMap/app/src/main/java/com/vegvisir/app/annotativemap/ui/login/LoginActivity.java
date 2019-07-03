@@ -221,7 +221,7 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(intent);
 //        MainActivity.resume();
-        MainActivity.runningMainActivity = true;
+//        MainActivity.runningMainActivity = true;
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {

@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i("comes","here");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -57,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, picture.class);
 //                Log.i("Before starting","1");
                 startActivity(intent);
-                runningMainActivity = true;
             }
         });
 
@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 MainActivity.this.runOnUiThread(() -> {
+                    Log.i("timer","running");
                     if (currentPicture != null && runningMainActivity) {
                         Log.i("annosatstart", annotations.toString());
                         Set<Coordinates> entriesToRemove = new HashSet<>();
@@ -149,12 +150,12 @@ public class MainActivity extends AppCompatActivity {
 
         timer = new Timer();
 
-        timer.schedule(task,0,2000);
+        timer.schedule(task,0,1000);
 
         Intent intent = new Intent(MainActivity.this, picture.class);
 //                Log.i("Before starting","1");
         startActivity(intent);
-        runningMainActivity = true;
+//        runningMainActivity = true;
 
     }
 
@@ -167,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
 //        if (timer != null) {
 //            Log.i("timer","resume");
 //            timer = new Timer();
-//            timer.schedule( task, 0, 2000 );
+//            timer.schedule( task, 0, 1000 );
 //        }
 //    }
 

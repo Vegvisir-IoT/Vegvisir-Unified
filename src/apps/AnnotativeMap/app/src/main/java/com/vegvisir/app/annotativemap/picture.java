@@ -41,6 +41,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
         image.load(); //read /sdcard/info.txt and init the subviews(annotations)
 //        image.write();
         MainActivity.currentPicture = this;
+        MainActivity.runningMainActivity = true;
 
         logout = findViewById(R.id.logout);
         logout.setOnClickListener(this);
