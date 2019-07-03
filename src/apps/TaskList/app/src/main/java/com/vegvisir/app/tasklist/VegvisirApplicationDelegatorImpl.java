@@ -45,7 +45,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 //        String item = payloadString.substring(1);
 //
 //        Set<TransactionTuple> updatedSet = new HashSet<>();
-//        Set<TransactionTuple> prevSets = MainActivity.dependencySets.get(item);
+//        Set<TransactionTuple> prevSets = MainActivity.MainDependencySets.get(item);
 //        String deviceId = tx_id.getDeviceID();
 //
 //        if (prevSets != null) {
@@ -64,14 +64,14 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 //
 //        TransactionTuple t = new TransactionTuple(tx_id, transactionType);
 //        updatedSet.add(t);
-//        MainActivity.dependencySets.put(item, updatedSet);
+//        MainActivity.MainDependencySets.put(item, updatedSet);
 //
-//        MainActivity.latestTransactions.put(deviceId, tx_id);
+//        MainActivity.MainLatestTransactions.put(deviceId, tx_id);
 //
 //        for (TransactionID d : deps) {
-//            MainActivity.topDeps.remove(d);
+//            MainActivity.MainTopDeps.remove(d);
 //        }
-//        MainActivity.topDeps.add(tx_id);
+//        MainActivity.MainTopDeps.add(tx_id);
 //        HashSet<String> lowSet = new HashSet<>();
 //        HashSet<String> mediumSet = new HashSet<>();
 //        HashSet<String> highSet = new HashSet<>();
@@ -118,7 +118,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 //        HashSet<String> highSetTop = new HashSet<>();
 //        HashSet<String> removeSetTop = new HashSet<>();
 //
-//        for (TransactionID d : MainActivity.topDeps) {
+//        for (TransactionID d : MainActivity.MainTopDeps) {
 //            if (MainActivity.fourPSets.containsKey(d)) {
 //                lowSetTop.addAll(MainActivity.fourPSets.get(d).getLowSet());
 //                mediumSetTop.addAll(MainActivity.fourPSets.get(d).getMediumSet());
@@ -127,7 +127,7 @@ public class VegvisirApplicationDelegatorImpl implements VegvisirApplicationDele
 //            }
 //        }
 //
-//        MainActivity.fourPSets.put(MainActivity.top, new FourPSet(lowSetTop, mediumSetTop, highSetTop, removeSetTop));
+//        MainActivity.fourPSets.put(MainActivity.MainTop, new FourPSet(lowSetTop, mediumSetTop, highSetTop, removeSetTop));
 //
 //        MainActivity.items.clear();
 //        MainActivity.priorities.clear();

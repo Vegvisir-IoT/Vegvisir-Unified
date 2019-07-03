@@ -11,7 +11,6 @@ import com.vegvisir.app.tasklist.ui.login.LoginActivity;
 import com.vegvisir.pub_sub.TransactionID;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -54,12 +53,12 @@ public class OrderAdapter extends ArrayAdapter<String> {
 
         //Set the text of the meal, amount and quantity
         selected_item.setText(item);
-        MainActivity.Priority p = MainActivity.priorities.get(item);
-        if (p == MainActivity.Priority.Low) {
+        LoginActivity.Priority p = LoginActivity.priorities.get(item);
+        if (p == LoginActivity.Priority.Low) {
             int green = this.context.getResources().getColor(R.color.Green);
             selected_item.setTextColor(green);
         }
-        else if (p == MainActivity.Priority.Medium){
+        else if (p == LoginActivity.Priority.Medium){
             int blue = this.context.getResources().getColor(R.color.Blue);
             selected_item.setTextColor(blue);
         }
@@ -79,17 +78,17 @@ public class OrderAdapter extends ArrayAdapter<String> {
                 Set<TransactionID> dependencies = new HashSet<>();
 
 //
-                Iterator<TransactionTuple> it = MainActivity.dependencySets.get(item).iterator();
+//                Iterator<TransactionTuple> it = MainActivity.MainDependencySets.get(item).iterator();
+//
+//                while(it.hasNext()){
+//                    TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+//                    if (!x.transaction.getDeviceID().equals(MainActivity.deviceId)){
+//                        dependencies.add(x.transaction);
+//                    }
+//                }
 
-                while(it.hasNext()){
-                    TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-                    if (!x.transaction.getDeviceID().equals(MainActivity.deviceId)){
-                        dependencies.add(x.transaction);
-                    }
-                }
-
-                if (MainActivity.latestTransactions.containsKey(MainActivity.deviceId)){
-                    dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
+                if (LoginActivity.MainLatestTransactions.containsKey(LoginActivity.deviceId)){
+                    dependencies.add(LoginActivity.MainLatestTransactions.get(LoginActivity.deviceId));
                 }
 
                 LoginActivity.instance.addTransaction(LoginActivity.context, topics, payload, dependencies);
@@ -109,17 +108,17 @@ public class OrderAdapter extends ArrayAdapter<String> {
                 Set<TransactionID> dependencies = new HashSet<>();
 
 //
-                Iterator<TransactionTuple> it = MainActivity.dependencySets.get(item).iterator();
+//                Iterator<TransactionTuple> it = MainActivity.MainDependencySets.get(item).iterator();
+//
+//                while(it.hasNext()){
+//                    TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+//                    if (!x.transaction.getDeviceID().equals(MainActivity.deviceId)){
+//                        dependencies.add(x.transaction);
+//                    }
+//                }
 
-                while(it.hasNext()){
-                    TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-                    if (!x.transaction.getDeviceID().equals(MainActivity.deviceId)){
-                        dependencies.add(x.transaction);
-                    }
-                }
-
-                if (MainActivity.latestTransactions.containsKey(MainActivity.deviceId)){
-                    dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
+                if (LoginActivity.MainLatestTransactions.containsKey(LoginActivity.deviceId)){
+                    dependencies.add(LoginActivity.MainLatestTransactions.get(LoginActivity.deviceId));
                 }
 
                 LoginActivity.instance.addTransaction(LoginActivity.context, topics, payload, dependencies);
@@ -139,17 +138,17 @@ public class OrderAdapter extends ArrayAdapter<String> {
                 Set<TransactionID> dependencies = new HashSet<>();
 
 //
-                Iterator<TransactionTuple> it = MainActivity.dependencySets.get(item).iterator();
+//                Iterator<TransactionTuple> it = MainActivity.MainDependencySets.get(item).iterator();
+//
+//                while(it.hasNext()){
+//                    TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+//                    if (!x.transaction.getDeviceID().equals(MainActivity.deviceId)){
+//                        dependencies.add(x.transaction);
+//                    }
+//                }
 
-                while(it.hasNext()){
-                    TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-                    if (!x.transaction.getDeviceID().equals(MainActivity.deviceId)){
-                        dependencies.add(x.transaction);
-                    }
-                }
-
-                if (MainActivity.latestTransactions.containsKey(MainActivity.deviceId)){
-                    dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
+                if (LoginActivity.MainLatestTransactions.containsKey(LoginActivity.deviceId)){
+                    dependencies.add(LoginActivity.MainLatestTransactions.get(LoginActivity.deviceId));
                 }
 
                 LoginActivity.instance.addTransaction(LoginActivity.context, topics, payload, dependencies);
@@ -169,17 +168,17 @@ public class OrderAdapter extends ArrayAdapter<String> {
                 Set<TransactionID> dependencies = new HashSet<>();
 
 //
-                Iterator<TransactionTuple> it = MainActivity.dependencySets.get(item).iterator();
+//                Iterator<TransactionTuple> it = MainActivity.MainDependencySets.get(item).iterator();
+//
+//                while(it.hasNext()){
+//                    TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+//                    if (!x.transaction.getDeviceID().equals(MainActivity.deviceId)){
+//                        dependencies.add(x.transaction);
+//                    }
+//                }
 
-                while(it.hasNext()){
-                    TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-                    if (!x.transaction.getDeviceID().equals(MainActivity.deviceId)){
-                        dependencies.add(x.transaction);
-                    }
-                }
-
-                if (MainActivity.latestTransactions.containsKey(MainActivity.deviceId)){
-                    dependencies.add(MainActivity.latestTransactions.get(MainActivity.deviceId));
+                if (LoginActivity.MainLatestTransactions.containsKey(LoginActivity.deviceId)){
+                    dependencies.add(LoginActivity.MainLatestTransactions.get(LoginActivity.deviceId));
                 }
 
                 LoginActivity.instance.addTransaction(LoginActivity.context, topics, payload, dependencies);
