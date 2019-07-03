@@ -8,3 +8,6 @@
 .externalNativeBuild
 .idea
 .DS_Store
+AnnotativeMap.iml
+app/app.iml
+local.properties
