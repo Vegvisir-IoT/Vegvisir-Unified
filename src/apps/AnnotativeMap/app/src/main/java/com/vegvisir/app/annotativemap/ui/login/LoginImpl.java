@@ -127,7 +127,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 
             Set<User> newSet = addSetTop;
             newSet.removeAll(removeSetTop);
-            //Log.i("new set", newSet.toString());
+            Log.i("new set", newSet.toString());
             LoginActivity.usernames.clear();
             for (User u: newSet){
                 LoginActivity.usernames.put(u.getUsername(), u.getPassword());
