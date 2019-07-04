@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 
 import java.util.*;
@@ -37,6 +38,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
         PictureTagLayout image = findViewById(R.id.image);
 //        Log.i("Before click","4");
         image.setBackgroundResource(R.drawable.example_map);
+
 //        Log.i("Before click","5");
         image.load(); //read /sdcard/info.txt and init the subviews(annotations)
 //        image.write();
@@ -89,10 +91,10 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
                 Set<TransactionID> dependencies = new HashSet<>();
 
                 if (LoginActivity.mapDependencySets.containsKey(coords)) {
-                    Iterator<TransactionTuple> it = LoginActivity.mapDependencySets.get(coords).iterator();
+                    Iterator<TransactionID> it = LoginActivity.mapDependencySets.get(coords).iterator();
                     while (it.hasNext()) {
-                        TransactionTuple tt = (TransactionTuple) ((Iterator) it).next();
-                        dependencies.add(tt.transaction);
+                        TransactionID t = (TransactionID) ((Iterator) it).next();
+                        dependencies.add(t);
                     }
                 }
 //                if (MainActivity.mapLatestTransactions.containsKey(LoginActivity.deviceId)) {
@@ -133,10 +135,10 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
                 Set<TransactionID> dependencies = new HashSet<>();
 
                 if (LoginActivity.mapDependencySets.containsKey(coords)) {
-                    Iterator<TransactionTuple> it = LoginActivity.mapDependencySets.get(coords).iterator();
+                    Iterator<TransactionID> it = LoginActivity.mapDependencySets.get(coords).iterator();
                     while (it.hasNext()) {
-                        TransactionTuple tt = (TransactionTuple) ((Iterator) it).next();
-                        dependencies.add(tt.transaction);
+                        TransactionID t = (TransactionID) ((Iterator) it).next();
+                        dependencies.add(t);
                     }
                 }
 //                if (MainActivity.mapLatestTransactions.containsKey(LoginActivity.deviceId)) {

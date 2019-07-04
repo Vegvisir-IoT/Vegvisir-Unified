@@ -32,13 +32,10 @@
         </activity>
         <activity
             android:name=".picture"
-            android:label="pic"></activity>
+            android:label="Ithaca"></activity>
         <activity
             android:name=".add_annotation"
             android:label="add_annotation"></activity>
-        <activity
-            android:name=".send"
-            android:label="send"></activity>
     </application>
 
 </manifest>

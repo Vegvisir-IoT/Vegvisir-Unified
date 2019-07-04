@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -30,10 +29,8 @@ import com.vegvisir.app.annotativemap.Annotation;
 import com.vegvisir.app.annotativemap.Coordinates;
 import com.vegvisir.app.annotativemap.MainActivity;
 import com.vegvisir.app.annotativemap.R;
-import com.vegvisir.app.annotativemap.TransactionTuple;
 import com.vegvisir.app.annotativemap.TwoPSet;
 import com.vegvisir.app.annotativemap.picture;
-import com.vegvisir.app.annotativemap.ui.login.LoginViewModel;
 import com.vegvisir.application.VegvisirInstanceV1;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
@@ -44,13 +41,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LoginActivity extends AppCompatActivity {
 
     public static ConcurrentHashMap<Coordinates, Annotation> annotations = new ConcurrentHashMap<>();
-    public static HashMap<Coordinates,Set<TransactionTuple>> mapDependencySets = new HashMap<>();
+    public static HashMap<Coordinates,Set<TransactionID>> mapDependencySets = new HashMap<>();
     public static HashMap<String, TransactionID> mapLatestTransactions = new HashMap<>();
     public static HashMap<TransactionID, TwoPSet> mapTwoPSets = new HashMap<>();
     public static Set<TransactionID> mapTopDeps = new HashSet<>();
@@ -61,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
     // mapping from device ID to Transaction ID
     public static HashMap<String, TransactionID> latestTransactions = new HashMap<>();
     // mapping from an item to dependencies
-    public static HashMap<String, Set<TransactionTuple>> dependencySets = new HashMap<>();
+    public static HashMap<String, Set<TransactionID>> dependencySets = new HashMap<>();
     //mapping from transaction ID to its 2P set
     public static HashMap<TransactionID, TwoPSetUser> twoPSets = new HashMap<>();
     public static HashMap<String, String> usernames = new HashMap<>();

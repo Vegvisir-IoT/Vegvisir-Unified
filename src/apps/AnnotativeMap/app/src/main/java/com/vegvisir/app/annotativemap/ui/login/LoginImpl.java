@@ -9,7 +9,6 @@ import com.vegvisir.app.annotativemap.FullAnnotation;
 import com.vegvisir.app.annotativemap.PictureTagLayout;
 import com.vegvisir.app.annotativemap.PictureTagView;
 import com.vegvisir.app.annotativemap.R;
-import com.vegvisir.app.annotativemap.TransactionTuple;
 import com.vegvisir.app.annotativemap.TwoPSet;
 import com.vegvisir.app.annotativemap.User;
 import com.vegvisir.pub_sub.TransactionID;
@@ -64,25 +63,24 @@ public class LoginImpl implements VegvisirApplicationDelegator {
             String username = payloadString.substring(1,usernamePos);
             String password = payloadString.substring(usernamePos + 1);
 
-            Set<TransactionTuple> updatedSet = new HashSet<>();
-            Set<TransactionTuple> prevSets = LoginActivity.dependencySets.get(username);
+            Set<TransactionID> updatedSet = new HashSet<>();
+            Set<TransactionID> prevSets = LoginActivity.dependencySets.get(username);
             String deviceId = tx_id.getDeviceID();
 
 
             if (prevSets != null) {
-                Iterator<TransactionTuple> itr = prevSets.iterator();
+                Iterator<TransactionID> itr = prevSets.iterator();
                 while (itr.hasNext()) {
-                    TransactionTuple x = (TransactionTuple) ((Iterator) itr).next();
+                    TransactionID x = (TransactionID) ((Iterator) itr).next();
 
-                    if (!deps.contains(x.transaction)) {
+                    if (!deps.contains(x)) {
 
                         updatedSet.add(x);
                     }
                 }
             }
 
-            TransactionTuple t = new TransactionTuple(tx_id, transactionType);
-            updatedSet.add(t);
+            updatedSet.add(tx_id);
             LoginActivity.dependencySets.put(username, updatedSet);
 
             LoginActivity.latestTransactions.put(deviceId, tx_id);
@@ -165,25 +163,24 @@ public class LoginImpl implements VegvisirApplicationDelegator {
                 }
             }
 
-            Set<TransactionTuple> updatedSet = new HashSet<>();
-            Set<TransactionTuple> prevSets = LoginActivity.mapDependencySets.get(coords);
+            Set<TransactionID> updatedSet = new HashSet<>();
+            Set<TransactionID> prevSets = LoginActivity.mapDependencySets.get(coords);
             String deviceId = tx_id.getDeviceID();
 
 
             if (prevSets != null) {
-                Iterator<TransactionTuple> itr = prevSets.iterator();
+                Iterator<TransactionID> itr = prevSets.iterator();
                 while (itr.hasNext()) {
-                    TransactionTuple tt = (TransactionTuple) ((Iterator) itr).next();
+                    TransactionID t = (TransactionID) ((Iterator) itr).next();
 
-                    if (!deps.contains(tt.transaction)) {
+                    if (!deps.contains(t)) {
 
-                        updatedSet.add(tt);
+                        updatedSet.add(t);
                     }
                 }
             }
 
-            TransactionTuple t = new TransactionTuple(tx_id, transactionType);
-            updatedSet.add(t);
+            updatedSet.add(tx_id);
             LoginActivity.mapDependencySets.put(coords, updatedSet);
 
             LoginActivity.mapLatestTransactions.put(deviceId, tx_id);

@@ -2,7 +2,6 @@ package com.vegvisir.app.annotativemap.data;
 
 import android.util.Log;
 
-import com.vegvisir.app.annotativemap.TransactionTuple;
 import com.vegvisir.app.annotativemap.data.model.LoggedInUser;
 import com.vegvisir.app.annotativemap.ui.login.LoginActivity;
 import com.vegvisir.pub_sub.TransactionID;
@@ -63,10 +62,10 @@ public class LoginDataSource {
             Set<TransactionID> dependencies = new HashSet<>();
 
             if (LoginActivity.dependencySets.containsKey(username)) {
-                Iterator<TransactionTuple> it = LoginActivity.dependencySets.get(username).iterator();
+                Iterator<TransactionID> it = LoginActivity.dependencySets.get(username).iterator();
                 while (it.hasNext()) {
-                    TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-                    dependencies.add(x.transaction);
+                    TransactionID x = (TransactionID) ((Iterator) it).next();
+                    dependencies.add(x);
                 }
             }
             if (LoginActivity.latestTransactions.containsKey(LoginActivity.deviceId)){
