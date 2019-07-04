@@ -22,6 +22,8 @@ public class EndPointConnection {
 
     private String endPointId;
 
+    private String remoteID;
+
     private java.util.function.Function<Payload, Void> recvHandler;
 
     private BlockingDeque<Payload> recvQueue;
@@ -41,8 +43,10 @@ public class EndPointConnection {
     private Boolean flushCondition = false;
 
     public EndPointConnection(@NonNull String endPointId,
+                              @NonNull String remoteID,
                               @NonNull Context context,
                               @NonNull ByteStream stream) {
+        this.remoteID = remoteID;
         this.endPointId = endPointId;
         this.stream = stream;
         this.recvQueue = new LinkedBlockingDeque<>();
@@ -145,6 +149,10 @@ public class EndPointConnection {
 
     public String getEndPointId() {
         return endPointId;
+    }
+
+    public String getRemoteID() {
+        return remoteID;
     }
 
     public void waitUntilFlushAllData() {

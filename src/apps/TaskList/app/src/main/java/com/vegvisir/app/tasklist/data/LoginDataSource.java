@@ -27,7 +27,9 @@ public class LoginDataSource {
             Log.i("usernames",LoginActivity.usernames.toString());
 
             if (LoginActivity.usernames.containsKey(username)){
-                if (LoginActivity.usernames.get(username).equals(password)){
+                String hash = Integer.toString((username + password).hashCode());
+
+                if (LoginActivity.usernames.get(username).equals(hash)){
                     user =  new LoggedInUser(
                             username,
                             username);
@@ -52,7 +54,8 @@ public class LoginDataSource {
         }
         else{
             //usernames.put(username, password);
-            String payloadString = "1" +  username + "," + password;
+            int hash = (username + password).hashCode();
+            String payloadString = "5" +  username + "," + hash;
             byte[] payload = payloadString.getBytes();
             Set<String> topics = new HashSet<String>();
             topics.add(LoginActivity.topic);
@@ -69,7 +72,7 @@ public class LoginDataSource {
                 dependencies.add(LoginActivity.latestTransactions.get(LoginActivity.deviceId));
             }
 
-            LoginActivity.virtual.addTransaction(LoginActivity.context, topics, payload, dependencies);
+            LoginActivity.instance.addTransaction(LoginActivity.context, topics, payload, dependencies);
             //instance.addTransaction(context, topics, payload, dependencies);
             return new Result.Success<>(user);
         }

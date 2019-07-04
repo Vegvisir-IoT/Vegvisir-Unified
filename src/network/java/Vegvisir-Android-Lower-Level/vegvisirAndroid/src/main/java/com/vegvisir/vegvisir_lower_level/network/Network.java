@@ -2,6 +2,7 @@ package com.vegvisir.vegvisir_lower_level.network;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Pair;
 import android.util.Log;
 
@@ -84,7 +85,7 @@ public class Network {
     }
 
     public String waitingConnection() {
-        return byteStream.establishConnection().getEndPointId();
+        return byteStream.establishConnection().getRemoteID();
     }
 
     public void send(String id, Payload payload) throws ConnectionNotAvailableException {
@@ -158,8 +159,8 @@ public class Network {
         return dispatcher.registerHandler(id, handler);
     }
 
-    public void disconnect(String endpoint) {
-        byteStream.disconnect(endpoint);
+    public void disconnect(String remoteID) {
+        byteStream.disconnect(remoteID);
     }
 
     public String getDisconnectedId() throws InterruptedException {
