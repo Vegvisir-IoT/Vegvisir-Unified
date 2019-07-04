@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.vegvisir.app.tasklist.FourPSet;
 import com.vegvisir.app.tasklist.MainActivity;
 import com.vegvisir.app.tasklist.R;
 import com.vegvisir.app.tasklist.TransactionTuple;
@@ -34,6 +35,7 @@ import com.vegvisir.pub_sub.VegvisirApplicationContext;
 import com.vegvisir.pub_sub.VegvisirInstance;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,6 +43,17 @@ import java.util.Timer;
 
 public class LoginActivity extends AppCompatActivity {
 
+    //public static String deviceId = "";
+    // mapping from device ID to Transaction ID
+    public static HashMap<String, TransactionID> MainLatestTransactions = new HashMap<>();
+    public static HashMap<String, Set<TransactionTuple>> MainDependencySets = new HashMap<>();
+    public static HashMap<TransactionID, FourPSet> fourPSets = new HashMap<>();
+    public static Set<TransactionID> witnessedTransactions = new HashSet<TransactionID>();
+    public static Set<TransactionID> notWitnessedTransactions = new HashSet<TransactionID>();
+    public static Set<TransactionID> MainTopDeps = new HashSet<>();
+    public static TransactionID MainTop = new TransactionID("", -1);
+    public static ArrayList<String> items = new ArrayList<>();
+    public static HashMap<String, Priority> priorities = new HashMap<>();
     private LoginViewModel loginViewModel;
     public static String deviceId = "";
     // mapping from device ID to Transaction ID
@@ -53,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
     public static Set<TransactionID> topDeps = new HashSet<>();
     public static TransactionID top = new TransactionID("", -1);
     public static VegvisirApplicationContext context = null;
-    private LoginImpl delegator = new LoginImpl();
+    public static LoginImpl delegator = new LoginImpl();
     public static String topic = "Blue team";
     private String appID = "123";
     private  String desc = "task list";
@@ -219,5 +232,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+    }
+
+    public enum Priority{
+        High, Medium, Low;
     }
 }

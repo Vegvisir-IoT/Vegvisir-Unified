@@ -61,7 +61,7 @@ public class MainActivity2 extends AppCompatActivity {
         mTaskList = (ListView) findViewById(R.id.task_listView);
         mItemEdit = (EditText) findViewById(R.id.item_editText);
         mAddButton = (Button) findViewById(R.id.add_button);
-        mSwitchButton = findViewById(R.id.switch_button);
+//        mSwitchButton = findViewById(R.id.switch_button);
 
 //        context.setAppID(appID);
 //        context.setDesc(desc);
@@ -99,15 +99,15 @@ public class MainActivity2 extends AppCompatActivity {
 //                        topics2.add(topic);
 //                        Set<TransactionID> dependencies2 = new HashSet<>();
 //
-//                        if (dependencySets.containsKey("a")) {
-//                            Iterator<TransactionTuple> it = dependencySets.get("a").iterator();
+//                        if (MainDependencySets.containsKey("a")) {
+//                            Iterator<TransactionTuple> it = MainDependencySets.get("a").iterator();
 //                            while (it.hasNext()) {
 //                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
 //                                dependencies2.add(x.transaction);
 //                            }
 //                        }
-//                        if (latestTransactions.containsKey("DeviceB")){
-//                            dependencies2.add(latestTransactions.get("DeviceB"));
+//                        if (MainLatestTransactions.containsKey("DeviceB")){
+//                            dependencies2.add(MainLatestTransactions.get("DeviceB"));
 //                        }
 //                        try {
 //                            virtual.addTransaction(context, topics2, payload2, dependencies2);
@@ -122,15 +122,15 @@ public class MainActivity2 extends AppCompatActivity {
 //                        topics.add(topic);
 //                        Set<TransactionID> dependencies = new HashSet<>();
 //
-//                        if (dependencySets.containsKey("a")) {
-//                            Iterator<TransactionTuple> it = dependencySets.get("a").iterator();
+//                        if (MainDependencySets.containsKey("a")) {
+//                            Iterator<TransactionTuple> it = MainDependencySets.get("a").iterator();
 //                            while (it.hasNext()) {
 //                                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
 //                                dependencies.add(x.transaction);
 //                            }
 //                        }
-//                        if (latestTransactions.containsKey("DeviceB")){
-//                            dependencies2.add(latestTransactions.get("DeviceB"));
+//                        if (MainLatestTransactions.containsKey("DeviceB")){
+//                            dependencies2.add(MainLatestTransactions.get("DeviceB"));
 //                        }
 //                        try {
 //                            virtual.addTransaction(context, topics, payload, dependencies);
