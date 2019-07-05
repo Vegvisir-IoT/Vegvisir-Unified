@@ -256,8 +256,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
             Log.i("highsettop",highSetTop.toString());
             Log.i("removesettop",removeSetTop.toString());
 
-            Log.i("sets", LoginActivity.fourPSets.toString());
-//
+            Log.i("sets", LoginActivity.fourPSets.toString());  
             Log.i("items", LoginActivity.items.toString());
 
         }
@@ -268,10 +267,6 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 
     }
 
-    // TODO: FIX
-    // if p1 == p2
-    // compare s1.s2
-    // else p1.compareTo(p2)
     public class ItemComparator implements Comparator<String> {
         @Override
         public int compare(String s1,String s2) {
@@ -281,32 +276,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
                 return s1.compareTo(s2);
             else
                 return p1.compareTo(p2);
-           /* if (p1 == LoginActivity.Priority.High) {
-                if (p2 == LoginActivity.Priority.High) {
-                    return s1.compareTo(s2);
-                }
-                else {
-                    return -1;
-                }
-            }
-            else if (p1 == LoginActivity.Priority.Medium) {
-                if (p2 == LoginActivity.Priority.High) {
-                    return 1;
-                }
-                else if (p2 == LoginActivity.Priority.Medium) {
-                    return s1.compareTo(s2);
-                }
-                else {
-                    return -1;
-                }
-            }
-            else {
-                if (p2 == LoginActivity.Priority.Low) {
-                    return s1.compareTo(s2);
-                }
-                else {
-                    return 1;
-                } */
+
         }
     }
 }
