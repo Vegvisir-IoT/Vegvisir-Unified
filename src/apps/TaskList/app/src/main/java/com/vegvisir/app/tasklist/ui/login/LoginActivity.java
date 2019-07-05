@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -38,7 +37,6 @@ import com.vegvisir.pub_sub.VegvisirInstance;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -147,7 +145,6 @@ public class LoginActivity extends AppCompatActivity {
                     updateUiWithUser(loginResult.getSuccess());
                 }
                 setResult(Activity.RESULT_OK);
-
                 //Complete and destroy login activity once successful
                 finish();
             }
@@ -172,9 +169,8 @@ public class LoginActivity extends AppCompatActivity {
         };
         usernameEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.addTextChangedListener(afterTextChangedListener);
-        passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        passwordEditText.setOnEditorActionListener(( view, actionId, event) -> {
+
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     try {
                         loginViewModel.login(usernameEditText.getText().toString(),
@@ -184,44 +180,31 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
                 return false;
-            }
-        });
+            });
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                loadingProgressBar.setVisibility(View.VISIBLE);
-                try {
-                    loginViewModel.login(usernameEditText.getText().toString(),
-                            passwordEditText.getText().toString());
-                } catch (IOException e) {
-                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-//                    finish();
-//                    startActivity(getIntent());
-                    usernameEditText.setText("");
-                    passwordEditText.setText("");
-                }
+        loginButton.setOnClickListener((view -> {
+            try {
+                loginViewModel.login(usernameEditText.getText().toString(),
+                        passwordEditText.getText().toString());
+            } catch (IOException e) {
+                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                usernameEditText.setText("");
+                passwordEditText.setText("");
             }
-        });
+        }));
 
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                loadingProgressBar.setVisibility(View.VISIBLE);
+        registerButton.setOnClickListener((view ->  {
                 try {
                     String displayString = loginViewModel.register(usernameEditText.getText().toString(),
                             passwordEditText.getText().toString());
                     Toast.makeText(getApplicationContext(),displayString,Toast.LENGTH_LONG).show();
                 } catch (IOException e) {
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-//                    finish();
-//                    startActivity(getIntent());
 
                     usernameEditText.setText("");
                     passwordEditText.setText("");
                 }
-            }
-        });
+        }));
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
@@ -235,7 +218,6 @@ public class LoginActivity extends AppCompatActivity {
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
-
 
 
     public enum Priority{
