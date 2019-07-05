@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     private Button editButton = null;
     private static TimerTask task;
     public static boolean runningMainActivity;
+    public static boolean printedOnce = false;
 
 //    public static VegvisirApplicationContext context = null;
 //    private static LoginImpl delegator = new LoginImpl();
@@ -53,19 +54,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 MainActivity.this.runOnUiThread(() -> {
-                    Log.i("timer","running");
+//                    Log.i("timer","running");
                     if (LoginActivity.currentPicture != null && runningMainActivity) {
-                        Log.i("annosatstart", LoginActivity.annotations.toString());
+                        if (!printedOnce) {
+                            Log.i("annosatstart", LoginActivity.annotations.toString());
+                        }
                         Set<Coordinates> entriesToRemove = new HashSet<>();
 
 //                            Log.i("before",annotations.toString());
                         for (Map.Entry<Coordinates, Annotation> entry : LoginActivity.annotations.entrySet()) {
 
                             Coordinates coords = entry.getKey();
-                            Log.i("coords", coords.getX() + "," + coords.getY());
+                            if (!printedOnce) {
+                                Log.i("coords", coords.getX() + "," + coords.getY());
 //                                Log.i("shouldRemove",entry.getValue().getShouldRemove().toString());
-                            Log.i("alreadyAdded", entry.getValue().getAlreadyAdded().toString());
-
+                                Log.i("alreadyAdded", entry.getValue().getAlreadyAdded().toString());
+                            }
                             Annotation annoObj = entry.getValue();
 //                            PictureTagLayout image = annoObj.getLayout();
                             anno = annoObj.getAnnotation();
@@ -73,14 +77,20 @@ public class MainActivity extends AppCompatActivity {
 
 
                             if (annoObj.getShouldRemove()) {
-                                Log.i("Should remove", "reached");
+//                                Log.i("Should remove", "reached");
                                 entriesToRemove.add(coords);
-                                View v = image.clickView;
-                                image.removeView(v);
-                                image.clickView = null;
+                                View v = image.justHasView(coords.getX(),coords.getY());
+                                if (v != null) {
+                                    image.removeView(v);
+                                }
+                                else {
+                                    Log.i("view","for remove not found");
+                                }
 
                             } else {
-                                Log.i("annoobj", annoObj.toString());
+                                if (!printedOnce) {
+                                    Log.i("annoobj", annoObj.toString());
+                                }
                                 if (!annoObj.getAlreadyAdded()) {
 //
                                     PictureTagView view = image.justHasView(coords.getX(), coords.getY());
@@ -90,12 +100,12 @@ public class MainActivity extends AppCompatActivity {
 
                                     view.setAnnotation(anno);
 
-                                    Log.i("ok", "nice");
+//                                    Log.i("ok", "nice");
                                     annoObj.setAlreadyAdded(true);
                                 } else {
                                     PictureTagView view = image.justHasView(coords.getX(), coords.getY());
                                     if (view != null) {
-                                        Log.i("edit","case");
+//                                        Log.i("edit","case");
                                         view.setAnnotation(anno);
                                     }
                                 }
@@ -106,9 +116,10 @@ public class MainActivity extends AppCompatActivity {
                         for (Coordinates coords : entriesToRemove) {
                             LoginActivity.annotations.remove(coords);
                         }
-
-                        Log.i("annos", LoginActivity.annotations.toString());
-
+                        if (!printedOnce) {
+                            Log.i("annos", LoginActivity.annotations.toString());
+                        }
+                        printedOnce = true;
 
 //                            Random rand = new Random();
 //                            int rand1 = rand.nextInt(500);

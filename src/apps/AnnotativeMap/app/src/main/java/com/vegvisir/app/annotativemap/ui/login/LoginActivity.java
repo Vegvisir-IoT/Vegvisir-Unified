@@ -66,8 +66,8 @@ public class LoginActivity extends AppCompatActivity {
     public static  VegvisirApplicationContext context = null;
     public static LoginImpl delegator;
     public static String topic = "Blue team";
-    private String appID = "123";
-    private  String desc = "task list";
+    private String appID = "456";
+    private  String desc = "annotated map";
     private Set<String> channels = new HashSet<String>();
     public static VegvisirInstance instance = null;
     public static Button loginButton;
