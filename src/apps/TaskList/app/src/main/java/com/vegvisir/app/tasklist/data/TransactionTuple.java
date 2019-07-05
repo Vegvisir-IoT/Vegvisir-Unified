@@ -1,4 +1,4 @@
-package com.vegvisir.app.tasklist;
+package com.vegvisir.app.tasklist.data;
 import com.vegvisir.pub_sub.*;
 
 public class TransactionTuple {

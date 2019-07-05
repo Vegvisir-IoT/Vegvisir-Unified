@@ -1,4 +1,4 @@
-package com.vegvisir.app.tasklist.ui.login;
+package com.vegvisir.app.tasklist.data;
 
 import com.vegvisir.app.tasklist.User;
 
