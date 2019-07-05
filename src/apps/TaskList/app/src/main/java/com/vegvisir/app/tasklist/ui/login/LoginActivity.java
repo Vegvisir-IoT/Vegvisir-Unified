@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -28,7 +29,8 @@ import androidx.lifecycle.ViewModelProviders;
 import com.vegvisir.app.tasklist.FourPSet;
 import com.vegvisir.app.tasklist.MainActivity;
 import com.vegvisir.app.tasklist.R;
-import com.vegvisir.app.tasklist.TransactionTuple;
+import com.vegvisir.app.tasklist.data.TransactionTuple;
+import com.vegvisir.app.tasklist.data.TwoPSetUser;
 import com.vegvisir.application.VegvisirInstanceV1;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
@@ -36,6 +38,7 @@ import com.vegvisir.pub_sub.VegvisirInstance;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -170,7 +173,6 @@ public class LoginActivity extends AppCompatActivity {
         usernameEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -234,7 +236,42 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 
+
+
     public enum Priority{
-        High, Medium, Low;
+        High(3), Medium(2), Low(1);
+        private final int value;
+        Priority(int val){
+            value = val;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public static int priorityComparator( Priority p1, Priority p2) {
+            if (p1.equals(p2))
+                return p1.getValue() - p2.getValue();
+            else
+                return p1.compareTo(p2);
+        }
+
+
+        /**
+         * @dependency :: Context must be initiated prior to calling
+         * @return Integer representation of Priority Color
+         */
+        public int getAssociatedColor() {
+
+            if (this == High)
+                return ContextCompat.getColor(androidContext, R.color.Red);
+            else if (this == Medium)
+                return ContextCompat.getColor(androidContext, R.color.Blue);
+            else
+                return ContextCompat.getColor(androidContext, R.color.Green);
+
+            }
+
     }
+
 }

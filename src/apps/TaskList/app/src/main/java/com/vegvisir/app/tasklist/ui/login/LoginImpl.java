@@ -3,8 +3,9 @@ package com.vegvisir.app.tasklist.ui.login;
 import android.util.Log;
 
 import com.vegvisir.app.tasklist.FourPSet;
-import com.vegvisir.app.tasklist.TransactionTuple;
+import com.vegvisir.app.tasklist.data.TransactionTuple;
 import com.vegvisir.app.tasklist.User;
+import com.vegvisir.app.tasklist.data.TwoPSetUser;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationDelegator;
 import com.vegvisir.pub_sub.VegvisirInstance;
@@ -259,10 +260,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 //
             Log.i("items", LoginActivity.items.toString());
 
-
         }
-
-
 
     }
 
@@ -270,12 +268,20 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 
     }
 
+    // TODO: FIX
+    // if p1 == p2
+    // compare s1.s2
+    // else p1.compareTo(p2)
     public class ItemComparator implements Comparator<String> {
         @Override
         public int compare(String s1,String s2) {
             LoginActivity.Priority p1 = LoginActivity.priorities.get(s1);
             LoginActivity.Priority p2 = LoginActivity.priorities.get(s2);
-            if (p1 == LoginActivity.Priority.High) {
+            if( p1 == p2)
+                return s1.compareTo(s2);
+            else
+                return p1.compareTo(p2);
+           /* if (p1 == LoginActivity.Priority.High) {
                 if (p2 == LoginActivity.Priority.High) {
                     return s1.compareTo(s2);
                 }
@@ -300,10 +306,8 @@ public class LoginImpl implements VegvisirApplicationDelegator {
                 }
                 else {
                     return 1;
-                }
-            }
+                } */
         }
     }
-
-
 }
+
