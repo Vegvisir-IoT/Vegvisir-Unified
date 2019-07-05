@@ -22,7 +22,206 @@
 
 \maketitle
 
-\section*{Vegvisir Block Graph}
+\section{Vegvisir Design}
+
+Perhaps the most important concept to understand in Vegvisir is that of a partially ordered set (poset).
+A poset is a pair $(S, \preceq)$ where $S$ is a set of elements and $\preceq$
+is a binary relation between elements of $s$ such that
+$\forall s, s', s'' \in S$:
+\begin{itemize}
+\item \emph{reflexivity}: $s \preceq s$
+\item \emph{antisymmetry}: $s \preceq s' \wedge s' \preceq s \implies s = s'$
+\item \emph{transitivity}: $s \preceq s' \wedge s' \preceq s'' \implies s \preceq s''$
+\end{itemize}
+
+A \emph{Directed Acyclic Graph} (DAG) induces a poset in a natural way,
+although typically a poset is diagrammed using a \emph{Hasse Diagram},
+which is essentially is a DAG with all transitive edges removed.
+
+Two elements $s$ and $s'$ of $S$ are called \emph{comparable} if either
+$s \preceq s'$ or $s' \preceq s$, and \emph{incomparable} otherwise.
+A subset $S' \subseteq S$ forms a \emph{cut} of $(S, \preceq)$ if
+any two elements of $S'$ are incomparable.
+We define the \emph{frontier} of $S$ to be the subset $S' \subseteq S$ that
+consists of all transactions in $S$ that no other transactions in $S$ depend
+on.  The frontier is a cut.
+If $s \prec s'$ (shorthand for $s \preceq s' \wedge s \neq s'$),
+we will say that $s$ \emph{precedes} $s'$.
+We say that $s$ is a \emph{parent} of $s'$ if $s \prec s'$ and
+there is no element $s''$ such that $s \prec s'' \prec s'$.
+
+In Vegvisir, the poset concept shows up in at least three places:
+\begin{enumerate}
+\item its transactions;
+\item its blocks;
+\item its layered architecture.
+\end{enumerate}
+
+\subsection{Vegvisir Transactions}
+
+A \emph{transaction} encodes an \emph{operation} on some object.
+(One may distinguish multiple objects within the object, but for simplicity
+we only consider a single object here.)
+An operation may mutate the state of the object and return a deterministic
+result.
+Operations are immutable and form a poset.
+In accordance with operation-based CRDTs, we require that incomparable
+operations in this poset commute.
+If so, a cut $c$ in the poset uniquely identifies a state, which we term
+$\mathit{state}(c)$.
+The state of the poset is the state of its frontier.
+
+An important feature of Vegvisir transactions is their durability.
+A Vegvisir transaction cannot become less durable over time, but its
+durability may increase.  Currently, durability may be expressed as the
+set of devices that are known to store a copy of the transaction.  We
+call those devices the \emph{witnesses}.
+Applications (should) have access to the level of durability of
+transactions.
+
+\subsection{Vegvisir Blocks}
+
+A block contains an ordered list of transactions.
+Like transactions, blocks are immutable, have a level of durability,
+and form a poset.
+(Essentially, a block aggregates a set of transactions.)
+Going further, in an instantiation of a Vegvisir blockchain,
+there is a unique block $g$ that precedes all other blocks in the blockchain.
+$g$ is called the \emph{genesis block}.  Note that a Vegvisir blockchain
+instantiation therefore forms a semilattice.
+
+[not sure about any of the following]
+
+If participants are all correct, $t \leq t' \implies t \preceq t'$
+(but not necessarily vice versa).
+We require that for two transactions $t$ and $t'$ and two blocks $b$ and
+$b'$, $t \in b \wedge t' \in b' \wedge t \preceq t' \implies b \preceq b'$,
+that is, the ordering among blocks has to be consistent with the ordering
+among transactions.  Moreover, the same transaction cannot appear more
+than once---it is thus possible to identify a transaction by the block
+that it is in and its index in the block.
+Also, the durability of a
+transaction is the same as the durability of the block that it is in.
+
+\subsection{Vegvisir Architecture}
+
+A natural way to deal with complexity in software design is through
+\emph{layering}.
+Each layer implements an \emph{abstraction} and typically
+supports instantiating the abstraction multiple times.  An abstraction
+is usually an \emph{object} with an \emph{interface} and a
+\emph{specification} that describes how that interface behaves.
+Different layers may implement the same abstraction.
+As the objects are typically distributed in nature, their implementations
+are usually through \emph{protocols}.
+
+Layers form a poset: one layer $L$ may use one or more other layers to
+implement the abstraction that layer $L$ implements, but there can be no
+circular dependencies.
+If $L \preceq L'$, then $L'$ uses $L$ in its implementation.
+Abstraction dictates that the implementation of $L'$ should only access
+$L$ through its interface in accordance with $L$'s specification, but
+should not know anything about its implementation.
+Through its specification, $L$ is allowed to limit how $L'$ or other layers
+accesses its interface, but in
+general should not know anything about those layers.  In other words,
+a layer's interface should be \emph{generic}.
+
+The Vegvisir architecture includes the following layers:
+\begin{enumerate}
+\item each application is a layer in its own right.  An application typically
+has no other layers that use it, but this is not necessary.
+\item the \emph{pub/sub layer}: a layer that supports topics, publishing
+transactions to topics, and subscribing to topics, indicating a desire to
+receive transactions published to those topics.
+Transactions are delivered to the subscriber in an order consistent
+with the transactions poset, that is, a transaction is never delivered
+until all transactions that precede it are delivered.
+\item the \emph{block layer}, implementing a poset of blocks;
+\item various \emph{block reconciliation layers}, each implementing an
+alternative way of reconciling block posets on different devices;
+\item various network layers, providing low-level networking support
+between devices for the block reconciliation layers.
+\end{enumerate}
+
+The enumeration above is consistent with the partial ordering among
+the layers: layers at a particular item are only allowed to use layers
+at higher numbered items in their implementation.
+
+\section{Vegvisir Data Types}
+
+Vegvisir defines a variety of types: messages, blocks, transactions,
+operations, and many more.  Many of these data types are \emph{container
+types}, and can contain other generic data types: a message may contain
+a block, a block may contain a transaction, and a transaction may contain
+an operation.
+Many data types are defined
+within a layer and are only intended for use within that layer; other
+data types are intended for general use and appear in the interfaces
+of layers.
+
+Like layer interfaces, data types should be generic: a message can
+contain different kinds of blocks, a block can contain different types
+of transactions, and a transaction can contain different kinds of
+operations.  Moreover, none of the data types should have to anticipate
+what data types it might contain in the future.
+
+In Vegvisir we use Google \emph{Protobuffers} or \emph{protobufs}
+for short to define Vegvisir data types.
+Unfortunately, while protobufs are efficient for serialization,
+the protobuf definition language does not support generics.
+One common solution around this problem, widely used in the internet,
+is to do iterative serialization:
+if data type $d$ can contain a variety of other data types, then
+define $d$ to have a \emph{byte buffer} and serialize the other data
+types into this byte buffer.
+A serialized value of any data type can be included in any container data type.
+
+This begs the question how, upon learning $d$, one should go about
+deserializing the byte buffer.
+Protobuf requires that the receiver knows the type of what is being
+deserialized.
+The two most commonly used solutions are that
+either the recipient of $d$ already knows what data type is serialized in
+the byte buffer (e.g., though a prior handshake protocol), or $d$
+also contains an integer that identifies the data type.
+The latter requires some convention on how these integers are used,
+but in general this convention should \emph{not} be described by $d$,
+or one risks that $d$ is no longer truly generic.
+
+(Another possible solution to the lack of generics in protobufs is to
+define a recursive \emph{Value} data type, but this makes programming
+with those data types awkward and inefficient.)
+
+\section{Vegvisir Transaction Graph}
+
+As mentioned above, transactions form a poset.  One problem is that
+devices may be Byzantine and try to form circular transaction dependencies.
+To prevernt this, a transaction is identified by a cryptographic hash function.
+
+A hash function $\mathit{hash}: \mathcal{O} \rightarrow \mathcal{H}$ maps an object in $\mathcal{O}$ to a unique identifier in $\mathcal{H}$.
+It has the usual properties of cryptographic hash functions:
+\begin{itemize}
+\item it is straightforward to compute $\mathit{hash}(o)$ for any $o \in \mathcal{O}$;
+\item given a $h \in \mathcal{H}$, it is computationally infeasible to find an $o$ such that $h = \mathit{hash}(o)$ (i.e., \textit{hash} is hard to invert);
+\item given $h = \mathit{hash}(o)$, it is computationally infeasible to find an $o'$ such that $h = \mathit{hash}(o')$ (i.e., \textit{hash} is \emph{collision-free});
+\end{itemize}
+
+In this case, $\mathcal{O}$ is the set of transactions.  A transaction
+consists of some opaque description of an operation and a set of
+transaction identifiers, that is, hashes of parent transactions.
+Because of the properties of hash functions,
+it is (computationally) impossible to create cycles in the transaction
+graph.
+
+As mentioned above, every cut in the transaction graph should uniquely
+identify a state.  But there is another important requirement:
+if one adds a single transaction to the transaction graph such that it
+depends on one of the transactions in the frontier, then it should
+have the same result as if the operation were to be applied to the
+state determined by the frontier.
+
+\section{Vegvisir Block Graph}
 
 The system is comprised of a set of devices $\mathcal{D} = \{ d_0, ... \}$.
 Some devices are correct and follow the specification below,
@@ -37,13 +236,6 @@ A \emph{block} $b \in \mathcal{B}$ is an immutable object with the following fie
 \item $b.\mathit{signature}$: an unforgeable digital signature from the owner of this block.
 \end{itemize}
 
-A hash function $\mathit{hash}: \mathcal{B} \rightarrow \mathcal{H}$ maps a block to a unique
-identifier in $\mathcal{H}$.  It has the usual properties of cryptographic hash functions:
-\begin{itemize}
-\item it is straightforward to compute $\mathit{hash}(b)$ for any $b \in \mathcal{B}$;
-\item given a $h \in \mathcal{H}$, it is computationally infeasible to find an $b$ such that $h = \mathit{hash}(b)$ (i.e., \textit{hash} is hard to invert);
-\item given $h = \mathit{hash}(b)$, it is computationally infeasible to find an $b'$ such that $h = \mathit{hash}(b')$ (i.e., \textit{hash} is \emph{collision-free});
-\end{itemize}
 
 Let $B \subseteq \mathcal{B}$ be a set of blocks.  We call $B$ \emph{complete} iff
 \begin{itemize}
@@ -98,7 +290,7 @@ We will call $\mathit{height}(B)$ the \emph{vector timestamp} of $B$.
 Also, for each well-behaved device, we will call the most recent block added by $d$ in $B$ the
 \emph{leader block} of $d$.
 
-\section*{Authorization}
+\section{Authorization}
 
 We are now going to constrain which devices are allowed to add blocks to a VBG $B$ by constraining
 the set of parents a block signed by a particular device is allowed to have.
@@ -120,7 +312,7 @@ We modify the \textit{height} function so
 that $\mathit{height}(B, d) = \bot$ if $B$ contains a block owned by $d$ that is not legal
 or depends on a block that is not legal.
 
-\section*{Reconciliation}
+\section{Reconciliation}
 
 Each correct device $d \in \mathcal{D}^o$ maintains a set of blocks $d.\mathit{blocks}$.
 The Vegvisir system maintains the following invariants:
@@ -153,7 +345,7 @@ It can also safely be terminated at any time, for example if a network connectio
 TODO: we have to prove that this protocol satisfies the invariants listed above and results in
 the VBGs of all devices converging to the same set.
 
-\section*{Witnesses}
+\section{Witnesses}
 
 Let $b$ be a block.  A correct device $d$ is said to \emph{witness} a block $b$ if $b \in d.\mathit{blocks}$.
 Given a set of correct devices $D$, the set of blocks that are witnessed by all devices in $D$ are
