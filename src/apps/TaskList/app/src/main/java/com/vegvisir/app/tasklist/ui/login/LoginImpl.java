@@ -48,7 +48,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
         Log.i("loginimpl",payloadString);
         int transactionType = Integer.parseInt(payloadString.substring(0,1));
 
-        if (transactionType > 4){
+        if (transactionType > 4 && transactionType < 8){
             int usernamePos = payloadString.indexOf(",");
             String username = payloadString.substring(1,usernamePos);
             String password = payloadString.substring(usernamePos + 1);
@@ -121,8 +121,21 @@ public class LoginImpl implements VegvisirApplicationDelegator {
                 LoginActivity.usernames.put(u.getUsername(), u.getPassword());
             }
         }
-        else{
+        else {
+
             String item = payloadString.substring(1);
+            if (transactionType > 7){
+                int first = payloadString.indexOf(",");
+                int second = payloadString.indexOf(",", first + 1);
+                int y = Integer.parseInt(payloadString.substring(first+1,second));
+                item = payloadString.substring(second+1);
+                if (transactionType == 8){
+                    transactionType = 0;
+                }
+                else if (transactionType == 9){
+                    transactionType = 2;
+                }
+            }
 
             Set<TransactionTuple> updatedSet = new HashSet<>();
             Set<TransactionTuple> prevSets = LoginActivity.MainDependencySets.get(item);
@@ -139,7 +152,6 @@ public class LoginImpl implements VegvisirApplicationDelegator {
                     }
                 }
             }
-
 
 
             TransactionTuple t = new TransactionTuple(tx_id, transactionType);
@@ -258,6 +270,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 
             Log.i("sets", LoginActivity.fourPSets.toString());  
             Log.i("items", LoginActivity.items.toString());
+
 
         }
 
