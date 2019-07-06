@@ -39,16 +39,16 @@ public class BlockchainV1 extends Blockchain {
      *
      * @param transactions
      * @param parents
-     * @return a hash of new created block.
+     * @return a new created block.
      */
     @Override
-    public synchronized Reference createBlock(Iterable<Block.Transaction> transactions, Iterable<Reference> parents) {
+    public synchronized com.isaacsheff.charlotte.proto.Block createBlock(Iterable<Block.Transaction> transactions, Iterable<Reference> parents) {
         Set<Reference> _parents = new HashSet<>();
         parents.forEach(_parents::add);
         Block.UserBlock content = Block.UserBlock.newBuilder().addAllParents(_parents)
                 .setUserid(_dag.getConfig().getNodeId())
                 .setCryptoID(this.getCryptoId())
-                .setClock(BlockUtil.incrementClock(this.getCryptoId(), this.getLastVectorClock()))
+                .setHeight(_blocks.size()+1)
                 .setTimestamp(com.vegvisir.common.datatype.proto.Timestamp.newBuilder().setUtcTime(new Date().getTime()).build())
                 .addAllTransactions(transactions)
                 .build();
@@ -58,7 +58,7 @@ public class BlockchainV1 extends Blockchain {
                                 .setSignature(_dag.getConfig().signProtoObject(content))
                                 .build()
                 ).build();
-        return appendBlock(block);
+        return block;
     }
 
 
@@ -86,7 +86,7 @@ public class BlockchainV1 extends Blockchain {
      */
     @Override
     public Reference appendBlock(com.isaacsheff.charlotte.proto.Block block) {
-        Reference ref = _dag.putBlock(block);
+        Reference ref = BlockUtil.byRef(block);
         if (ref != null)
             _blocks.add(ref);
         return ref;

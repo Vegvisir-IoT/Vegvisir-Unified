@@ -85,6 +85,8 @@ public class ByteStream {
 
     private boolean stateChangeCondition = false;
 
+    private boolean hasFoundPeer = false;
+
     private final int STATE_CHANGE_PERIOD = 20;
 
     private boolean isInPairingProgress = false;
@@ -110,6 +112,7 @@ public class ByteStream {
         @Override
         public void onEndpointFound(String endPoint, DiscoveredEndpointInfo
                 discoveredEndpointInfo) {
+            hasFoundPeer = true;
             isInPairingProgress = true;
             String remoteId = discoveredEndpointInfo.getEndpointName();
             Log.i(TAG, "onEndpointFound: "+ discoveredEndpointInfo.getEndpointName() + "/" + endPoint);
@@ -254,10 +257,11 @@ public class ByteStream {
         endpoint2id = new ConcurrentHashMap<>();
         broadcastStateChanger.scheduleAtFixedRate(() -> {
             synchronized (lock) {
-                if (activeEndPoint == null && isDiscovering && !isInPairingProgress) {
+                if (activeEndPoint == null && isDiscovering && !isInPairingProgress && !hasFoundPeer) {
                     stateChangeCondition = rnd.nextBoolean();
                     restart();
                 }
+                hasFoundPeer = false;
             }
         }, 0, STATE_CHANGE_PERIOD, TimeUnit.SECONDS);
     }

@@ -71,7 +71,6 @@ public class BlockUtil {
             return id.getPublicKey().getEllipticCurveP256().getByteString().toStringUtf8();
     }
 
-
     public static String ref2Str(Reference ref) {
         return hash2Str(ref.getHash());
     }
@@ -83,6 +82,7 @@ public class BlockUtil {
     public static Reference refStr2Ref(String refStr) {
         Hash hash = Hash.newBuilder().setSha3(ByteString.copyFromUtf8(refStr)).build();
         return byRef(hash);
+    }
 
     public static com.isaacsheff.charlotte.proto.CryptoId str2cryptoId(String idstr) {
         return com.isaacsheff.charlotte.proto.CryptoId.newBuilder()

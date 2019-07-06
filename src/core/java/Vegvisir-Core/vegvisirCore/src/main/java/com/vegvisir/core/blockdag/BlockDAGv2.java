@@ -12,6 +12,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,10 +30,19 @@ public class BlockDAGv2 extends BlockDAG {
 
     private final Set<Reference> leadingSet;
 
-    public BlockDAGv2() {
-        super();
+    private DataManager manager;
+
+    public BlockDAGv2(Block genesisBlock, Config config, DataManager manager, NewBlockListener listener) {
+        super(genesisBlock, config, listener);
+        this.manager = manager;
         blockchains = new HashMap<>();
+        blockchains.put(config.getDeviceID(), new BlockchainV1(this, config.getCryptoId()));
         leadingSet = new HashSet<>();
+        Block oldGenesisBlock = manager.loadGenesisBlock();
+        this.genesisBlock = oldGenesisBlock == null ? genesisBlock : oldGenesisBlock;
+        blockStorage.putIfAbsent(BlockUtil.byRef(this.genesisBlock), this.genesisBlock);
+        leadingSet.add(BlockUtil.byRef(this.genesisBlock));
+        manager.saveGenesisBlock(this.genesisBlock);
     }
 
     /**
@@ -44,6 +54,8 @@ public class BlockDAGv2 extends BlockDAG {
      */
     @Override
     public boolean verifyBlock(Block block) {
+        if (block.getVegvisirBlock().hasGenesisBlock())
+            return true;
         for (Reference r :  block.getVegvisirBlock().getBlock().getParentsList()) {
             if(!this.blockStorage.containsKey(r))
                 return false;
@@ -57,30 +69,46 @@ public class BlockDAGv2 extends BlockDAG {
      * Add blocks to the dag. This will delegate to each blockchain to add blocks.
      * @param blocks a set of blocks to be appended.
      */
-    public void addBlocks(Iterable<Block> blocks) {
-        com.isaacsheff.charlotte.proto.CryptoId blockId;
-        Reference blockRef;
+    public void addBlocks(Iterable<Block> blocks, boolean save) {
         for (Block block : blocks) {
-            if (!verifyBlock(block))
-                return;
-            blockId = block.getVegvisirBlock().getBlock().getCryptoID();
-            if (!blockchains.containsKey(BlockUtil.cryptoId2Str(blockId))) {
-                if (validatePeer(blockId)) {
-                    addNewChain(blockId);
-                } else {
-                    return;
-                }
-            }
-            synchronized (leadingSet) {
-                blockRef = blockchains.get(BlockUtil.cryptoId2Str(block.getVegvisirBlock().getBlock().getCryptoID())).appendBlock(block);
-                leadingSet.removeAll(block.getVegvisirBlock().getBlock().getParentsList());
-                leadingSet.add(blockRef);
-            }
+            addBlock(block, save);
         }
     }
 
+    public void addBlocks(Iterable<Block> blocks) {
+        addBlocks(blocks, true);
+    }
 
-//    /**
+    @Override
+    public Reference addBlock(Block block) {
+        return addBlock(block, true);
+    }
+
+    public Reference addBlock(Block block, boolean save) {
+        CryptoId blockId;
+        Reference blockRef;
+        if (!verifyBlock(block))
+            return null;
+        blockId = block.getVegvisirBlock().getBlock().getCryptoID();
+        if (!blockchains.containsKey(BlockUtil.cryptoId2Str(blockId))) {
+            if (validatePeer(blockId)) {
+                addNewChain(blockId);
+            } else {
+                return null;
+            }
+        }
+        synchronized (leadingSet) {
+            putBlock(block);
+            blockRef = blockchains.get(BlockUtil.cryptoId2Str(block.getVegvisirBlock().getBlock().getCryptoID())).appendBlock(block);
+            leadingSet.removeAll(block.getVegvisirBlock().getBlock().getParentsList());
+            leadingSet.add(blockRef);
+        }
+        if (save)
+            manager.saveBlock(block);
+        return blockRef;
+    }
+
+    //    /**
 //     * Append blocks to chain with @cryptoId.
 //     * @param blocks a set of blocks to be appended.
 //     * @param cryptoId the id of the chain.
@@ -102,6 +130,10 @@ public class BlockDAGv2 extends BlockDAG {
     @Override
     public void addAllBlocks(Iterable<Block> blocks) {
         addBlocks(blocks);
+    }
+
+    public void loadAllBlocks(Iterable<Block> blocks) {
+        addBlocks(blocks, false);
     }
 
 
@@ -161,16 +193,16 @@ public class BlockDAGv2 extends BlockDAG {
                 VectorClock.Value value = remoteVC.getValuesMap().get(entry.getKey());
                 index = Math.min(value.getIndex(), entry.getValue().getIndex());
             }
-            commonFrontierSet.add(
-                    blockchains.get(entry.getKey())
-                            .getBlockList()
-                            .get(index)
-            );
-
+            if (index > 0) {
+                commonFrontierSet.add(
+                        blockchains.get(entry.getKey())
+                                .getBlockList()
+                                .get(index-1));
+            }
         }
-        Blockchain thisChain = blockchains.get(BlockUtil.cryptoId2Str(this.config.getCryptoId()));
-        Reference leadingBlock = thisChain.getBlockList().get(thisChain.getBlockList().size()-1);
-        return _findMissedBlocks(commonFrontierSet, leadingBlock);
+//        Blockchain thisChain = blockchains.get(BlockUtil.cryptoId2Str(this.config.getCryptoId()));
+//        Reference leadingBlock = thisChain.getBlockList().get(thisChain.getBlockList().size()-1);
+        return _findMissedBlocks(commonFrontierSet, leadingSet);
     }
 
 
@@ -181,16 +213,17 @@ public class BlockDAGv2 extends BlockDAG {
      * happens before), then, indexOf(Block A) > indexOf(Block B).
      *
      * @param commonFrontierSet
-     * @param leader
+     * @param leaderSet
      * @return a list of blocks preserving the partial order of blocks based on their dependencies.
      */
-    private List<Block> _findMissedBlocks(Set<Reference> commonFrontierSet, Reference leader) {
-        Deque<Reference> references = new ArrayDeque<>();
+    private List<Block> _findMissedBlocks(Set<Reference> commonFrontierSet, Set<Reference> leaderSet) {
+        Deque<Reference> references = new ArrayDeque<>(leaderSet);
         Set<Reference> dupRefs = new HashSet<>();
         List<Block> blocks = new ArrayList<>();
-        references.add(leader);
         while (!references.isEmpty()) {
             Reference next = references.poll();
+            if (next.equals(BlockUtil.byRef(genesisBlock)))
+                continue;
             if (!dupRefs.add(next) || commonFrontierSet.contains(next))
                 continue;
             Block nextBlock = this.getBlock(next);
@@ -203,6 +236,7 @@ public class BlockDAGv2 extends BlockDAG {
 
 
     @Override
+    @Deprecated
     public void addLeadingBlock() {
         createBlock(BlockUtil.cryptoId2Str(config.getCryptoId()), Collections.emptyList(), Collections.emptyList());
     }
@@ -212,6 +246,7 @@ public class BlockDAGv2 extends BlockDAG {
     }
 
     @Override
+    @Deprecated
     public Set<Reference> getLeadingBlocks() {
         return leadingSet;
     }
@@ -225,19 +260,61 @@ public class BlockDAGv2 extends BlockDAG {
             Set<Reference> _parents = new HashSet<>();
             parents.forEach(_parents::add);
             _parents.addAll(leadingSet);
-            ref = blockchains.get(cryptoID).createBlock(transactions, _parents);
-            leadingSet.clear();
-            leadingSet.add(ref);
+            Block block = blockchains.get(cryptoID).createBlock(transactions, _parents);
+            ref = addBlock(block);
         }
         return  ref;
     }
 
     @Override
     public void createBlock(Iterable<com.vegvisir.core.datatype.proto.Block.Transaction> transactions, Iterable<Reference> parents) {
-
+        if (!parents.iterator().hasNext())
+            throw new AssertionError("Parents set should not be empty");
+        createBlock(getConfig().getDeviceID(), transactions, parents);
     }
 
     public void updateVCForDevice(String deviceID, VectorClock vc) {
+        if (!blockchains.containsKey(deviceID))
+            blockchains.putIfAbsent(deviceID, new BlockchainV1(this, BlockUtil.str2cryptoId(deviceID)));
         blockchains.get(deviceID).setLatestVC(vc);
+    }
+
+    /**
+     * Compute how many witness for a particular block.
+     * @param ref the reference for the block
+     * @return a set of device ids who have seen the given block(reference).
+     */
+    @Override
+    public Set<String> computeWitness(Reference ref) {
+        Set<String> witnessDevices = new HashSet<>();
+        Block block = blockStorage.get(ref);
+        long height = block.getVegvisirBlock().getBlock().getHeight();
+        String id = BlockUtil.cryptoId2Str(block.getVegvisirBlock().getBlock().getCryptoID());
+        blockchains.entrySet().forEach(bc -> {
+            VectorClock.Value vc = bc.getValue().getLatestVC().getValuesMap().getOrDefault(id, null);
+            if (vc != null && vc.getIndex() >= height) {
+                witnessDevices.add(bc.getKey());
+            }
+        });
+        return witnessDevices;
+    }
+
+    @Override
+    public void witness(Block block, String remoteId) {}
+
+    @Override
+    public void recoverBlocks() {
+        loadAllBlocks(manager.loadBlockSet());
+//        manager.loadBlockSet().forEach(b -> {
+//            blockStorage.putIfAbsent(BlockUtil.byRef(b), b);
+//            newBlockListener.onNewBlock(b);
+//            leadingSet.removeAll(b.getVegvisirBlock().getBlock().getParentsList());
+//            leadingSet.add(BlockUtil.byRef(b));
+//        });
+    }
+
+    @Override
+    public Set<Reference> getFrontierBlocks() {
+        return leadingSet;
     }
 }

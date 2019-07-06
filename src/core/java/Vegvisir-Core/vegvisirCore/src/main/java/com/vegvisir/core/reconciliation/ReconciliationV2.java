@@ -9,6 +9,9 @@ import com.vegvisir.core.blockdag.BlockDAG;
 import com.vegvisir.network.datatype.proto.Payload;
 import com.vegvisir.network.datatype.proto.VegvisirProtocolMessage;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javax.management.RuntimeErrorException;
 
 public class ReconciliationV2 extends ReconciliationV1 {
@@ -16,6 +19,8 @@ public class ReconciliationV2 extends ReconciliationV1 {
     protected Block.VectorClock remoteVector;
 
     boolean connEnded = false;
+
+    private static final int TIMEOUT = 3000;
 
     BlockDAGv2 dag;
 
@@ -54,7 +59,9 @@ public class ReconciliationV2 extends ReconciliationV1 {
 
         this.dag = myDAG;
         this.remoteId = remoteConnectionID;
+        currentThread = Thread.currentThread();
 
+        dispatchThread = gossipLayer.setHandlerForPeerMessage(remoteId, this::dispatcherHandler);
 
         /*
          * Compute frontier set. Now this is a vector clock.
@@ -64,9 +71,26 @@ public class ReconciliationV2 extends ReconciliationV1 {
         exchangeVectorClock(clock);
 
         /* Wait for remote vector clock */
+
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+             currentThread.interrupt();
+            }
+        }, TIMEOUT);
+
         try {
-            lock.wait();
+            if (remoteVector == null) {
+                synchronized (lock) {
+                    if (remoteVector == null) {
+                        lock.wait();
+                        timer.cancel();
+                    }
+                }
+            }
         } catch (InterruptedException ex) {
+            reconciliationEndCleaner();
             return;
         }
 
@@ -81,22 +105,34 @@ public class ReconciliationV2 extends ReconciliationV1 {
 
         /* Send blocks */
         blocks.forEach(this::sendBlock);
+
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                currentThread.interrupt();
+            }
+        }, TIMEOUT);
+
         synchronized (lock) {
             if (!connEnded) {
                 try {
                     lock.wait();
                 } catch (InterruptedException ex) {
-                    return;
                 }
             }
         }
+        reconciliationEndCleaner();
+    }
 
-        if (connEnded) {
+    private void reconciliationEndCleaner() {
+        connEnded = true;
+        dispatchThread.interrupt();
+        gossipLayer.disconnect(this.remoteId);
+//        if (connEnded) {
             /* If connection ended by remote peer */
-            dispatchThread.interrupt();
-            gossipLayer.disconnect(this.remoteId);
 //            dag.addLeadingBlock();
-        }
+//        }
     }
 
 
@@ -129,7 +165,7 @@ public class ReconciliationV2 extends ReconciliationV1 {
         VegvisirProtocolMessage message = VegvisirProtocolMessage.newBuilder()
                 .addBlocks(block)
                 .setCmd(block == null ? ControlSignal.END : ControlSignal.ADD_BLOCKS)
-                .setVersion(this.runningVersion.toProtoVersion())
+//                .setVersion(this.runningVersion.toProtoVersion())
                 .build();
         Payload payload = Payload.newBuilder()
                 .setMessage(message)
@@ -157,24 +193,32 @@ public class ReconciliationV2 extends ReconciliationV1 {
 //                break;
 
             case ADD_BLOCKS:
-                synchronized (lock) {
-                    if (this.runningVersion == null) {
-                        try {
-                            lock.wait();
-                        } catch (InterruptedException ex) {
-
-                        }
-                    }
-                }
-                if(remoteVersion.compareTo(this.runningVersion) != 0)
-                {
-                    /* all operations other than sync version will be run with the same version between two nodes. This is because the first step for running reconciliation is syncing up versions */
-                    return;
-                }
+//                synchronized (lock) {
+//                    if (this.runningVersion == null) {
+//                        try {
+//                            lock.wait();
+//                        } catch (InterruptedException ex) {
+//
+//                        }
+//                    }
+//                }
+//                if(remoteVersion.compareTo(this.runningVersion) != 0)
+//                {
+//                    /* all operations other than sync version will be run with the same version between two nodes. This is because the first step for running reconciliation is syncing up versions */
+//                    return;
+//                }
                 handleAddBlocks(payload.getMessage().getBlocksList());
+                break;
 
             case VECTOR_CLOCK:
                 remoteVector = payload.getMessage().getBlocks(0).getVegvisirBlock().getVectorClock();
+                try {
+                    synchronized (lock) {
+                        lock.notifyAll();
+                    }
+                } catch (IllegalMonitorStateException ex) {
+
+                }
                 break;
 
             case END:

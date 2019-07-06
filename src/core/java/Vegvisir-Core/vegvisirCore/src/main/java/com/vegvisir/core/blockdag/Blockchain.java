@@ -38,9 +38,9 @@ public abstract class Blockchain {
      * global block map.
      * @param transactions
      * @param parents
-     * @return a hash of new created block.
+     * @return a new created block.
      */
-    public abstract Reference createBlock(Iterable<Block.Transaction> transactions, Iterable<Reference> parents);
+    public abstract com.isaacsheff.charlotte.proto.Block createBlock(Iterable<Block.Transaction> transactions, Iterable<Reference> parents);
 
 
     /**
@@ -67,6 +67,10 @@ public abstract class Blockchain {
         return cryptoId;
     }
 
+    public String getCryptoIdStr() {
+        return BlockUtil.cryptoId2Str(cryptoId);
+    }
+
 
     /**
      * @return a list of all blocks' references on this chain so far.
@@ -76,23 +80,23 @@ public abstract class Blockchain {
     }
 
 
-    /**
-     * @param index the index of the block in the list.
-     * @return a vector clock of the block in the given index position. If index is out of range,
-     * then return null.
-     */
-    public Block.VectorClock getVectorClock(int index) {
-        if (index >= _blocks.size())
-            return null;
-        return _dag.getBlock(_blocks.get(index)).getVegvisirBlock().getBlock().getClock();
-    }
-
-
-    /**
-     * @return the vector clock of the last block on this chain so far. This should never return
-     * null because all chains contains a reference to the genesis block.
-     */
-    public Block.VectorClock getLastVectorClock() {
-        return getVectorClock(_blocks.size()-1);
-    }
+//    /**
+//     * @param index the index of the block in the list.
+//     * @return a vector clock of the block in the given index position. If index is out of range,
+//     * then return null.
+//     */
+//    public Block.VectorClock getVectorClock(int index) {
+//        if (index >= _blocks.size())
+//            return null;
+//        return _dag.getBlock(_blocks.get(index)).getVegvisirBlock().getBlock().getClock();
+//    }
+//
+//
+//    /**
+//     * @return the vector clock of the last block on this chain so far. This should never return
+//     * null because all chains contains a reference to the genesis block.
+//     */
+//    public Block.VectorClock getLastVectorClock() {
+//        return getVectorClock(_blocks.size()-1);
+//    }
 }
