@@ -3,11 +3,14 @@ package com.vegvisir.pub_sub;
 import com.google.protobuf.ByteString;
 import com.vegvisir.core.datatype.proto.Block;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -35,10 +38,13 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
     /* The height of current device */
     private long height = 1;
 
+    private Map<String, Set<String>> subscriptionList = new HashMap<>();
+
     /* delegator from upper application */
     private VegvisirApplicationDelegator delegator;
 
     private static VirtualVegvisirInstance instance = null;
+    private static VirtualVegvisirInstance alternate= null;
 
     private static final Object instanceLock = new Object();
 
@@ -69,9 +75,57 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
         return instance;
     }
 
+    /**
+     * VirtualVegvisirInstance
+     * @brief Creates a 2nd Instance of VirtualVegisir in the variable alternate
+     * @param deviceName : String representation of name
+     * @return VegvisirInstance
+     */
+    public static VirtualVegvisirInstance getInstance( String deviceName ){
+        if (alternate == null){
+            synchronized (instanceLock){
+                if (alternate == null){
+                    alternate = new VirtualVegvisirInstance( deviceName );
+                    alternate.deviceToTransactionHeight = new HashMap<>();
+                    alternate.txQueue = new LinkedBlockingDeque<>();
+                    pollingThread = new Thread( alternate :: poll );
+                    pollingThread.start();
+                }
+            }
+        }
+        return alternate;
+    }
+
 
     private VirtualVegvisirInstance() {}
 
+
+    /**
+     * Public Constructor Overloaded
+     */
+    private VirtualVegvisirInstance( String aDevice ){
+        this.deviceId = aDevice;
+    }
+
+    public void updateSubscriptionList( String deviceId, Set<String> applicableChannels){
+        for (String topic : applicableChannels)
+        {
+            if( subscriptionList.containsKey( topic )){
+                System.out.format("Key: %s here\n", topic);
+                if (subscriptionList.get(topic).contains(deviceId) ){
+                    continue;  // NO DUPLICATES
+                }
+                else{
+                    subscriptionList.get(topic).add(deviceId);
+                }
+            }
+            else{
+                System.out.format("%s not present \n", topic);
+                subscriptionList.put(topic, new HashSet<>(Arrays.asList(deviceId))) ;
+            }
+        }
+        System.out.println(Arrays.asList( subscriptionList));
+    }
 
     /**
      * Register a delegator, which will handle new transactions for that application.
@@ -236,6 +290,9 @@ public class VirtualVegvisirInstance implements VegvisirInstance {
         return deviceId;
     }
 
+    public Map<String, Set<String>> getSubscriptionList() {
+        return subscriptionList;
+    }
 
     public static Thread getPollingThread() {
         return pollingThread;

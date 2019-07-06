@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.vegvisir.pub_sub.ExampleUnitTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2019-06-12T20:28:20" hostname="Goyievus" time="0.001">
+  <properties/>
+  <testcase name="addition_isCorrect" classname="com.vegvisir.pub_sub.ExampleUnitTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

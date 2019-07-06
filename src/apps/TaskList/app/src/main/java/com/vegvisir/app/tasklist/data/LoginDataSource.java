@@ -2,7 +2,6 @@ package com.vegvisir.app.tasklist.data;
 
 import android.util.Log;
 
-import com.vegvisir.app.tasklist.TransactionTuple;
 import com.vegvisir.app.tasklist.data.model.LoggedInUser;
 import com.vegvisir.app.tasklist.ui.login.LoginActivity;
 import com.vegvisir.pub_sub.TransactionID;

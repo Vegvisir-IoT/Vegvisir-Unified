@@ -6,6 +6,7 @@ import android.util.Log;
 import com.vegvisir.app.annotativemap.Annotation;
 import com.vegvisir.app.annotativemap.Coordinates;
 import com.vegvisir.app.annotativemap.FullAnnotation;
+import com.vegvisir.app.annotativemap.MainActivity;
 import com.vegvisir.app.annotativemap.PictureTagLayout;
 import com.vegvisir.app.annotativemap.PictureTagView;
 import com.vegvisir.app.annotativemap.R;
@@ -39,6 +40,24 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 
     }
 
+    private Set<TransactionID> getUpdatedSet(Set<TransactionID> prevSets, TransactionID tx_id, Set<TransactionID> deps) {
+        Set<TransactionID> updatedSet = new HashSet<>();
+
+        if (prevSets != null) {
+            Iterator<TransactionID> itr = prevSets.iterator();
+            while (itr.hasNext()) {
+                TransactionID x = (TransactionID) ((Iterator) itr).next();
+
+                if (!deps.contains(x)) {
+                    updatedSet.add(x);
+                }
+            }
+        }
+
+        updatedSet.add(tx_id);
+
+        return updatedSet;
+    }
 
     /**
      * An application implemented function. This function will get called whenever a new transaction
@@ -58,37 +77,19 @@ public class LoginImpl implements VegvisirApplicationDelegator {
         String payloadString = new String(payload);
         Log.i("payload",payloadString);
         int transactionType = Integer.parseInt(payloadString.substring(0,1));
-        if (transactionType > 4) {
+        if (transactionType > 4 && transactionType < 8) {
             int usernamePos = payloadString.indexOf(",");
             String username = payloadString.substring(1,usernamePos);
             String password = payloadString.substring(usernamePos + 1);
 
-            Set<TransactionID> updatedSet = new HashSet<>();
             Set<TransactionID> prevSets = LoginActivity.dependencySets.get(username);
             String deviceId = tx_id.getDeviceID();
+            Set<TransactionID> updatedSet = getUpdatedSet(prevSets, tx_id, deps);
 
-
-            if (prevSets != null) {
-                Iterator<TransactionID> itr = prevSets.iterator();
-                while (itr.hasNext()) {
-                    TransactionID x = (TransactionID) ((Iterator) itr).next();
-
-                    if (!deps.contains(x)) {
-
-                        updatedSet.add(x);
-                    }
-                }
-            }
-
-            updatedSet.add(tx_id);
             LoginActivity.dependencySets.put(username, updatedSet);
 
             LoginActivity.latestTransactions.put(deviceId, tx_id);
 
-            for (TransactionID d : deps) {
-                LoginActivity.topDeps.remove(d);
-            }
-            LoginActivity.topDeps.add(tx_id);
             HashSet<User> addSet = new HashSet<>();
             HashSet<User> removeSet = new HashSet<>();
 
@@ -111,6 +112,11 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 
             HashSet<User> addSetTop = new HashSet<>();
             HashSet<User> removeSetTop = new HashSet<>();
+
+            for (TransactionID d : deps) {
+                LoginActivity.topDeps.remove(d);
+            }
+            LoginActivity.topDeps.add(tx_id);
 
             for (TransactionID d : LoginActivity.topDeps) {
                 if (LoginActivity.twoPSets.containsKey(d)) {
@@ -135,19 +141,46 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 
         else{
             Log.i("start","of anno case");
-            int first = payloadString.indexOf(",");
-            if (first == -1){
-                return;
-            }
-            int x = Integer.parseInt(payloadString.substring(1,first));
-            int second = payloadString.indexOf(",", first + 1);
-            int y = Integer.parseInt(payloadString.substring(first+1,second));
-            String anno = payloadString.substring(second+1);
+            Coordinates coords = null;
+            String anno = "";
+            int x = -1;
+            int y = -1;
+            if (transactionType < 5){
+                if (transactionType == 0) {
+                    String item = payloadString.substring(1);
+                    boolean entryFound = false;
+                    for (Map.Entry<Coordinates, Annotation> entry : LoginActivity.annotations.entrySet()) {
+                        Coordinates c = entry.getKey();
+                        Annotation a = entry.getValue();
+                        if (item.equals(a.getAnnotation())) {
+                            anno = item;
+                            coords = c;
+                            x = c.getX();
+                            y = c.getY();
+                            entryFound = true;
+                            break;
+                        }
+                    }
+                    if (!entryFound) {
+                        return;
+                    }
 
-            Coordinates coords = new Coordinates(x,y);
-            Log.i("before","while");
-            //while (LoginActivity.currentPicture == null);
-            Log.i("after","while");
+                }
+                else {
+                    return;
+                }
+            }
+
+            else {
+                int first = payloadString.indexOf(",");
+                x = Integer.parseInt(payloadString.substring(1, first));
+                int second = payloadString.indexOf(",", first + 1);
+                y = Integer.parseInt(payloadString.substring(first + 1, second));
+                anno = payloadString.substring(second + 1);
+
+                coords = new Coordinates(x, y);
+            }
+
             PictureTagLayout image = null;
             PictureTagView pointView;
             if (LoginActivity.currentPicture != null) {
@@ -163,26 +196,12 @@ public class LoginImpl implements VegvisirApplicationDelegator {
                 }
             }
 
-            Set<TransactionID> updatedSet = new HashSet<>();
+
             Set<TransactionID> prevSets = LoginActivity.mapDependencySets.get(coords);
             String deviceId = tx_id.getDeviceID();
+            Set<TransactionID> updatedSet = getUpdatedSet(prevSets, tx_id, deps);
 
-
-            if (prevSets != null) {
-                Iterator<TransactionID> itr = prevSets.iterator();
-                while (itr.hasNext()) {
-                    TransactionID t = (TransactionID) ((Iterator) itr).next();
-
-                    if (!deps.contains(t)) {
-
-                        updatedSet.add(t);
-                    }
-                }
-            }
-
-            updatedSet.add(tx_id);
             LoginActivity.mapDependencySets.put(coords, updatedSet);
-
             LoginActivity.mapLatestTransactions.put(deviceId, tx_id);
 
             for (TransactionID d : deps) {
@@ -199,7 +218,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
                 }
             }
 
-            if (transactionType == 1) {
+            if (transactionType == 9) {
                 PictureTagView view = null;
                 if (image != null) {
                     view = image.justHasView(x, y);
@@ -356,20 +375,21 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 
             HashSet<Coordinates> entriesToRemove = new HashSet<>();
 
-            for(Map.Entry<Coordinates, Annotation> entry : LoginActivity.annotations.entrySet()) {
-                Coordinates c = entry.getKey();
-                Annotation a = entry.getValue();
-                FullAnnotation annoFa = new FullAnnotation(c,a.getAnnotation());
-                if (!addSetTop.contains(annoFa)) {
-                    entriesToRemove.add(c);
-                }
-            }
-
-            for (Coordinates c: entriesToRemove) {
-                LoginActivity.annotations.get(c).setShouldRemove(true);
-            }
+//            for(Map.Entry<Coordinates, Annotation> entry : LoginActivity.annotations.entrySet()) {
+//                Coordinates c = entry.getKey();
+//                Annotation a = entry.getValue();
+//                FullAnnotation annoFa = new FullAnnotation(c,a.getAnnotation());
+//                if (!addSetTop.contains(annoFa)) {
+//                    entriesToRemove.add(c);
+//                }
+//            }
+//
+//            for (Coordinates c: entriesToRemove) {
+//                LoginActivity.annotations.get(c).setShouldRemove(true);
+//            }
 
             Log.i("annosinimpl", LoginActivity.annotations.toString());
+            MainActivity.printedOnce = false;
 
         }
 

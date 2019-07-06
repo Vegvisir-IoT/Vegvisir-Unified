@@ -31,11 +31,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add_button_text"/>
-        <Button
-            android:id="@+id/switch_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/switch_button_text"/>
+        <!--<Button-->
+            <!--android:id="@+id/switch_button"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/switch_button_text"/>-->
 
     </LinearLayout>
     <Button

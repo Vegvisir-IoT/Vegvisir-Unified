@@ -37,7 +37,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 //        Log.i("Before click","3");
         PictureTagLayout image = findViewById(R.id.image);
 //        Log.i("Before click","4");
-        image.setBackgroundResource(R.drawable.example_map);
+        image.setBackgroundResource(R.drawable.chicago_map);
 
 //        Log.i("Before click","5");
         image.load(); //read /sdcard/info.txt and init the subviews(annotations)
@@ -69,7 +69,11 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 
     protected void onActivityResult(int requestCode, int resultCode, Intent annotation) {
         if (resultCode == 0) { //Done
-            anno = annotation.getStringExtra(ANNOTATION);
+            try {
+                anno = annotation.getStringExtra(ANNOTATION);
+            } catch (NullPointerException e) {
+                Log.i("anno","not in intent");
+            }
             cur_time = annotation.getStringExtra(TIME);
             PictureTagLayout image = findViewById(R.id.image);
             //if (!TextUtils.isEmpty(anno)) {
@@ -101,7 +105,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 //                    dependencies.add(MainActivity.mapLatestTransactions.get(LoginActivity.deviceId));
 //                }
 
-                String payloadString = "1" + coords.getX() + "," + coords.getY() + "," + anno;
+                String payloadString = "9" + coords.getX() + "," + coords.getY() + "," + anno;
                 byte[] payload = payloadString.getBytes();
                 Log.i("gets","here");
                 LoginActivity.instance.addTransaction(LoginActivity.context,topics,payload,dependencies);
@@ -162,7 +166,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 //                }
 //
 //            }
-                String payloadString = "0" + view.getXVal() + "," + view.getYVal() + "," + anno;
+                String payloadString = "8" + view.getXVal() + "," + view.getYVal() + "," + anno;
                 byte[] payload = payloadString.getBytes();
                 LoginActivity.instance.addTransaction(LoginActivity.context, topics, payload, dependencies);
                 Log.i("In the try","");

@@ -32,7 +32,7 @@
         </activity>
         <activity
             android:name=".picture"
-            android:label="Ithaca"></activity>
+            android:label="Chicago"></activity>
         <activity
             android:name=".add_annotation"
             android:label="add_annotation"></activity>
