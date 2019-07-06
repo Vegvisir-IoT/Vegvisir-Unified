@@ -8,5 +8,5 @@ build
 .idea
 *.iml
 local.properties
-.idea
 .DS_Store
+.idea

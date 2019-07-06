@@ -1,6 +1,7 @@
 package com.vegvisir.application;
 
 import android.content.Context;
+
 import androidx.core.util.Pair;
 
 import com.vegvisir.gossip.adapter.NetworkAdapter;
@@ -22,6 +23,8 @@ public class AndroidAdapter implements NetworkAdapter {
     private Network network;
 
     private Deque<String> connectionHistory;
+
+    private static final long INTERVAL = 1000L;
 
 
     public AndroidAdapter(Context context, String id) {
@@ -119,6 +122,8 @@ public class AndroidAdapter implements NetworkAdapter {
     @Override
     public void disconnect(String remoteID) {
         network.disconnect(remoteID);
+        network.ignore(remoteID, INTERVAL);
+
     }
 
     public Deque<String> getConnectionHistory() {

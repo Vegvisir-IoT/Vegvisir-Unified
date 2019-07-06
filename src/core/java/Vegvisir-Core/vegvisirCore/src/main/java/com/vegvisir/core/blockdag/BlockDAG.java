@@ -45,6 +45,13 @@ public abstract class BlockDAG {
         blockStorage = new ConcurrentHashMap<>();
         this.config = config;
 //        blockStorage.put(BlockUtil.byRef(genesisBlock), genesisBlock);
+
+    }
+
+    public BlockDAG(Block genesisBlock, Config config, NewBlockListener listener) {
+        this(genesisBlock, config);
+        this.newBlockListener = listener;
+
     }
 
 
@@ -75,9 +82,8 @@ public abstract class BlockDAG {
      * @param block
      * @return
      */
-    @Deprecated
-    public boolean addBlock(Block block) {
-        return blockStorage.putIfAbsent(BlockUtil.byRef(block), block) == null;
+    public Reference addBlock(Block block) {
+        return BlockUtil.byRef(blockStorage.putIfAbsent(BlockUtil.byRef(block), block));
     }
 
 
@@ -162,6 +168,7 @@ public abstract class BlockDAG {
         return null;
     }
 
+
     public void setNewBlockListener(NewBlockListener newBlockListener) {
         this.newBlockListener = newBlockListener;
     }
@@ -173,11 +180,31 @@ public abstract class BlockDAG {
         return Collections.emptySet();
     }
 
-    public Set<String> computeWitness(Reference ref) {
-        return Collections.emptySet();
-    };
+    public abstract Set<String> computeWitness(Reference ref);
 
-    public void witness(Block block, String remoteId) {}
+    public abstract void witness(Block block, String remoteId);
+
 
     public void save() {}
+
+  
+    /**
+     * [V2 Feature]
+     * @param remoteVC
+     * @return
+     */
+    public Iterable<Block> findMissedBlocksByVectorClock(com.vegvisir.core.datatype.proto.Block.VectorClock remoteVC) {
+        return null;
+    }
+
+    public void addLeadingBlock() {}
+
+    public Set<Reference> getLeadingBlocks() {return Collections.emptySet();}
+
+    public Reference  createBlock(String cryptoID, Iterable<com.vegvisir.core.datatype.proto.Block.Transaction> transactions, Iterable<Reference> parents) {
+        return null;
+    }
+
+    public abstract void recoverBlocks();
+
 }

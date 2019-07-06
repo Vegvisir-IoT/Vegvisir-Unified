@@ -14,7 +14,7 @@ enum ControlSignal {
     VERSION = 0;
     ADD_BLOCKS = 1;
     VECTOR_CLOCK = 2;
-    PULL = 3;
+    END = 3;
 }
 
 

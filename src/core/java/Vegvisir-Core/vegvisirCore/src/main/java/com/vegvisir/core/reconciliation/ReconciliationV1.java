@@ -2,6 +2,7 @@ package com.vegvisir.core.reconciliation;
 
 import com.vegvisir.common.datatype.proto.ControlSignal;
 import com.vegvisir.core.blockdag.BlockDAG;
+import com.vegvisir.core.blockdag.BlockDAGv1;
 import com.vegvisir.core.blockdag.ReconciliationEndListener;
 import com.vegvisir.network.datatype.proto.Payload;
 import com.vegvisir.network.datatype.proto.VegvisirProtocolMessage;
@@ -20,6 +21,8 @@ public class ReconciliationV1 extends ReconciliationProtocol
     private BlockingQueue<String> completionQueue;
     Thread dispatchThread;
     Thread currentThread;
+
+    BlockDAG dag;
 
     public ReconciliationV1() {
         super(1, 0, 0);

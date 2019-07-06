@@ -3,6 +3,7 @@ package com.vegvisir;
 import com.google.protobuf.ByteString;
 import com.vegvisir.core.blockdag.BlockDAG;
 import com.vegvisir.core.blockdag.BlockDAGv1;
+import com.vegvisir.core.blockdag.BlockDAGv2;
 import com.vegvisir.core.blockdag.BlockUtil;
 import com.vegvisir.core.blockdag.DataManager;
 import com.vegvisir.core.blockdag.NewBlockListener;
@@ -42,7 +43,7 @@ public class VegvisirCore implements Runnable {
     private Gossip gossipLayer;
 
     /* Block DAG containing real blocks */
-    private final BlockDAGv1 dag;
+    private final BlockDAG dag;
 
     /* Protocol that this instance will use for reconciliation with peers */
     private Class<? extends ReconciliationProtocol> protocol;
@@ -93,7 +94,12 @@ public class VegvisirCore implements Runnable {
             userid = ByteString.copyFrom(keyPair.getPublic().getEncoded()).toString();
 
         config = new Config(userid, keyPair);
-        dag = new BlockDAGv1(genesisBlock, config, manager, listener);
+
+        if (protocol.getName().equals(ReconciliationV1.class.getName()))
+            dag = new BlockDAGv1(genesisBlock, config, manager, listener);
+        else
+            dag = new BlockDAGv2(genesisBlock, config, manager, listener);
+
         this.protocol = protocol;
         service = Executors.newCachedThreadPool();
         transactionBuffer = new HashSet<>();
@@ -146,6 +152,7 @@ public class VegvisirCore implements Runnable {
                     catch (IllegalAccessException ex) {
                     }
                     finally {
+                        System.out.println("run: CATCH ALL REACHED");
                         if (disconnectHandlers.containsKey(remoteId)) {
                             disconnectHandlers.remove(remoteId);
                         }
