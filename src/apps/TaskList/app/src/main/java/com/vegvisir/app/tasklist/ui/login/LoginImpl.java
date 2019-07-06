@@ -141,22 +141,26 @@ public class LoginImpl implements VegvisirApplicationDelegator {
             Set<TransactionTuple> prevSets = LoginActivity.MainDependencySets.get(item);
             String deviceId = tx_id.getDeviceID();
 
-            if (prevSets != null) {
-                Iterator<TransactionTuple> itr = prevSets.iterator();
-                while (itr.hasNext()) {
-                    TransactionTuple x = (TransactionTuple) ((Iterator) itr).next();
+            if (deviceId != LoginActivity.deviceId) {
 
-                    if (!deps.contains(x.transaction)) {
+                if (prevSets != null) {
+                    Iterator<TransactionTuple> itr = prevSets.iterator();
+                    while (itr.hasNext()) {
+                        TransactionTuple x = (TransactionTuple) ((Iterator) itr).next();
 
-                        updatedSet.add(x);
+                        if (!deps.contains(x.transaction)) {
+
+                            updatedSet.add(x);
+                        }
                     }
                 }
+
+
+                TransactionTuple t = new TransactionTuple(tx_id, transactionType);
+                updatedSet.add(t);
+                LoginActivity.MainDependencySets.put(item, updatedSet);
+
             }
-
-
-            TransactionTuple t = new TransactionTuple(tx_id, transactionType);
-            updatedSet.add(t);
-            LoginActivity.MainDependencySets.put(item, updatedSet);
 
             LoginActivity.MainLatestTransactions.put(deviceId, tx_id);
 

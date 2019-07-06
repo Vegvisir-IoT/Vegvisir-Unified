@@ -7,13 +7,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import androidx.core.content.ContextCompat;
-
+import com.vegvisir.app.tasklist.data.TransactionTuple;
 import com.vegvisir.app.tasklist.ui.login.LoginActivity;
 import com.vegvisir.pub_sub.TransactionID;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -78,6 +78,14 @@ public class OrderAdapter extends ArrayAdapter<String> {
         byte[] payload = payloadString.getBytes();
         Set<String> topics = new HashSet<>(Arrays.asList( LoginActivity.topic));
         Set<TransactionID> dependencies = new HashSet<>();
+
+        if (LoginActivity.MainDependencySets.containsKey(item)) {
+            Iterator<TransactionTuple> it = LoginActivity.MainDependencySets.get(item).iterator();
+            while (it.hasNext()) {
+                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
+                dependencies.add(x.transaction);
+            }
+        }
 
         if (LoginActivity.MainLatestTransactions.containsKey(LoginActivity.deviceId)) {
             dependencies.add(LoginActivity.MainLatestTransactions.get(LoginActivity.deviceId));
