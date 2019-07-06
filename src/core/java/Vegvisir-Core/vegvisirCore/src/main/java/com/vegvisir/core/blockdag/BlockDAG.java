@@ -162,6 +162,7 @@ public abstract class BlockDAG {
         return null;
     }
 
+
     public void setNewBlockListener(NewBlockListener newBlockListener) {
         this.newBlockListener = newBlockListener;
     }
@@ -179,5 +180,25 @@ public abstract class BlockDAG {
 
     public void witness(Block block, String remoteId) {}
 
+
     public void save() {}
+
+  
+    /**
+     * [V2 Feature]
+     * @param remoteVC
+     * @return
+     */
+    public Iterable<Block> findMissedBlocksByVectorClock(com.vegvisir.core.datatype.proto.Block.VectorClock remoteVC) {
+        return null;
+    }
+
+    public void addLeadingBlock() {}
+
+    public Set<Reference> getLeadingBlocks() {return Collections.emptySet();}
+
+    public Reference  createBlock(String cryptoID, Iterable<com.vegvisir.core.datatype.proto.Block.Transaction> transactions, Iterable<Reference> parents) {
+        return null;
+    }
+
 }
