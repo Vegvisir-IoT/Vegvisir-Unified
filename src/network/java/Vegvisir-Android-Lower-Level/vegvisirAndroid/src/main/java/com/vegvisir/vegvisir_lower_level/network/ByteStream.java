@@ -112,7 +112,9 @@ public class ByteStream {
         @Override
         public void onEndpointFound(String endPoint, DiscoveredEndpointInfo
                 discoveredEndpointInfo) {
-            hasFoundPeer = true;
+            synchronized (lock) {
+                hasFoundPeer = true;
+            }
             isInPairingProgress = true;
             String remoteId = discoveredEndpointInfo.getEndpointName();
             Log.i(TAG, "onEndpointFound: "+ discoveredEndpointInfo.getEndpointName() + "/" + endPoint);

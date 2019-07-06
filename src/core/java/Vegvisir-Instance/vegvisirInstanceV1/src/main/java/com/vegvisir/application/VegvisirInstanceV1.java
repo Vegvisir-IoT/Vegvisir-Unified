@@ -219,7 +219,7 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
      * @return true if the @delegator is successfully registered.
      */
     @Override
-    public boolean registerApplicationDelegator(final VegvisirApplicationContext context, VegvisirApplicationDelegator delegator) {
+    public synchronized boolean registerApplicationDelegator(final VegvisirApplicationContext context, VegvisirApplicationDelegator delegator) {
         if (context.getChannels() == null || context.getAppID() == null || context.getChannels().isEmpty())
             return false;
         context.getChannels().forEach(t -> {
@@ -252,7 +252,7 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
      * @return true, if the transaction is valid.
      */
     @Override
-    public boolean addTransaction(VegvisirApplicationContext context, Set<String> topics, byte[] payload, Set<TransactionID> dependencies) {
+    public synchronized boolean addTransaction(VegvisirApplicationContext context, Set<String> topics, byte[] payload, Set<TransactionID> dependencies) {
         List<com.vegvisir.core.datatype.proto.Block.Transaction.TransactionId> deps = new ArrayList<>();
         for (TransactionID id : dependencies) {
             deps.add(com.vegvisir.core.datatype.proto.Block.Transaction.TransactionId.newBuilder().setTransactionHeight(id.getTransactionHeight()).setDeviceId(id.getDeviceID()).build());
