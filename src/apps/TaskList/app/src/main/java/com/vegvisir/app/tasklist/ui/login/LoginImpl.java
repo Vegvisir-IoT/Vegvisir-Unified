@@ -141,26 +141,36 @@ public class LoginImpl implements VegvisirApplicationDelegator {
             Set<TransactionTuple> prevSets = LoginActivity.MainDependencySets.get(item);
             String deviceId = tx_id.getDeviceID();
 
-            //if (deviceId != LoginActivity.deviceId) {
-
-            if (prevSets != null) {
-                Iterator<TransactionTuple> itr = prevSets.iterator();
-                while (itr.hasNext()) {
-                    TransactionTuple x = (TransactionTuple) ((Iterator) itr).next();
-
-                    if (!deps.contains(x.transaction)) {
-
-                        updatedSet.add(x);
-                    }
-                }
-            }
-
-
-            TransactionTuple t = new TransactionTuple(tx_id, transactionType);
-            updatedSet.add(t);
-            LoginActivity.MainDependencySets.put(item, updatedSet);
-
-            //}
+//            Log.i("deviceidthis",LoginActivity.deviceId);
+//            Log.i("deviceidtx",deviceId);
+//
+//            if (!deviceId.equals(LoginActivity.deviceId)) {
+//
+//            if (prevSets != null) {
+//                Iterator<TransactionTuple> itr = prevSets.iterator();
+//                while (itr.hasNext()) {
+//                    TransactionTuple x = (TransactionTuple) ((Iterator) itr).next();
+//
+//                    if (!deps.contains(x.transaction)) {
+//
+//                        updatedSet.add(x);
+//                    }
+//                }
+//            }
+//
+//
+//            TransactionTuple t = new TransactionTuple(tx_id, transactionType);
+//            updatedSet.add(t);
+//            LoginActivity.MainDependencySets.put(item, updatedSet);
+//
+//            }
+//
+//            else {
+//                Log.i("reaches","else case");
+//                LoginActivity.MainDependencySets.remove(item);
+//            }
+//
+//            Log.i("depsets",LoginActivity.MainDependencySets.toString());
 
             LoginActivity.MainLatestTransactions.put(deviceId, tx_id);
 
