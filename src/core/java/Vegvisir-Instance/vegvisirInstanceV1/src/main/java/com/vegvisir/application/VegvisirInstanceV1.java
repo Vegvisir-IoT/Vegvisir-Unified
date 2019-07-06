@@ -15,6 +15,7 @@ import com.vegvisir.core.blockdag.ReconciliationEndListener;
 import com.vegvisir.core.config.Config;
 import com.vegvisir.core.datatype.proto.Block.Transaction;
 import com.vegvisir.core.reconciliation.ReconciliationV1;
+import com.vegvisir.core.reconciliation.ReconciliationV2;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
 import com.vegvisir.pub_sub.VegvisirApplicationDelegator;
@@ -70,6 +71,7 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
     private int appCount = 0;
     private int backupCount = 0;
 
+
     private static boolean recovered = false;
 
     private static String PUB_FILENAME = "pub";
@@ -97,7 +99,7 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
         dataManager = VegvisirDataManager.getDataManager(ctx);
         backupCount = dataManager.loadAppCount();
         core = new VegvisirCore(new AndroidAdapter(ctx, deviceID),
-                ReconciliationV1.class,
+                ReconciliationV2.class,
                 dataManager,
                 this,
                 createGenesisBlock(keyPair),
@@ -218,7 +220,7 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
      * @return true if the @delegator is successfully registered.
      */
     @Override
-    public boolean registerApplicationDelegator(final VegvisirApplicationContext context, VegvisirApplicationDelegator delegator) {
+    public synchronized boolean registerApplicationDelegator(final VegvisirApplicationContext context, VegvisirApplicationDelegator delegator) {
         if (context.getChannels() == null || context.getAppID() == null || context.getChannels().isEmpty())
             return false;
         context.getChannels().forEach(t -> {
@@ -230,6 +232,7 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
         app2handler.put(context.getAppID(), delegator);
         appCount = app2handler.keySet().size();
         dataManager.updateAppCount(appCount);
+
         if (appCount == backupCount && !recovered) {
             recovered = true;
             core.tryRecoverBlocks();
@@ -250,7 +253,7 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
      * @return true, if the transaction is valid.
      */
     @Override
-    public boolean addTransaction(VegvisirApplicationContext context, Set<String> topics, byte[] payload, Set<TransactionID> dependencies) {
+    public synchronized boolean addTransaction(VegvisirApplicationContext context, Set<String> topics, byte[] payload, Set<TransactionID> dependencies) {
         List<com.vegvisir.core.datatype.proto.Block.Transaction.TransactionId> deps = new ArrayList<>();
         for (TransactionID id : dependencies) {
             deps.add(com.vegvisir.core.datatype.proto.Block.Transaction.TransactionId.newBuilder().setTransactionHeight(id.getTransactionHeight()).setDeviceId(id.getDeviceID()).build());
@@ -303,7 +306,7 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
         return Block.newBuilder().setVegvisirBlock(
                 com.vegvisir.core.datatype.proto.Block.newBuilder()
                 .setGenesisBlock(genesis)
-                .setSignature(Config.signProtoObject(keyPair, genesis))
+//                .setSignature(Config.signProtoObject(keyPair, genesis))
                 .build()
 
         ).build();

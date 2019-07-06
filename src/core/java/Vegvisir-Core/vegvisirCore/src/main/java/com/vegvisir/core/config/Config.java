@@ -194,11 +194,12 @@ public class Config {
      * @param signatureBytes
      * @return true if the signature is match otherwise return false if anything goes wrong.
      */
-    public static boolean checkSignature(byte[] signatureBytes, PublicKey publicKey) {
+    public static boolean checkSignature(byte[] signatureBytes, PublicKey publicKey, byte[] signatureValue) {
         try {
             Signature sig = initSignature();
             sig.initVerify(publicKey);
-            return sig.verify(signatureBytes);
+            sig.update(signatureBytes);
+            return sig.verify(signatureValue);
         } catch (InvalidKeyException e) {
             logger.info("Invalid Public Key\n"+e.getLocalizedMessage());
             return false;
@@ -217,11 +218,12 @@ public class Config {
             return false;
 //        } catch(NoSuchProviderException e) {
 //            return false;
+
         } catch (InvalidKeySpecException e) {
             logger.info("tried to verify a signature which had an invalid key");
             return false; // the key was invalid
         }
-        return checkSignature(signedBytes, publicKey);
+        return checkSignature(signedBytes, publicKey, signature.getSha256WithEcdsa().getByteString().toByteArray());
     }
 
 

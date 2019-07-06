@@ -83,4 +83,12 @@ public class BlockUtil {
         Hash hash = Hash.newBuilder().setSha3(ByteString.copyFromUtf8(refStr)).build();
         return byRef(hash);
     }
+
+    public static com.isaacsheff.charlotte.proto.CryptoId str2cryptoId(String idstr) {
+        return com.isaacsheff.charlotte.proto.CryptoId.newBuilder()
+                .setHash(com.isaacsheff.charlotte.proto.Hash.newBuilder()
+                        .setSha3(ByteString.copyFromUtf8(idstr)).build())
+                .build();
+
+    }
 }
