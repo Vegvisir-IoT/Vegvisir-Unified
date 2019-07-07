@@ -26,7 +26,7 @@ public abstract class ReconciliationProtocol {
     protected Gossip gossipLayer;
 
     /* The blockdag for the current node */
-    protected BlockDAG dag;
+//    protected BlockDAG dag;
 
     protected ReconciliationProtocol(int major, int minor, int patch) {
         this.setVersion(major, minor, patch);
@@ -54,7 +54,7 @@ public abstract class ReconciliationProtocol {
      * @param minor
      * @param patch
      */
-    private void setVersion(int major, int minor, int patch) {
+    protected void setVersion(int major, int minor, int patch) {
         this.version = new Version(major, minor, patch);
     }
 

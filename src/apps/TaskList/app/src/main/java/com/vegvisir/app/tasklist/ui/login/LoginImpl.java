@@ -6,15 +6,13 @@ import com.vegvisir.app.tasklist.FourPSet;
 import com.vegvisir.app.tasklist.data.TransactionTuple;
 import com.vegvisir.app.tasklist.User;
 import com.vegvisir.app.tasklist.data.TwoPSetUser;
-import com.vegvisir.core.datatype.proto.Block;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationDelegator;
 import com.vegvisir.pub_sub.VegvisirInstance;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
+
 import java.util.Set;
 
 /**
@@ -107,6 +105,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 
             updatedSet.add( new TransactionTuple( tx_id, transactionType) );
             LoginActivity.MainDependencySets.put(item, updatedSet);
+
 
             LoginActivity.MainLatestTransactions.put(deviceId, tx_id);
 
