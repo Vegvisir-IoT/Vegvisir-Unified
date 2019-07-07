@@ -219,6 +219,14 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 
+    public static void updateByPriority(Set<String> aSet, Priority priority){
+        for(String entry: aSet) {
+            items.add( entry );
+            priorities.put(entry, priority);
+        }
+
+
+    }
 
     public enum Priority{
         High(3), Medium(2), Low(1);

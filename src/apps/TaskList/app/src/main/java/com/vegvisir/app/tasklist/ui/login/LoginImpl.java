@@ -6,10 +6,12 @@ import com.vegvisir.app.tasklist.FourPSet;
 import com.vegvisir.app.tasklist.data.TransactionTuple;
 import com.vegvisir.app.tasklist.User;
 import com.vegvisir.app.tasklist.data.TwoPSetUser;
+import com.vegvisir.core.datatype.proto.Block;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationDelegator;
 import com.vegvisir.pub_sub.VegvisirInstance;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -47,28 +49,17 @@ public class LoginImpl implements VegvisirApplicationDelegator {
         String payloadString = new String(payload);
         Log.i("loginimpl",payloadString);
         int transactionType = Integer.parseInt(payloadString.substring(0,1));
+        Set<TransactionTuple> updatedSet;
+        String deviceId = tx_id.getDeviceID();
 
         if (transactionType > 4 && transactionType < 8){
             int usernamePos = payloadString.indexOf(",");
             String username = payloadString.substring(1,usernamePos);
             String password = payloadString.substring(usernamePos + 1);
 
-            Set<TransactionTuple> updatedSet = new HashSet<>();
             Set<TransactionTuple> prevSets = LoginActivity.dependencySets.get(username);
-            String deviceId = tx_id.getDeviceID();
 
-
-            if (prevSets != null) {
-                Iterator<TransactionTuple> itr = prevSets.iterator();
-                while (itr.hasNext()) {
-                    TransactionTuple x = (TransactionTuple) ((Iterator) itr).next();
-
-                    if (!deps.contains(x.transaction)) {
-
-                        updatedSet.add(x);
-                    }
-                }
-            }
+            updatedSet = TransactionTuple.createSetFromPrevious(prevSets, deps);
 
             TransactionTuple t = new TransactionTuple(tx_id, transactionType);
             updatedSet.add(t);
@@ -80,44 +71,18 @@ public class LoginImpl implements VegvisirApplicationDelegator {
                 LoginActivity.topDeps.remove(d);
             }
             LoginActivity.topDeps.add(tx_id);
-            HashSet<User> addSet = new HashSet<>();
-            HashSet<User> removeSet = new HashSet<>();
 
-            for (TransactionID d : deps) {
-                if (LoginActivity.twoPSets.containsKey(d)) {
-                    addSet.addAll(LoginActivity.twoPSets.get(d).getAddSet());
-                    removeSet.addAll(LoginActivity.twoPSets.get(d).getRemoveSet());
-                }
-            }
+            TwoPSetUser regular = new TwoPSetUser();
+            regular.loadDependencies( deps, LoginActivity.twoPSets);
+            regular.attachUser( transactionType, username, password);
+            LoginActivity.twoPSets.put(tx_id, regular );
 
-            if (transactionType == 5) {
-                addSet.add(new User(username, password));
-                removeSet.remove(username);
-            } else {
-                addSet.remove(username);
-                removeSet.add(new User(username, password));
-            }
+            TwoPSetUser userTop = new TwoPSetUser();
+            userTop.loadDependencies( LoginActivity.topDeps, LoginActivity.twoPSets );
 
-            LoginActivity.twoPSets.put(tx_id, new TwoPSetUser(addSet, removeSet));
-
-            HashSet<User> addSetTop = new HashSet<>();
-            HashSet<User> removeSetTop = new HashSet<>();
-
-            for (TransactionID d : LoginActivity.topDeps) {
-                if (LoginActivity.twoPSets.containsKey(d)) {
-                    addSetTop.addAll(LoginActivity.twoPSets.get(d).getAddSet());
-                    removeSetTop.addAll(LoginActivity.twoPSets.get(d).getRemoveSet());
-                }
-            }
-
-            LoginActivity.twoPSets.put(LoginActivity.top, new TwoPSetUser(addSetTop, removeSetTop));
-
-
-            Set<User> newSet = addSetTop;
-            newSet.removeAll(removeSetTop);
-            //Log.i("new set", newSet.toString());
+            LoginActivity.twoPSets.put(LoginActivity.top, userTop);
             LoginActivity.usernames.clear();
-            for (User u: newSet){
+            for (User u: userTop.filterRemove()){
                 LoginActivity.usernames.put(u.getUsername(), u.getPassword());
             }
         }
@@ -127,7 +92,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
             if (transactionType > 7){
                 int first = payloadString.indexOf(",");
                 int second = payloadString.indexOf(",", first + 1);
-                int y = Integer.parseInt(payloadString.substring(first+1,second));
+                int y = Integer.parseInt(payloadString.substring(first+1,second));  //
                 item = payloadString.substring(second+1);
                 if (transactionType == 8){
                     transactionType = 0;
@@ -137,25 +102,10 @@ public class LoginImpl implements VegvisirApplicationDelegator {
                 }
             }
 
-            Set<TransactionTuple> updatedSet = new HashSet<>();
             Set<TransactionTuple> prevSets = LoginActivity.MainDependencySets.get(item);
-            String deviceId = tx_id.getDeviceID();
+            updatedSet = TransactionTuple.createSetFromPrevious(prevSets, deps);
 
-            if (prevSets != null) {
-                Iterator<TransactionTuple> itr = prevSets.iterator();
-                while (itr.hasNext()) {
-                    TransactionTuple x = (TransactionTuple) ((Iterator) itr).next();
-
-                    if (!deps.contains(x.transaction)) {
-
-                        updatedSet.add(x);
-                    }
-                }
-            }
-
-
-            TransactionTuple t = new TransactionTuple(tx_id, transactionType);
-            updatedSet.add(t);
+            updatedSet.add( new TransactionTuple( tx_id, transactionType) );
             LoginActivity.MainDependencySets.put(item, updatedSet);
 
             LoginActivity.MainLatestTransactions.put(deviceId, tx_id);
@@ -164,109 +114,48 @@ public class LoginImpl implements VegvisirApplicationDelegator {
                 LoginActivity.MainTopDeps.remove(d);
             }
             LoginActivity.MainTopDeps.add(tx_id);
-            HashSet<String> lowSet = new HashSet<>();
-            HashSet<String> mediumSet = new HashSet<>();
-            HashSet<String> highSet = new HashSet<>();
-            HashSet<String> removeSet = new HashSet<>();
 
-            for (TransactionID d : deps) {
-                if (LoginActivity.fourPSets.containsKey(d)) {
-                    lowSet.addAll(LoginActivity.fourPSets.get(d).getLowSet());
-                    mediumSet.addAll(LoginActivity.fourPSets.get(d).getMediumSet());
-                    highSet.addAll(LoginActivity.fourPSets.get(d).getHighSet());
-                    removeSet.addAll(LoginActivity.fourPSets.get(d).getRemoveSet());
-                }
-            }
+            FourPSet reg4PSet = new FourPSet();
+            reg4PSet.adjustForDependencies(deps, LoginActivity.fourPSets);
+            reg4PSet.updateBySetByType( transactionType, item);
 
-            if (transactionType == 1) {
-                lowSet.add(item);
-                mediumSet.remove(item);
-                highSet.remove(item);
-                removeSet.remove(item);
-            }
-            else if (transactionType == 2) {
-                lowSet.remove(item);
-                mediumSet.add(item);
-                highSet.remove(item);
-                removeSet.remove(item);
-            }
-            else if (transactionType == 3) {
-                lowSet.remove(item);
-                mediumSet.remove(item);
-                highSet.add(item);
-                removeSet.remove(item);
-            }
-            else if (transactionType == 0){
-                lowSet.remove(item);
-                mediumSet.remove(item);
-                highSet.remove(item);
-                removeSet.add(item);
-            }
+            LoginActivity.fourPSets.put(tx_id, reg4PSet);
 
-            LoginActivity.fourPSets.put(tx_id, new FourPSet(lowSet, mediumSet, highSet, removeSet));
 
-            HashSet<String> lowSetTop = new HashSet<>();
-            HashSet<String> mediumSetTop = new HashSet<>();
-            HashSet<String> highSetTop = new HashSet<>();
-            HashSet<String> removeSetTop = new HashSet<>();
+            FourPSet top4PSet = new FourPSet();
+            top4PSet.adjustForDependencies( LoginActivity.MainTopDeps, LoginActivity.fourPSets );
 
-            for (TransactionID d : LoginActivity.MainTopDeps) {
-                if (LoginActivity.fourPSets.containsKey(d)) {
-                    lowSetTop.addAll(LoginActivity.fourPSets.get(d).getLowSet());
-                    mediumSetTop.addAll(LoginActivity.fourPSets.get(d).getMediumSet());
-                    highSetTop.addAll(LoginActivity.fourPSets.get(d).getHighSet());
-                    removeSetTop.addAll(LoginActivity.fourPSets.get(d).getRemoveSet());
-                }
-            }
-
-            LoginActivity.fourPSets.put(LoginActivity.MainTop, new FourPSet(lowSetTop, mediumSetTop, highSetTop, removeSetTop));
+            LoginActivity.fourPSets.put(LoginActivity.MainTop, top4PSet);
 
             LoginActivity.items.clear();
             LoginActivity.priorities.clear();
 
-            Set<String> newLowSet = lowSetTop;
-            newLowSet.removeAll(mediumSetTop);
-            newLowSet.removeAll(highSetTop);
-            newLowSet.removeAll(removeSetTop);
+            LoginActivity.updateByPriority( FourPSet.filterSetByList(top4PSet.getLowSet(),
+                    Arrays.asList(top4PSet.getMediumSet(), top4PSet.getHighSet(),
+                            top4PSet.getRemoveSet())), LoginActivity.Priority.Low);
 
-            for(String lowItem: newLowSet) {
-                LoginActivity.items.add(lowItem);
-                LoginActivity.priorities.put(lowItem, LoginActivity.Priority.Low);
-            }
+            LoginActivity.updateByPriority( FourPSet.filterSetByList(top4PSet.getMediumSet(),
+                    Arrays.asList( top4PSet.getHighSet(), top4PSet.getRemoveSet())),
+                    LoginActivity.Priority.Medium);
 
-            Set<String> newMediumSet = mediumSetTop;
-            newMediumSet.removeAll(highSetTop);
-            newMediumSet.removeAll(removeSetTop);
-
-            for(String mediumItem: newMediumSet) {
-                LoginActivity.items.add(mediumItem);
-                LoginActivity.priorities.put(mediumItem, LoginActivity.Priority.Medium);
-            }
-
-            Set<String> newHighSet = highSetTop;
-            newHighSet.removeAll(removeSetTop);
-
-            for(String highItem: newHighSet) {
-                LoginActivity.items.add(highItem);
-                LoginActivity.priorities.put(highItem, LoginActivity.Priority.High);
-            }
+            LoginActivity.updateByPriority( FourPSet.filterSetByList(top4PSet.getHighSet(),
+                    Arrays.asList( top4PSet.getRemoveSet())), LoginActivity.Priority.High );
 
             LoginActivity.notWitnessedTransactions.add(tx_id);
 
-
             LoginActivity.items.sort(new ItemComparator());
 
-            Log.i("lowset",lowSet.toString());
-            Log.i("mediumset",mediumSet.toString());
-            Log.i("highset",highSet.toString());
-            Log.i("removeset",removeSet.toString());
+            Log.i("lowset",reg4PSet.getLowSet().toString());
+            Log.i("mediumset",reg4PSet.getMediumSet().toString());
+            Log.i("highset", reg4PSet.getHighSet().toString());
+            Log.i("removeset",reg4PSet.getRemoveSet().toString());
 
             Log.i("topdeps", LoginActivity.MainTopDeps.toString());
 
-            Log.i("lowsettop",lowSetTop.toString());
-            Log.i("mediumsettop",mediumSetTop.toString());
-            Log.i("highsettop",highSetTop.toString());
-            Log.i("removesettop",removeSetTop.toString());
+            Log.i("lowsettop",top4PSet.getHighSet().toString());
+            Log.i("mediumsettop",top4PSet.getMediumSet().toString());
+            Log.i("highsettop",top4PSet.getHighSet().toString());
+            Log.i("removesettop",top4PSet.getRemoveSet().toString());
 
             Log.i("sets", LoginActivity.fourPSets.toString());  
             Log.i("items", LoginActivity.items.toString());
