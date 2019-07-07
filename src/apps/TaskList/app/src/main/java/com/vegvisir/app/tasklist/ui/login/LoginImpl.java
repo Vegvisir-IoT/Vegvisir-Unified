@@ -71,7 +71,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
             LoginActivity.topDeps.add(tx_id);
 
             TwoPSetUser regular = new TwoPSetUser();
-            regular.loadDependencies( deps, LoginActivity.twoPSets);
+            //regular.loadDependencies( deps, LoginActivity.twoPSets);
             regular.attachUser( transactionType, username, password);
             LoginActivity.twoPSets.put(tx_id, regular );
 
