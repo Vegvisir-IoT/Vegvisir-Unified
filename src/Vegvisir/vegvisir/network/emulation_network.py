@@ -49,10 +49,8 @@ class EmulationNetworkOperator(Network):
         payload.ParseFromString(self.buffer[start:start + message_len])
         
         print("SUCCESSFUL PARSING ON %s\n" % self.userid)
-        print("BUFFER AFTER PARSING %s\n" % self.buffer)
         self.buffer = bytearray()
         print("MESSAGE SIZE %s\n" % message_len)
-        print("Start was %s\n" % start)
         return payload
 
 
@@ -107,7 +105,6 @@ class EmulationNetworkOperator(Network):
              print("Receiving failed....\n")  
              return comstatus.SOCKET_ERROR
          self.buffer += incoming_bytes
-         print("Current buffer %s\n" % self.buffer)
          return comstatus.SUCCESS 
 
 

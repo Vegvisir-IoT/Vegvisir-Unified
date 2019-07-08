@@ -1,9 +1,11 @@
 from time import time, sleep
 
 
-from vegvisir.emulator.socket_opcodes import ProtocolState as state
+from vegvisir.emulator.socket_opcodes import ProtocolState as rstate
 from vegvisir.proto import handshake_pb2 as hs
 from vegvisir.proto import sendall_pb2 as sa
+from vegvisir.proto import frontier_pb2 as frontier
+
 
 __author__ = "Gloire Rubambiza"
 __email__ = "gbr26@cornell.edu"
@@ -57,37 +59,38 @@ class StateMachine(object):
            else:
                payload = hs.HandshakeMessage()
                payload.CopyFrom(message.handshake)
-               state = self.handshake_handler.handle_message(payload,
-                                                       state['message_queue'])
-               if state == state.PROTOCOL_DISAGREEMENT:
-                   self.destroy_session(connection)
+               state = self.handshake_handler.handle_message(payload, state)
+               if state == rstate.PROTOCOL_DISAGREEMENT:
+                   print("No agreement on protocol spoken\n")
                else:
                    self.states[connection]['state'] = state
         elif message_type == "frontier":
-           state = self.frontier_handler.handle_message(message,
+           frontier_message = frontier.FrontierMessage()
+           frontier_message.CopyFrom(message.frontier)
+           nstate = self.frontier_handler.handle_message(frontier_message,
                                                        self.states[connection]) 
-           self.states[connection] = state
+           self.states[connection] = nstate
            if state['client_socket']: # Outgoing connection
-               if state == state.REMOTE_DOMINATES:
+               if nstate == rstate.REMOTE_DOMINATES:
                    nstate = self.frontier_handler.request_next_missing_block()
-                   if nstate == state.EVEN:
+                   if nstate == rstate.EVEN:
                       nstate = self.frontier_handler.provide_pow(
                                                              end_protocol=True)
                       self.destroy_session(connection)
                    else:
-                       self.states[connection]['state'] = state
+                       self.states[connection]['state'] = nstate
            else: # Incoming connection 
-               if state == state.REMOTE_DOMINATES:
+               if nstate == rstate.REMOTE_DOMINATES:
                    nstate = self.frontier_handler.request_next_missing_block()
-                   if nstate == state.EVEN and state['remote_is_subset']:
+                   if nstate == rstate.EVEN and state['remote_is_subset']:
                        nstate = self.frontier_handler.provide_pow()
                        self.frontier_server.send_fset_request() 
-                   elif nstate == state.EVEN: # Only server is behind.
+                   elif nstate == rstate.EVEN: # Only server is behind.
                        nstate = self.frontier_handler.provide_pow(
                                                            end_protocol=True)
                        self.destroy_session(connection)
                    else: # More missing blocks exist
-                       self.states[connection]['state'] = state
+                       self.states[connection]['state'] = nstate
         #elif message_type == "vector":
         #    continue
         elif message_type == "sendall":
@@ -106,4 +109,20 @@ class StateMachine(object):
         """
         if connection in self.states:
             del self.states[connection]
+        if connection in self.network.outputs:
+            self.network.outputs.remove(connection)
         self.network.remove_connection(connection)
+
+
+    def update_state(self, connection, new_state):
+        """
+           Update the state of a connection.
+           :param connection: A socket object.
+           :param new_state: A Handshake enum.
+        """
+        if connection in self.states:
+            self.states[connection]['state'] = new_state
+        else:
+            self.states[connection] = {'state': new_state}
+            message_queue = self.network.message_queues[connection]
+            self.states[connection]['message_queue'] = message_queue

@@ -37,4 +37,4 @@ class ProtocolState(Enum):
     EVEN = 4
     RECONCILIATION = 5 
     PROTOCOL_DISAGREEMENT = 6 
-    
+    CONNECTION_ATTEMPT_FAILURE = 7    

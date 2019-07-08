@@ -1,8 +1,9 @@
 from time import time
 
 
-from vegvisir.emulator.socket_opcodes import ProtocolState as state 
+from vegvisir.emulator.socket_opcodes import ProtocolState as rstate 
 from vegvisir.protocols.protocol import Protocol
+import vegvisir.proto.handshake_pb2 as hs
 
 
 __author__ = "Gloire Rubambiza"
@@ -22,37 +23,39 @@ class FrontierServer(Protocol):
                           request_creator.blockchain, crash_prob)
         self.request_creator = request_creator
         self.request_handler = request_handler
-        # State will have a pointer when any function in here is called.
-        self.state = None
 
 
-    def send_fset_request(self, first_run):
+    def send_fset_request(self, state, first_run):
         """
            Send the frontier set to a remote peer.
            Additionally, the request asks whether the server is behind the client.
+           :param state: A dictionary.
            :param first_run: A boolean.
         """
         # Create a request for frontier set and whether the server is a subset.
         frontier_request = self.request_creator.frontier_set_request()
     
         # Add the request to the message queue for the connection.
-        message_queue.put(frontier_set_request) 
+        state['message_queue'].put(frontier_request) 
     
         # Create the "state" for the connection.
         if first_run:
-            self.state = {'protocol': vgp.FRONTIER,'cached_blocks': [],
-                           'client_socket': False, 'start_time': time()}
-            return state.HANDSHAKE
+            state['protocol'] = hs.FRONTIER
+            state['cached_blocks'] = []
+            state['client_socket'] = False,
+            state['start_time'] = time()
+            return rstate.HANDSHAKE
         else:
-            return state.RECONCILIATION
+            return rstate.RECONCILIATION
 
 
-    def handle_client_fset_update(self, other_frontier_set,
+    def handle_client_fset_update(self, other_frontier_set, state,
                                   server_is_subset=False):
         """
            Update the state for a connection based on a response from the client.
            :param other_frontier_set: A list of hashes.
            :param server_is_subset: A boolean.
+           :state: A dictionary.
         """
         our_hashes = set(self.blockchain.blocks.keys())
         remote_client_is_subset = set(other_frontier_set).issubset(our_hashes)
@@ -60,32 +63,31 @@ class FrontierServer(Protocol):
         # Update the "state" for the connection.
         if server_is_subset and remote_client_is_subset:
             end_protocol_request = self.request_creator.end_protocol_request()
-            message_queue.put(end_protocol_request)
-            return state.EVEN
+            state['message_queue'].put(end_protocol_request)
+            return rstate.EVEN
 
         elif server_is_subset:
-            self.state['server_is_subset'] = True
+            state['server_is_subset'] = True
 
             # Create the list of missing blocks.
             local_fset = self.blockchain.crdt.frontier_set()
             frontier_difference = list(other_frontier_set.difference(local_fset))
-            self.state['missing_blocks'] =  frontier_difference
-            self.state['other_fset'] = other_frontier_set
-            return state.REMOTE_DOMINATES
+            state['missing_blocks'] =  frontier_difference
+            state['other_fset'] = other_frontier_set
+            return rstate.REMOTE_DOMINATES
 
         else: # remote_client_is_subset:
             states[peer_conn]['remote_is_subset'] = True
     
             # Create a request for the peer to reconcile.
             reconciliation_request = self.request_creator.reconciliation_request()
-            message_queue.put(reconciliation_request)
-            return state.LOCAL_DOMINATES
+            state['message_queue'].put(reconciliation_request)
+            return rstate.LOCAL_DOMINATES
 
 
-    def handle_incoming_add_block_request(self, peer_conn, message):
+    def handle_incoming_add_block_request(self, message):
         """
            Handle peer's request to add their proof-of-witness block.
-           :param peer_conn: A connection object.
            :param message: A VegvisirProtocolMessage.
         """
         self.request_handler.handle_add_block_request(message)

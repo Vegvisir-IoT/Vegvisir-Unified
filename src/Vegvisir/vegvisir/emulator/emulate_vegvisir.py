@@ -8,13 +8,12 @@ from vegvisir.blockchain.crdt import Crdt
 from vegvisir.emulator.server import VegvisirServer
 from vegvisir.emulator.client import VegvisirClient
 from vegvisir.emulator.serverside_controller import ServerController
-from vegvisir.emulator.clientside_controller import ClientController
 from vegvisir.emulator.stateless_request_handler import PeerRequestHandler
 from vegvisir.emulator.stateless_request_creator import ProtocolRequestCreator
 from vegvisir.emulator.emulator import Emulator
 from vegvisir.emulator.emulation_helpers import deserialize_certificate
 from vegvisir.emulator.stateless.state_machine import StateMachine
-from vegvisir.emulator.socket_opcodes import (ProtocolStatus as ps,
+from vegvisir.emulator.socket_opcodes import (ProtocolState as rstate,
                                              CommunicationStatus as comstatus)
 from vegvisir.network.emulation_network import EmulationNetworkOperator
 from vegvisir.proto import vegvisir_pb2 as vegvisir 
@@ -58,11 +57,12 @@ def emulate_vegvisir(args):
     components = create_components(my_userid, peer_names, gblock, blockchain,
                                    private_key, port, crash_prob,protocol)
     server_controller = components[0]
-    state_machine = components[2]
+    state_machine = components[1]
 
     # Create the emulator for sleeping and waking up
     emulator = Emulator(private_key, params, block_limit,
-                        server_controller.request_handler)
+                        server_controller.request_handler,
+                        state_machine.handshake_handler.request_creator)
 
 
     # Start the protocol runner
@@ -230,21 +230,24 @@ def spin_server_forever(emulator, controller, state_machine):
                 print("Payload is %s\n" % payload)
                 if payload in error_statuses:
                     state_machine.destroy_session(incoming)
-                    if connection in network.outputs:
-                        network.outputs.remove(connection)
+                    if incoming in network.outputs:
+                        network.outputs.remove(incoming)
                 else:
                     if not incoming in network.outputs:
                         network.outputs.append(incoming)
                     state_machine.process_message(payload, incoming)
         for ready in writable:
-            try:
-                outgoing_message = network.message_queues[ready].get_nowait()
-            except queue_is_empty:
-                print("No message in %s's queue atm" % ready)
-                network.outputs.remove(ready)
-            else:
-                status = network.send(outgoing_message, ready)
-                print("Sending status %s\n" % status)
+            if ready in network.message_queues:
+                try:
+                    outgoing_msg = network.message_queues[ready].get_nowait()
+                except queue_is_empty:
+                    print("No message in %s's queue atm" % ready)
+                    network.outputs.remove(ready)
+                else:
+                    status = network.send(outgoing_msg, ready)
+                    print("Sending status %s\n" % status)
+            elif ready in network.outputs:
+                 network.outputs.remove(ready)
         for exception in exceptional:
             print("Connection to %s ran into an exception\n" % exception.getpeername())
             if exception in network.outputs:
@@ -256,11 +259,12 @@ def spin_server_forever(emulator, controller, state_machine):
             emulator.random_sleep()
             if emulator.block_limit > 0:
                 emulator.generate_new_block()
-            gossip_status = emulator.wake_up_to_gossip()
+            gossip_status, connection = emulator.wake_up_to_gossip()
             print("%s Gossip status -> %s\n" % (server.userid,
                                                 gossip_status))
-            if gossip_status == ps.SUCCESS:
+            if gossip_status == rstate.HANDSHAKE:
                 print("%s GOSSIP STARTED SUCCESSFULLY!\n" % server.userid)
+                state_machine.update_state(connection, rstate.HANDSHAKE)
             else:
                 print("%s GOSSIPING FAILED, STATUS %s, INPUT\n" %
                       (server.userid, gossip_status))

@@ -49,7 +49,7 @@ class ProtocolRequestCreator(object):
             :param request_type: A HandshakeMessage enum.
             :param protocol: A HandshakeMessage enum.
         """
-        request = vegvisir.protocol.datatype.HandshakeMessage()
+        request = hs.HandshakeMessage()
         if not end_protocol:
             request.type = request_type
             request.spokenVersions.extend([protocol])

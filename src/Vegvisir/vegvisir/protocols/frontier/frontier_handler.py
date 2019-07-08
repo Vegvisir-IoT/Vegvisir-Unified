@@ -1,3 +1,8 @@
+from vegvisir.proto import (vegvisir_pb2 as vegvisir,
+                           vegvisirCommon_pb2 as vc,
+                           frontier_pb2 as frontier)
+
+from vegvisir.emulator.socket_opcodes import ProtocolState as rstate
 
 __author__ = "Gloire Rubambiza"
 __email__ = "gbr26@cornell.edu"
@@ -29,27 +34,28 @@ class FrontierHandler(object):
         # Channel the message to the right handler.
         message_type = message.WhichOneof("frontier_message_type")
         if message_type == "request":
-           request = vegvisir.proto.Request()
+           request = frontier.Request()
            request.CopyFrom(message.request)
            request_type = request.type
-           fset_request = vegvisir.protocol.dataype.Request.SEND_FRONTIER_SET
+           fset_request = frontier.Request.SEND_FRONTIER_SET
            if request_type == fset_request: 
                self.frontier_client.state = state
-               return self.frontier_client.handle_fset_request(request.send)
-           if request_type == vegvisir.protocol.dataype.SEND_BLOCK:
+               return self.frontier_client.handle_fset_request(request.send,
+                                                               state)
+           if request_type == frontier.Request.SEND_BLOCK:
                block_response = self.handle_block_request(request)
                message_queue.put(block_response)
-               return state.LOCAL_DOMINATES
-           if request_type == vegvisir.protocol.dataype.ADD_BLOCK:
+               return rstate.LOCAL_DOMINATES
+           if request_type == frontier.Request.ADD_BLOCK:
                self.request_handler.handle_add_block_request(request)
-               return state.EVEN
-           rec_request = vegvisir.proto.RECONCILIATION_NEEDED
+               return rstate.EVEN
+           rec_request = frontier.Request.RECONCILIATION_NEEDED
            if request_type == rec_request:
                self.frontier_client.handle_reconciliation_request(
                                                            request.send.hashes)
-               return state.REMOTE_DOMINATES 
+               return rstate.REMOTE_DOMINATES 
         else: # response
-            response = vegvisir.proto.Response()
+            response = frontier.Response()
             response.CopyFrom(message.response)
             response_type = response.WhichOneof("response_types")
             if response_type == "hashResponse":
@@ -68,9 +74,9 @@ class FrontierHandler(object):
         """
         print("BLOCK REQUEST START\n")
         # Create response
-        blocks_of_interest = vegvisir.common.datatype.AddBlocks()
+        blocks_of_interest = vc.AddBlocks()
         for b_hash in request.send.hashes:
-            general_block = vegvisir.core.datatype.Block()
+            general_block = vegvisir.Block()
             block = self.blockchain.blocks[b_hash]
             general_block.user_block.userid = block.userid
             general_block.user_block.timestamp.utc_time = block.timestamp
@@ -98,7 +104,7 @@ class FrontierHandler(object):
             # Serialize the block and turn it into a charlotte block.
             serialized_block = general_block.SerializeToString()
             charlotte_block = blocks_of_interest.blocksToAdd.add()
-            charlotte_block.block = serialized_block 
+            charlotte_block.block.CopyFrom(serialized_block)
  
         response = vegvisir.proto.Response()
         response.blockResponse.CopyFrom(blocks_of_interest)
@@ -109,29 +115,31 @@ class FrontierHandler(object):
         return self.request_handler.serialize(message)
 
 
-    def handle_incoming_missing_block(self, block):
+    def handle_incoming_missing_block(self, block, state):
         """
            Cache a missing block received from remote peer.
            :param block: A Block object.
+           :state: A dictionary.
         """
-        missing_blocks = self.state['missing_blocks']
+        missing_blocks = state['missing_blocks']
         self.cache[block.hash()] = block 
         for parent_hash in block.parents:
             if not(parent_hash in self.blockchain.blocks):
                 missing_blocks.append(parent_hash)
-        if 'reconciled_blocks' in self.state.keys():
-            self.state['reconciled_blocks'] += 1
+        if 'reconciled_blocks' in state.keys():
+            state['reconciled_blocks'] += 1
         else:
-            self.state['reconciled_blocks'] = 1
-        return state.RECONCILIATION
+            state['reconciled_blocks'] = 1
+        return rstate.RECONCILIATION
 
 
-    def provide_pow(self, end_protocol=False):
+    def provide_pow(self, state, end_protocol=False):
         """
            Add cached blocks when there are no more missing blocks.
            :param end_protocol: A boolean.
+           :param state: A dictionary.
         """
-        cached_blocks = self.state['cached_blocks']
+        cached_blocks = state['cached_blocks']
         cached_blocks.reverse()
         self.blockchain.add_list(cached_blocks, self.cache)
         print("%s Server adding from cache worked\n" % self.userid)
@@ -140,7 +148,7 @@ class FrontierHandler(object):
         print("UPDATED FRONTIER SET: %s\n" % frontier_set)
     
         # The frontier_set in this case should be the most recent.
-        pow_parents = frontier_set.union(self.state['other_fset'])
+        pow_parents = frontier_set.union(state['other_fset'])
         pow_block = self.create_pow(pow_parents)
     
         # Add the POW block to our blockchain
@@ -153,7 +161,7 @@ class FrontierHandler(object):
                                                                    [pow_block],
                                                                   end_protocol)
         message_queue.put(pow_request)
-        return state.RECONCILIATION
+        return rstate.RECONCILIATION
 
 
     def create_pow(self, pow_hashes):
@@ -180,9 +188,9 @@ class FrontierHandler(object):
         # Emulate probability of crash in the middle of reconciliation.
         self.emulate_crash_probability()
 
-        missing_blocks = self.state['missing_blocks']
+        missing_blocks = state['missing_blocks']
         if len(missing_blocks) == 0:
-            return state.EVEN
+            return rstate.EVEN
 
         bhash = missing_blocks.pop(0)
         if bhash in self.cache:
@@ -195,7 +203,7 @@ class FrontierHandler(object):
             block_request = self.request_creator.block_request(bhash)
             # Add the request to the message queue for the connection.
             message_queue.put(block_request) 
-        return state.REMOTE_DOMINATES
+        return rstate.REMOTE_DOMINATES
 
 
 

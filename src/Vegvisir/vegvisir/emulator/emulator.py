@@ -2,14 +2,8 @@ from time import time, sleep
 from copy import deepcopy
 from random import randint
 
-from .serverside_controller import ServerController
-from .clientside_controller import ClientController
-from .protocol_request_handler import ProtocolRequestCreator
-from .peer_request_handlers import PeerRequestHandler
-from .client import VegvisirClient
-from .server import VegvisirServer
 from .emulation_helpers import (create_blocks, update_local_vector_maps)
-from .socket_opcodes import (ProtocolStatus as ps,
+from .socket_opcodes import (ProtocolState as rstate,
                               CommunicationStatus as comstatus)
 from vegvisir.simulator.opcodes import Operation
 import vegvisir.proto.handshake_pb2 as hs 
@@ -29,15 +23,19 @@ class Emulator(object):
         :param peers: A list of peers.
         :param block_limit: An int.
         :request_handler: A PeerRequestHandler object.
+        :request_creator: A PeerRequestCreator object.
     """
-    def __init__(self, private_key, peers, block_limit, peer_request_handler):
+    def __init__(self, private_key, peers, block_limit, request_handler,
+                 request_creator):
         self.private_key = private_key
         self.peers = peers
         self.block_limit = block_limit
+        self.request_creator = request_creator
         self.userid = request_handler.userid
         self.blockchain = request_handler.blockchain
         self.network = request_handler.network
         self.vector_clock = request_handler.vector_clock
+        self.protocol = request_handler.protocol
 
 
     def random_sleep(self):
@@ -77,15 +75,15 @@ class Emulator(object):
                 message_queue = self.network.message_queues[connection]
                 self.initiate_protocol(message_queue,
                                        hs.HandshakeMessage.REQUEST) 
-                return ps.SUCCESS
+                return rstate.HANDSHAKE, connection
             else:
                 print("Connection to %s failed.... \n" % peer_port)
-                return ps.CONNECTION_ATTEMPT_FAILURE
+                return rstate.CONNECTION_ATTEMPT_FAILURE, None
         else:
             existing_conn = self.network.outgoing_connections[peer_port]
             message_queue = self.network.message_queues[existing_conn] 
             self.initiate_protocol(message_queue, hs.HandshakeMessage.REQUEST)
-            return ps.SUCCESS
+            return rstate.HANDSHAKE, existing_conn
 
 
     def initiate_protocol(self, message_queue, request_type):
@@ -113,7 +111,7 @@ class Emulator(object):
         for block in block_list:
             self.blockchain.add(block, Operation.ADDED_REQUEST)
             print("Newly minted block hash %s\n" % block.hash())
-            if self.clientctrl.protocol == hs.VECTOR:
+            if self.protocol == hs.VECTOR:
                 update_local_vector_maps(self.vector_clock, block)
             if self.vector_clock.offline_activity == False:
                 self.vector_clock.update_offline_activity(True)

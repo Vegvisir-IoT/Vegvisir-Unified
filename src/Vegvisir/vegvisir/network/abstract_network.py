@@ -53,12 +53,19 @@ class Network(metaclass=ABCMeta):
            Remove an active connection from the lookup table.
            :param connection: A socket object.
         """
-        print("Closing socket connection to %s \n" %
-                                        self.incoming_connections[connection])
-        connection.shutdown(SHUT_RDWR)
-        connection.close()
+        if connection in self.incoming_connections:
+            print("Closing incoming connection to %s \n" % connection)
         if connection in self.incoming_connections:
             del self.incoming_connections[connection]
             self.inputs.remove(connection)
+        else:
+            port = -1
+            for out_port, con in self.outgoing_connections.items():
+                if con == connection:
+                    port = out_port
+            del self.outgoing_connections[port]
+            self.inputs.remove(connection)
         if connection in self.message_queues:
             del self.message_queues[connection]
+        connection.shutdown(SHUT_RDWR)
+        connection.close()

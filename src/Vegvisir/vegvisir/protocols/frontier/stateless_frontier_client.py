@@ -2,6 +2,8 @@ from time import time
 
 
 from vegvisir.protocols.protocol import Protocol
+from vegvisir.emulator.socket_opcodes import ProtocolState as rstate
+from vegvisir.proto import handshake_pb2 as hs
 
 
 __author__ = "Gloire Rubambiza"
@@ -22,15 +24,14 @@ class FrontierClient(Protocol):
                           request_creator.blockchain, crash_prob)
         self.request_creator = request_creator
         self.request_handler = request_handler
-        # State will have a pointer when any function in here is called.
-        self.state = None
 
 
-    def handle_fset_request(self, message):
+    def handle_fset_request(self, message, state):
         """
            Handle a peer's request for the frontier set.
            Additionally, notify the server whether it is behind.
            :param message: A HashSet message.
+           :param state: A dictionary.
         """
         other_frontier_set = []
         for block_hash in message.hashes:
@@ -41,17 +42,17 @@ class FrontierClient(Protocol):
         our_frontier_set = self.blockchain.crdt.frontier_set()
         response = self.request_handler.handle_fset_request(
                                                       remote_server_is_subset)
-        message_queue.put(response)
-        if self.state['state'] == state.HANDSHAKE:
-            self.state['protocol'] = vgp.FRONTIER
-            self.state['cached_blocks'] = []
-            self.state['start_time'] = time(),
-            self.state['other_fset'] = other_frontier_set,
-            self.state['client_socket'] = True
+        state['message_queue'].put(response)
+        if state['state'] == rstate.HANDSHAKE:
+            state['protocol'] = hs.FRONTIER
+            state['cached_blocks'] = []
+            state['start_time'] = time(),
+            state['other_fset'] = other_frontier_set,
+            state['client_socket'] = True
 
         if remote_server_is_subset:
-            return state.LOCAL_DOMINATES
-        return state.RECONCILIATION
+            return rstate.LOCAL_DOMINATES
+        return rstate.RECONCILIATION
 
 
     def handle_reconciliation_request(self, outgoing_conn, message):
@@ -66,8 +67,8 @@ class FrontierClient(Protocol):
         local_fset = self.blockchain.crdt.frontier_set()
 
         frontier_difference = list(other_frontier_set.difference(local_fset))
-        self.state['missing_blocks'] =  frontier_difference
-        return state.RECONCILIATION 
+        state['missing_blocks'] =  frontier_difference
+        return rstate.RECONCILIATION 
 
 
     def print_reconciliation_stats(self):

@@ -6,7 +6,8 @@ from google.protobuf.internal.encoder import _VarintBytes
 
 
 from vegvisir.proto import (handshake_pb2 as hs, vegvisir_pb2 as vegvisir,
-                            frontier_pb2 as frontier) 
+                            frontier_pb2 as frontier,
+                            vegvisirNetwork_pb2 as network) 
 from vegvisir.simulator.opcodes import Operation as op
 from vegvisir.blockchain.block import Block, Transaction
 from vegvisir.blockchain.blockchain_helpers import int_to_bytestring
@@ -67,10 +68,12 @@ class PeerRequestHandler(object):
         # Create response
         frontier_response = frontier.Response()
         f_set = list(self.blockchain.crdt.frontier_set())
-        frontier_response.hashResponse.hashes.extend(fset)
+        frontier_response.hashResponse.hashes.extend(f_set)
         frontier_response.is_subset = remote_is_subset
         
         message = network.VegvisirProtocolMessage()
+        my_frontier_set = frontier.FrontierMessage()
+        my_frontier_set.response.CopyFrom(frontier_response)
         message.frontier.CopyFrom(my_frontier_set) 
 
         # Serialize response
