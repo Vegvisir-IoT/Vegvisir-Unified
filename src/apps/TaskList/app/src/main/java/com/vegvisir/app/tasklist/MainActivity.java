@@ -21,7 +21,7 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
 
     private ListView mTaskList;
-    private EditText mItemEdit;
+    public static EditText mItemEdit;
     private Button mAddButton;
 //    private Button mSwitchButton;
     private Button mLogoutButton;
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
             String item = mItemEdit.getText().toString().trim();
 
             mItemEdit.setText("");
-            mAdapter.setTheTransaction(item, 2); //Initially All items are medium priority
+            mAdapter.setTheTransaction(item, 2, null); //Initially All items are medium priority
 
             MainActivity.this.runOnUiThread(() -> mAdapter.handleActivity(LoginActivity.items));
         });

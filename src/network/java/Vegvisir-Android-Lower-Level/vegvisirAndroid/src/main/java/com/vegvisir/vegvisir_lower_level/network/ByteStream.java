@@ -44,7 +44,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ByteStream {
 
-    private static final String SERVICE_ID = "Vegvisir-IoT-test2";
+    private static final String SERVICE_ID = "Vegvisir-IoT-test3";
 
     private static final Strategy STRATEGY = Strategy.P2P_STAR;
 
@@ -87,7 +87,7 @@ public class ByteStream {
 
     private boolean hasFoundPeer = false;
 
-    private final int STATE_CHANGE_PERIOD = 20;
+    private final int STATE_CHANGE_PERIOD = 5;
 
     private boolean isInPairingProgress = false;
 
@@ -115,7 +115,7 @@ public class ByteStream {
             synchronized (lock) {
                 hasFoundPeer = true;
             }
-            isInPairingProgress = true;
+            setInPairingProgress(true);
             String remoteId = discoveredEndpointInfo.getEndpointName();
             Log.i(TAG, "onEndpointFound: "+ discoveredEndpointInfo.getEndpointName() + "/" + endPoint);
             if (discoveredEndpointInfo.getServiceId().equals(SERVICE_ID)) {
@@ -124,12 +124,12 @@ public class ByteStream {
                 if (connections.containsKey(remoteId)) {
                     if (connections.get(remoteId).isConnected()) {
                         /* Already connected */
-                        isInPairingProgress = false;
+                        setInPairingProgress(false);
                         return;
                     }
                     if (!connections.get(remoteId).isWakeup()) {
                         /* not wake up yet */
-                        isInPairingProgress = false;
+                        setInPairingProgress(false);
                         return;
                     }
                 }
@@ -144,7 +144,7 @@ public class ByteStream {
                             return;
                         default:
                             restart();
-                            isInPairingProgress = false;
+                            setInPairingProgress(false);
                     }
 //                    if (t.getMessage().equals("8012: STATUS_ENDPOINT_IO_ERROR")) {
 //                        restart();
@@ -177,11 +177,14 @@ public class ByteStream {
     private final ConnectionLifecycleCallback connectionLifecycleCallback = new ConnectionLifecycleCallback() {
         @Override
         public void onConnectionInitiated(String endPoint, ConnectionInfo connectionInfo) {
+            synchronized (lock) {
+                hasFoundPeer = true;
+            }
             Log.d(TAG, "onConnectionInitiated: Received Connection Request");
             endpoint2id.putIfAbsent(endPoint, connectionInfo.getEndpointName());
             if (activeEndPoint != null) {
                 client.rejectConnection(endPoint);
-                isInPairingProgress = false;
+                setInPairingProgress(false);
                 Log.d(TAG, "onConnectionInitiated: Rejected request");
             }
             else {
@@ -191,7 +194,7 @@ public class ByteStream {
                         Log.d(TAG, "onConnectionInitiated: Accepted request");
                     } else {
                         client.rejectConnection(endPoint);
-                        isInPairingProgress = false;
+                        setInPairingProgress(false);
                         Log.d(TAG, "onConnectionInitiated: Rejected request");
                     }
                 }
@@ -223,10 +226,10 @@ public class ByteStream {
                         connections.get(endpoint2id.get(endPoint)).setConnected(true);
                         establishedConnection.push(connections.get(endpoint2id.get(endPoint)));
                         Log.i(TAG, "onConnectionResult: Connection established!");
-                        isInPairingProgress = false;
+                        setInPairingProgress(false);
                     } else {
                         Log.i("Vegivsir-EndPointConnection", "connection failed");
-                        isInPairingProgress = false;
+                        setInPairingProgress(false);
                         restart();
                     }
                 }
@@ -239,6 +242,7 @@ public class ByteStream {
                 activeEndPoint = null;
                 connections.get(endpoint2id.get(endPoint)).setConnected(false);
                 disconnectedId.add(endpoint2id.get(endPoint));
+                hasFoundPeer = true;
             }
             Log.d(TAG, "disconnect: Disconnected with " + endpoint2id.get(endPoint));
             start();
@@ -259,11 +263,15 @@ public class ByteStream {
         endpoint2id = new ConcurrentHashMap<>();
         broadcastStateChanger.scheduleAtFixedRate(() -> {
             synchronized (lock) {
+
                 if (activeEndPoint == null && isDiscovering && !isInPairingProgress && !hasFoundPeer) {
                     stateChangeCondition = rnd.nextBoolean();
                     restart();
                 }
-                hasFoundPeer = false;
+                if (!isInPairingProgress && !isDiscovering && activeEndPoint == null) {
+                    hasFoundPeer = false;
+                }
+
             }
         }, 0, STATE_CHANGE_PERIOD, TimeUnit.SECONDS);
     }
@@ -459,6 +467,10 @@ public class ByteStream {
         synchronized (lock) {
             return activeEndPoint;
         }
+    }
+
+    public void setInPairingProgress(boolean inPairingProgress) {
+        isInPairingProgress = inPairingProgress;
     }
 
     public BlockingQueue<String> getDisconnectedId() {
