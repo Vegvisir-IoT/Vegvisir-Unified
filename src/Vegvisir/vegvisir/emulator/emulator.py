@@ -27,18 +27,17 @@ class Emulator(object):
         The representation of an emulator that contacts peers.
         :param private_key: An _EllipticCurvePrivateKey for signing blocks.
         :param peers: A list of peers.
-        :param clientctrl: A ClientController.
         :param block_limit: An int.
+        :request_handler: A PeerRequestHandler object.
     """
-    def __init__(self, private_key, peers, clientctrl, block_limit):
+    def __init__(self, private_key, peers, block_limit, peer_request_handler):
+        self.private_key = private_key
         self.peers = peers
         self.block_limit = block_limit
-        self.clientctrl = clientctrl
-        self.userid = clientctrl.userid
-        self.blockchain = clientctrl.request_handler.blockchain
-        self.private_key = private_key
-        self.network = clientctrl.request_handler.network
-        self.vector_clock = clientctrl.vector_clock
+        self.userid = request_handler.userid
+        self.blockchain = request_handler.blockchain
+        self.network = request_handler.network
+        self.vector_clock = request_handler.vector_clock
 
 
     def random_sleep(self):
@@ -76,7 +75,8 @@ class Emulator(object):
                                             port=peer_port,
                                             outgoing=True)
                 message_queue = self.network.message_queues[connection]
-                self.clientctrl.initiate_any_protocol(message_queue) 
+                self.initiate_protocol(message_queue,
+                                       hs.HandshakeMessage.REQUEST) 
                 return ps.SUCCESS
             else:
                 print("Connection to %s failed.... \n" % peer_port)
@@ -84,8 +84,22 @@ class Emulator(object):
         else:
             existing_conn = self.network.outgoing_connections[peer_port]
             message_queue = self.network.message_queues[existing_conn] 
-            self.clientctrl.initiate_any_protocol(message_queue)
+            self.initiate_protocol(message_queue, hs.HandshakeMessage.REQUEST)
             return ps.SUCCESS
+
+
+    def initiate_protocol(self, message_queue, request_type):
+        """
+            Initiate the Vegvisir protocol after connecting to a peer.
+            The initial message sent should have a list of protocols that 
+            the client can speak. 
+            :param message_queue: A Queue object.
+            :param request_type: A ProtocolVersion enum.
+        """
+        request = self.request_creator.initiate_protocol_request(
+                                                            self.protocol,
+                                                            request_type)
+        message_queue.put(request)
 
 
     def generate_new_block(self):

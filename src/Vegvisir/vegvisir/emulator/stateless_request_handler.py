@@ -5,7 +5,8 @@ from random import randint
 from google.protobuf.internal.encoder import _VarintBytes
 
 
-import vegvisir.proto.handshake_pb2 as hs 
+from vegvisir.proto import (handshake_pb2 as hs, vegvisir_pb2 as vegvisir,
+                            frontier_pb2 as frontier) 
 from vegvisir.simulator.opcodes import Operation as op
 from vegvisir.blockchain.block import Block, Transaction
 from vegvisir.blockchain.blockchain_helpers import int_to_bytestring
@@ -64,7 +65,7 @@ class PeerRequestHandler(object):
         """
 
         # Create response
-        frontier_response = vegvisir.protocol.datatype.Response()
+        frontier_response = frontier.Response()
         f_set = list(self.blockchain.crdt.frontier_set())
         frontier_response.hashResponse.hashes.extend(fset)
         frontier_response.is_subset = remote_is_subset
@@ -76,11 +77,10 @@ class PeerRequestHandler(object):
         return self.serialize(message)
 
 
-    def handle_protocol_list_request(self, request, peer_conn):
+    def handle_protocol_list_request(self, message):
         """
            handle a request for the list of protocols spoken.
-           :param message: a VegvisirProtocolMessage object. 
-           :param peer_conn: a socket object.
+           :param message: a HandshakeMessage object. 
         """
         choice = ""
         sendall = hs.SEND_ALL
@@ -88,22 +88,20 @@ class PeerRequestHandler(object):
         frontier = hs.FRONTIER
         no_choice = hs.VERSION
 
-        request = hs.HandshakeMessage()
-        request.CopyFrom(message.handshake)
-        if vector in request.spokenVersions and self.protocol == vector:
+        if vector in message.spokenVersions and self.protocol == vector:
             choice = vector 
-        elif frontier in request.spokenVersions and self.protocol == frontier:
+        elif frontier in message.spokenVersions and self.protocol == frontier:
             choice = frontier
-        elif sendall in request.spokenVersions and self.protocol == sendall:
+        elif sendall in message.spokenVersions and self.protocol == sendall:
             choice = sendall 
         else: # We don't agree on a protocol 
             choice = no_choice 
 
         print("Server, List received from client %s\n" % 
-              request.spokenVersions)
+              message.spokenVersions)
         print("SERVER PROTOCOL CHOICE %s\n" % choice) 
 
-        return choice, request.type
+        return choice, message.type
 
 
     def handle_add_block_request(self, request):
@@ -113,7 +111,7 @@ class PeerRequestHandler(object):
         """
         # Rebuild and add the block to the blockchain 
         for incoming in request.add.blocksToAdd:
-            general_block = vegvisir.core.datatype.Block.Block()
+            general_block = vegvisir.Block()
             general_block.ParseFromString(incoming.block)
             user_block = general_block.user_block
             b_userid = user_block.userid
@@ -132,7 +130,7 @@ class PeerRequestHandler(object):
                 userid = transaction.userid
                 timestamp = transaction.timestamp
                 tx_dict = {'recordid': transaction.recordid,
-                           'comment': transaction.comment}
+                           'comment': transaction.payload}
                 incoming_transaction = Transaction(userid, timestamp, tx_dict)
                 tx_list.append(incoming_transaction)              
             

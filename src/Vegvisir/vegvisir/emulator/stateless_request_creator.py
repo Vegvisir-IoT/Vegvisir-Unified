@@ -1,11 +1,12 @@
 from google.protobuf.internal.encoder import _VarintBytes
 
 
-import vegvisir.protos.vegvisirprotocol_pb2 as vgp
-import vegvisir.proto.handshake as handshake
-import vegvisir.proto.frontier as frontier
-import vegvisir.proto.vegvisirNetwork as network
-import vegvisir.proto.vegvisir as vegvisir
+from vegvisir.proto import handshake_pb2 as hs
+from vegvisir.proto import frontier_pb2 as frontier
+from vegvisir.proto import sendall_pb2 as sa
+from vegvisir.proto import vegvisirNetwork_pb2 as network
+from vegvisir.proto import charlotte_pb2 as charlotte
+import vegvisir.proto.vegvisir_pb2 as vegvisir
 from vegvisir.blockchain.block import Block
 
 __author__ = "Gloire Rubambiza"
@@ -73,11 +74,11 @@ class ProtocolRequestCreator(object):
     def initiate_protocol_request(self, protocol, request_type):
         """
             Create a serialized protocol initialization request.
-            :param protocol: The protocol spoken by the node.
+            :param protocol: A HandshakeMessage.ProtocolVersion enum.
             :param request_type: A HandshakeMessage.Type enum.
         """
         message = network.VegvisirProtocolMessage()
-        request = handshake.HandshakeMessage()
+        request = hs.HandshakeMessage()
         request.type = request_type 
         request.spokenVersions.extend([protocol])
         message.handshake.CopyFrom(request)
@@ -93,6 +94,7 @@ class ProtocolRequestCreator(object):
         local_frontier = self.blockchain.crdt.frontier_set()
         request.send.hashes.extend(list(local_frontier))
         message.frontier.request.CopyFrom(request)
+        print("Frontier request to be sent %s\n" % message.__str__())
         return self.serialize_message(message)
 
 
@@ -135,12 +137,12 @@ class ProtocolRequestCreator(object):
                 outgoing_tx.userid = tx.userid
                 outgoing_tx.timestamp = tx.timestamp
                 outgoing_tx.recordid = tx.recordid
-                outgoing_tx.comment = tx.comment
+                outgoing_tx.payload = tx.comment
         
             # Add signature
             _block.signature.sha256WithEcdsa.byteString = block.sig
             blocks_to_add.append(_block)
-        request.blockResponse.blocksToAdd.extend([blocks_to_add])
+        request.blockResponse.blocksToAdd.extend(blocks_to_add)
         message.frontier.request.CopyFrom(request)
         if end_protocol:
             message.endProtocol = True
@@ -151,36 +153,41 @@ class ProtocolRequestCreator(object):
            Creates a serialized request for sending all blocks.
         """
         message = network.VegvisirProtocolMessage()
-        request = self.request_stub(vgp.PeerRequest.ADD_BLOCK)
+        sa_message = sa.SendallMessage() 
         ordered_blocks = self.blockchain.get_topological_sort()
-        regular_blocks = []
-        for block in ordered_blocks:
-            if type(block) == Block:
-                regular_blocks.append(block)
+        regular_blocks = ordered_blocks[1:]
+        blocks_to_add = []
  
         for block in regular_blocks:
-            pointer = request.blocks_to_add.add()
-            pointer.vegblock.user_block.userid = str(block.userid)
-            pointer.vegblock.user_block.timestamp.utc_time = block.timestamp
+            general_block = vegvisir.Block()
+            _block = vegvisir.Block.UserBlock()
+            _block.userid = str(block.userid)
+            _block.timestamp.utc_time = block.timestamp
         
             # Implement location as needed here.
 
             # Add the parent hashes.
             for parent_hash in block.parents:
-                ref_parent = pointer.vegblock.user_block.parents.add()
+                ref_parent = _block.parents.add()
                 ref_parent.hash.sha256 = parent_hash
 
             # Add the transactions
             for tx in block.tx:
-                outgoing_tx = pointer.vegblock.user_block.transactions.add()
+                outgoing_tx = _block.transactions.add()
                 outgoing_tx.userid = tx.userid
                 outgoing_tx.timestamp = tx.timestamp
                 outgoing_tx.recordid = tx.recordid
-                outgoing_tx.comment = tx.comment
+                outgoing_tx.payload = tx.comment
  
             # Add signature
-            pointer.vegblock.signature.sha256WithEcdsa.byteString = block.sig
-        message.request.CopyFrom(request)
+            general_block.signature.sha256WithEcdsa.byteString = block.sig
+            general_block.user_block.CopyFrom(_block)
+            serialized_block = general_block.SerializeToString()
+            charlotte_block = charlotte.Block()
+            charlotte_block.block = serialized_block
+            blocks_to_add.append(charlotte_block)
+        sa_message.add.blocksToAdd.extend(blocks_to_add)
+        message.sendall.CopyFrom(sa_message)
         return self.serialize_message(message)
      
 

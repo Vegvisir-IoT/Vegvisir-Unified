@@ -9,8 +9,8 @@ from vegvisir.emulator.server import VegvisirServer
 from vegvisir.emulator.client import VegvisirClient
 from vegvisir.emulator.serverside_controller import ServerController
 from vegvisir.emulator.clientside_controller import ClientController
-from vegvisir.emulator.peer_request_handlers import PeerRequestHandler
-from vegvisir.emulator.protocol_request_handler import ProtocolRequestCreator
+from vegvisir.emulator.stateless_request_handler import PeerRequestHandler
+from vegvisir.emulator.stateless_request_creator import ProtocolRequestCreator
 from vegvisir.emulator.emulator import Emulator
 from vegvisir.emulator.emulation_helpers import deserialize_certificate
 from vegvisir.emulator.stateless.state_machine import StateMachine
@@ -25,6 +25,8 @@ from vegvisir.protocols.sendall.sendallserver import SendallServer
 from vegvisir.protocols.frontier.stateless_frontier_client import FrontierClient
 from vegvisir.protocols.frontier.stateless_frontier_server import FrontierServer
 from vegvisir.protocols.frontier.frontier_handler import FrontierHandler
+from vegvisir.protocols.handshake.handshake_handler import HandshakeHandler
+
 
 __author__ = "Gloire Rubambiza"
 __email__ = "gbr26@cornell.edu"
@@ -55,12 +57,12 @@ def emulate_vegvisir(args):
 
     components = create_components(my_userid, peer_names, gblock, blockchain,
                                    private_key, port, crash_prob,protocol)
-    client_controller = components[0]
-    server_controller = components[1]
+    server_controller = components[0]
     state_machine = components[2]
 
     # Create the emulator for sleeping and waking up
-    emulator = Emulator(private_key, params, client_controller, block_limit)
+    emulator = Emulator(private_key, params, block_limit,
+                        server_controller.request_handler)
 
 
     # Start the protocol runner
@@ -95,6 +97,7 @@ def create_components(userid, peer_names, gblock, blockchain,
     request_handler = PeerRequestHandler(blockchain, network, vector_clock, protocol)
     request_creator = ProtocolRequestCreator(blockchain, network)
 
+
     # Create the sendall protocol client and server.
     sendall_client = SendallClient(request_creator, crash_prob)
 
@@ -107,6 +110,10 @@ def create_components(userid, peer_names, gblock, blockchain,
     frontier_server = FrontierServer(request_creator, request_handler,
                                      crash_prob)
 
+    # Create the handshake handler for the handshake protocol.
+    handshake_handler = HandshakeHandler(request_handler, request_creator,
+                                         frontier_server)
+
     # Create the frontier message handler.
     frontier_handler = FrontierHandler(private_key, frontier_server,
                                        frontier_client, request_handler)
@@ -117,16 +124,13 @@ def create_components(userid, peer_names, gblock, blockchain,
 
     # Create the state machine for processing messages.
     state_machine = StateMachine(network, frontier_handler, frontier_server,
-                                 vector_server) 
-
-    # Create server and client controllers.
-    client_controller = ClientController(sendall_client, frontier_client,
-                                         request_handler, request_creator)
+                                 sendall_server, vector_server,
+                                 handshake_handler) 
 
     server_controller = ServerController(sendall_server, frontier_server, 
                                          request_handler, vector_server)
 
-    return client_controller, server_controller, state_machine
+    return server_controller, state_machine
     
 
 def read_parameters(paramfile, userid):
@@ -229,9 +233,9 @@ def spin_server_forever(emulator, controller, state_machine):
                     if connection in network.outputs:
                         network.outputs.remove(connection)
                 else:
-                    if not connection in network.outputs:
-                        network.outputs.append(connection)
-                    state_machine.process_message(payload, connection)
+                    if not incoming in network.outputs:
+                        network.outputs.append(incoming)
+                    state_machine.process_message(payload, incoming)
         for ready in writable:
             try:
                 outgoing_message = network.message_queues[ready].get_nowait()
