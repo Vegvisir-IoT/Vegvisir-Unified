@@ -32,7 +32,6 @@ import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -87,7 +86,7 @@ public class ByteStream {
 
     private boolean hasFoundPeer = false;
 
-    private final int STATE_CHANGE_PERIOD = 5;
+    private final int STATE_CHANGE_PERIOD = 10;
 
     private boolean isInPairingProgress = false;
 
