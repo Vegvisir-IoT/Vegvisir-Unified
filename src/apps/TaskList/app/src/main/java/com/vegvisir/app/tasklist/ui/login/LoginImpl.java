@@ -38,7 +38,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
      * @param tx_id A unique identifier for the transaction.
      * @param deps which transactions this transaction depends on.
      */
-    public void applyTransaction(
+    public synchronized void applyTransaction(
             Set<String> topics,
             byte[] payload,
             TransactionID tx_id,
@@ -46,6 +46,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 
         String payloadString = new String(payload);
         Log.i("loginimpl",payloadString);
+        Log.i("inputdeps", deps.toString());
         int transactionType = Integer.parseInt(payloadString.substring(0,1));
         Set<TransactionTuple> updatedSet;
         String deviceId = tx_id.getDeviceID();
@@ -107,11 +108,10 @@ public class LoginImpl implements VegvisirApplicationDelegator {
             LoginActivity.MainDependencySets.put(item, updatedSet);
 
 
-            LoginActivity.MainLatestTransactions.put(deviceId, tx_id);
-
             for (TransactionID d : deps) {
                 LoginActivity.MainTopDeps.remove(d);
             }
+
             LoginActivity.MainTopDeps.add(tx_id);
 
             FourPSet reg4PSet = new FourPSet();
@@ -143,6 +143,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
             LoginActivity.notWitnessedTransactions.add(tx_id);
 
             LoginActivity.items.sort(new ItemComparator());
+            
 
             Log.i("lowset",reg4PSet.getLowSet().toString());
             Log.i("mediumset",reg4PSet.getMediumSet().toString());

@@ -51,7 +51,6 @@ public class OrderAdapter extends ArrayAdapter<String> {
         medium_priority  = (TextView)listItemView.findViewById(R.id.medium_priority);
         delete_item      = (TextView)listItemView.findViewById(R.id.delete_item);
 
-        //Set the text of the meal, amount and quantity
         selected_item.setText(item);
         LoginActivity.Priority p = LoginActivity.priorities.get(item);
         selected_item.setTextColor( p.getAssociatedColor());
@@ -94,17 +93,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
         Set<String> topics = new HashSet<>(Arrays.asList( LoginActivity.topic));
         Set<TransactionID> dependencies = new HashSet<>();
 
-//        if (LoginActivity.MainDependencySets.containsKey(item)) {
-//            Iterator<TransactionTuple> it = LoginActivity.MainDependencySets.get(item).iterator();
-//            while (it.hasNext()) {
-//                TransactionTuple x = (TransactionTuple) ((Iterator) it).next();
-//                dependencies.add(x.transaction);
-//            }
-//        }
-
-        if (LoginActivity.MainLatestTransactions.containsKey(LoginActivity.deviceId)) {
-            dependencies.add(LoginActivity.MainLatestTransactions.get(LoginActivity.deviceId));
-        }
+        dependencies = LoginActivity.MainTopDeps;
 
         LoginActivity.instance.addTransaction(LoginActivity.context, topics, payload, dependencies);
     }

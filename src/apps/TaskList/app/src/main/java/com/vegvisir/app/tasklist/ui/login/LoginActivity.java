@@ -8,13 +8,11 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -44,9 +42,6 @@ import java.util.Timer;
 
 public class LoginActivity extends AppCompatActivity {
 
-    //public static String deviceId = "";
-    // mapping from device ID to Transaction ID
-    public static HashMap<String, TransactionID> MainLatestTransactions = new HashMap<>();
     public static HashMap<String, Set<TransactionTuple>> MainDependencySets = new HashMap<>();
     public static HashMap<TransactionID, FourPSet> fourPSets = new HashMap<>();
     public static Set<TransactionID> witnessedTransactions = new HashSet<TransactionID>();
