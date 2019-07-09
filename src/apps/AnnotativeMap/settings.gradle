@@ -1,0 +1,9 @@
+include ':app', ':vegvisirPubSub', ':vegvisirDatatype', ':vegvisirGossip', ':vegvisirCore', ':vegvisirInstanceV1', ':vegvisirAndroid'
+
+
+project(":vegvisirPubSub").projectDir = new File("./deps/vegvisirPubSub")
+project(":vegvisirCore").projectDir = new File("./deps/vegvisirCore")
+project(":vegvisirDatatype").projectDir = new File("./deps/vegvisirDatatype")
+project(":vegvisirGossip").projectDir = new File("./deps/vegvisirGossip")
+project(":vegvisirInstanceV1").projectDir = new File("./deps/vegvisirInstanceV1")
+project(":vegvisirAndroid").projectDir = new File("./deps/vegvisirAndroid")

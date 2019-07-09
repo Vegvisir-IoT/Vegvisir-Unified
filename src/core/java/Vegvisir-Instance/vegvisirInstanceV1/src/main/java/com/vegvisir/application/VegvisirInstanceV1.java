@@ -1,6 +1,9 @@
 package com.vegvisir.application;
 
 import android.content.Context;
+import android.util.Log;
+
+import androidx.core.util.Pair;
 
 import com.google.protobuf.ByteString;
 import com.isaacsheff.charlotte.proto.Block;
@@ -78,8 +81,6 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
      * The singleton instance.
      */
     private static VegvisirInstanceV1 instance;
-
-
 
     public static synchronized VegvisirInstance getInstance(Context applicationContext) {
         if (instance == null) {
