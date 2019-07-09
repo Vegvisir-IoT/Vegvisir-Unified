@@ -29,7 +29,8 @@ def login(request):
 
 def index(request):
    
-    applist = Mock.applist
+    # applist = Mock.applist
+    applist=Item.objects.all()
     return render(request, 'index.html', {'shoplist' : applist})
 
 def add(request):
