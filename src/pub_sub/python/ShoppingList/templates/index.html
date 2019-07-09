@@ -1,14 +1,18 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}">
     <title>Shopping List</title>
 </head>
 <body>
     <center>
-    <div class = "list" style="border: solid black; margin: 10%; padding: 10%;">
+    <h1 style="margin-top: 5%; margin-bottom: 2%;">Shopping List</h1>
+    </center>
+    <div class = "list" style="border: 1px solid black; border-radius: 5%; margin: 0% 35%; padding: 2%;">
        
             {% for item in shoplist %}
                 {% if item.isOn %}
@@ -32,6 +36,5 @@
         {% endif %}
         -->
     </div>
-    </center>
 </body>
 </html>

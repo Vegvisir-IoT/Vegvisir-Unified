@@ -60,6 +60,7 @@ def apply(newTxn):
     num = 0
     for item in applist.items:
         if item.name == newItem.name:
+            item.isOn = 0;
             num += 1
 
     newItem.isOn = not (num % 2)
