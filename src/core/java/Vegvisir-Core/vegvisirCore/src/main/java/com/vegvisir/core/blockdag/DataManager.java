@@ -31,4 +31,8 @@ public interface DataManager {
     void updateAppCount(int c);
 
     int loadAppCount();
+
+    void updateTransactionHeight(long height);
+
+    long loadTransactionHeight();
 }

@@ -60,10 +60,11 @@ public class VegvisirCore implements Runnable {
      * A sequence counter for transactions on this device.
      * TODO: move this to config?
      */
-    private long transactionHeight = 1;
+    private long transactionHeight;
     private final int BLOCK_SIZE = 1;
 
     private Set<Transaction> transactionBuffer;
+    private DataManager manager;
 
 
     private ExecutorService service;
@@ -86,6 +87,8 @@ public class VegvisirCore implements Runnable {
                         KeyPair keyPair,
                         String userid) {
         gossipLayer = new Gossip(adapter);
+        this.manager = manager;
+        transactionHeight = manager.loadTransactionHeight();
 
         if (keyPair == null)
             keyPair = Config.generateKeypair();
@@ -206,7 +209,9 @@ public class VegvisirCore implements Runnable {
     }
 
     private long getNIncTransactionHeight() {
+        manager.updateTransactionHeight(transactionHeight+1);
         return transactionHeight++;
+
     }
 
     public void tryRecoverBlocks() {

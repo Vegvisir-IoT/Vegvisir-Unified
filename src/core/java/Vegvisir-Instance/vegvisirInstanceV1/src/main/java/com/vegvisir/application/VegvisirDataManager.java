@@ -34,6 +34,7 @@ public class VegvisirDataManager implements DataManager {
     private static String GENESIS_KEY = "genesis";
     private static String COUNTER_NAME = "counter";
     private static String APP_COUNT_NAME = "app_count";
+    private static String TX_HEIGHT= "tx_height";
 
     private Book dagDB;
     private Book metaDB;
@@ -121,5 +122,15 @@ public class VegvisirDataManager implements DataManager {
     @Override
     public void updateAppCount(int c) {
         metaDB.write(APP_COUNT_NAME, c);
+    }
+
+    @Override
+    public long loadTransactionHeight() {
+        return metaDB.read(TX_HEIGHT, 1);
+    }
+
+    @Override
+    public void updateTransactionHeight(long height) {
+        metaDB.write(TX_HEIGHT, height);
     }
 }
