@@ -1,8 +1,6 @@
 package com.vegvisir.pub_sub;
 
 
-import com.vegvisir.core.datatype.proto.Block;
-
 /**
  * A unique identifier for a transaction
  */
@@ -50,6 +48,11 @@ public class TransactionID {
     @Override
     public int hashCode() {
       return (this.deviceID.hashCode() ^ (new Long(this.transactionHeight).hashCode()));
+    }
+
+    @Override
+    public String toString() {
+        return (this.deviceID + " - " + this.transactionHeight);
     }
 
 }

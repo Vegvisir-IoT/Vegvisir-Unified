@@ -130,4 +130,3 @@ public class AndroidAdapter implements NetworkAdapter {
         return connectionHistory;
     }
 }
-

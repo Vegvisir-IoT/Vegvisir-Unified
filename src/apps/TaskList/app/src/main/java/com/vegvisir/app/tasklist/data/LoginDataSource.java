@@ -7,6 +7,7 @@ import com.vegvisir.app.tasklist.ui.login.LoginActivity;
 import com.vegvisir.pub_sub.TransactionID;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -56,8 +57,7 @@ public class LoginDataSource {
             int hash = (username + password).hashCode();
             String payloadString = "5" +  username + "," + hash;
             byte[] payload = payloadString.getBytes();
-            Set<String> topics = new HashSet<String>();
-            topics.add(LoginActivity.topic);
+            Set<String> topics = new HashSet<String>(Arrays.asList(LoginActivity.topic));
             Set<TransactionID> dependencies = new HashSet<>();
 
             if (LoginActivity.dependencySets.containsKey(username)) {
