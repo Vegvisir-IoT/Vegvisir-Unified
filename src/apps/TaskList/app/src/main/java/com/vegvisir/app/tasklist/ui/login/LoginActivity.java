@@ -246,14 +246,14 @@ public class LoginActivity extends AppCompatActivity {
          * @dependency :: Context must be initiated prior to calling
          * @return Integer representation of Priority Color
          */
-        public int getAssociatedColor() {
+        public int getAssociatedColor( Context c) {
 
             if (this == High)
-                return ContextCompat.getColor(androidContext, R.color.Red);
+                return ContextCompat.getColor(c, R.color.Red);
             else if (this == Medium)
-                return ContextCompat.getColor(androidContext, R.color.Blue);
+                return ContextCompat.getColor(c, R.color.Blue);
             else
-                return ContextCompat.getColor(androidContext, R.color.Green);
+                return ContextCompat.getColor(c, R.color.Green);
 
             }
 

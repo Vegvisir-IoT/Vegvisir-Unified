@@ -53,7 +53,7 @@ public class OrderAdapter extends ArrayAdapter<String> {
 
         selected_item.setText(item);
         LoginActivity.Priority p = LoginActivity.priorities.get(item);
-        selected_item.setTextColor( p.getAssociatedColor());
+        selected_item.setTextColor( p.getAssociatedColor( context ));
         listItemView.setBackgroundColor(0);
 
 
