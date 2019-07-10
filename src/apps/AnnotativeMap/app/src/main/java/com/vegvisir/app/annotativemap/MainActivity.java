@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        AnnotativeMapApplication thisApp = (AnnotativeMapApplication) this.getApplication();
 
         task = new TimerTask() {
             @Override
@@ -57,12 +58,12 @@ public class MainActivity extends AppCompatActivity {
 //                    Log.i("timer","running");
                     if (LoginActivity.currentPicture != null && runningMainActivity) {
                         if (!printedOnce) {
-                            Log.i("annosatstart", LoginActivity.annotations.toString());
+                            Log.i("annosatstart", thisApp.getAnnotations().toString());
                         }
                         Set<Coordinates> entriesToRemove = new HashSet<>();
 
 //                            Log.i("before",annotations.toString());
-                        for (Map.Entry<Coordinates, Annotation> entry : LoginActivity.annotations.entrySet()) {
+                        for (Map.Entry<Coordinates, Annotation> entry : thisApp.getAnnotations().entrySet()) {
 
                             Coordinates coords = entry.getKey();
                             if (!printedOnce) {
@@ -114,10 +115,10 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         for (Coordinates coords : entriesToRemove) {
-                            LoginActivity.annotations.remove(coords);
+                            thisApp.getAnnotations().remove(coords);
                         }
                         if (!printedOnce) {
-                            Log.i("annos", LoginActivity.annotations.toString());
+                            Log.i("annos", thisApp.getAnnotations().toString());
                         }
                         printedOnce = true;
 
@@ -174,4 +175,10 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //    }
 
+
+    @Override
+    public void onBackPressed() {
+        Log.d("Main Activity", "onBackPressed: Pressed");
+        return;
+    }
 }

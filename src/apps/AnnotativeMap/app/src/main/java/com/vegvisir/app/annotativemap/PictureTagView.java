@@ -167,5 +167,4 @@ public class PictureTagView extends RelativeLayout{
     public void setYVal(int y) {
         this.y = y;
     }
-
 }
