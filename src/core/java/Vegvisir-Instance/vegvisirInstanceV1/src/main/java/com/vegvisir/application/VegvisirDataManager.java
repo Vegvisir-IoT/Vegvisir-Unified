@@ -126,7 +126,7 @@ public class VegvisirDataManager implements DataManager {
 
     @Override
     public long loadTransactionHeight() {
-        return metaDB.read(TX_HEIGHT, 1);
+        return metaDB.read(TX_HEIGHT, 1L);
     }
 
     @Override
