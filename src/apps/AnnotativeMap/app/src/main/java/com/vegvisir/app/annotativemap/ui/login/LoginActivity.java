@@ -75,6 +75,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public static VirtualVegvisirInstance virtual = VirtualVegvisirInstance.getInstance();
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

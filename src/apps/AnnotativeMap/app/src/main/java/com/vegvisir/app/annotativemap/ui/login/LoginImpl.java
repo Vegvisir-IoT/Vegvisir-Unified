@@ -136,7 +136,6 @@ public class LoginImpl implements VegvisirApplicationDelegator {
                 LoginActivity.usernames.put(u.getUsername(), u.getPassword());
             }
 
-//            loginActivity.runOnUiThread(() -> LoginActivity.loginButton.setEnabled(true));
         }
 
         else{
@@ -308,9 +307,6 @@ public class LoginImpl implements VegvisirApplicationDelegator {
             HashSet<FullAnnotation> addSetTop = new HashSet<>();
             HashSet<FullAnnotation> removeSetTop = new HashSet<>();
 
-//        Log.i("txid",tx_id.toString());
-//        Log.i("topdeps",MainActivity.mapTopDeps.toString());
-//        Log.i("TwoPSets",MainActivity.mapTwoPSets.toString());
 
             for (TransactionID d : LoginActivity.mapTopDeps) {
 //            Log.i("d",d.toString());
@@ -325,11 +321,6 @@ public class LoginImpl implements VegvisirApplicationDelegator {
             Log.i("remsettop",removeSetTop.toString());
 
             LoginActivity.mapTwoPSets.put(LoginActivity.mapTop, new TwoPSet(addSetTop, removeSetTop));
-
-//       c
-
-//        Set<Coordinates> newSet = addSetTop;
-//        newSet.removeAll(removeSetTop);
 
             PictureTagView v = null;
             if (image != null) {
@@ -361,9 +352,6 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 
             }
 
-//        for (Map.Entry<Coordinates, PictureTagLayout> entry : MainActivity.imageAtCoords.entrySet()) {
-//
-//        }
 
             for (FullAnnotation fa: removeSetTop) {
                 Coordinates c = fa.getCoords();
@@ -375,18 +363,6 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 
             HashSet<Coordinates> entriesToRemove = new HashSet<>();
 
-//            for(Map.Entry<Coordinates, Annotation> entry : LoginActivity.annotations.entrySet()) {
-//                Coordinates c = entry.getKey();
-//                Annotation a = entry.getValue();
-//                FullAnnotation annoFa = new FullAnnotation(c,a.getAnnotation());
-//                if (!addSetTop.contains(annoFa)) {
-//                    entriesToRemove.add(c);
-//                }
-//            }
-//
-//            for (Coordinates c: entriesToRemove) {
-//                LoginActivity.annotations.get(c).setShouldRemove(true);
-//            }
 
             Log.i("annosinimpl", LoginActivity.annotations.toString());
             MainActivity.printedOnce = false;
