@@ -111,12 +111,11 @@ def create_components(userid, peer_names, gblock, blockchain,
                                      crash_prob)
 
     # Create the handshake handler for the handshake protocol.
-    handshake_handler = HandshakeHandler(request_handler, request_creator,
-                                         frontier_server)
+    handshake_handler = HandshakeHandler(frontier_server)
 
     # Create the frontier message handler.
     frontier_handler = FrontierHandler(private_key, frontier_server,
-                                       frontier_client, request_handler)
+                                       frontier_client)
 
     # Create the vector server to be used by the server_controllerl.
     vector_server = VectorServer(request_creator, vector_clock,
@@ -224,10 +223,10 @@ def spin_server_forever(emulator, controller, state_machine):
                               client_address[1]))
                 connection.settimeout(SOCKET_TIMEOUT)
                 network.add_connection(connection, client_address)
-                print("Added %s to inputs\n" % connection)
+                print("Adding %s to inputs\n" % connection)
             else:
                 payload = network.receive(incoming) 
-                print("Payload is %s\n" % payload)
+                print("Payload \n %s\n" % payload)
                 if payload in error_statuses:
                     state_machine.destroy_session(incoming)
                     if incoming in network.outputs:
@@ -236,6 +235,7 @@ def spin_server_forever(emulator, controller, state_machine):
                     if not incoming in network.outputs:
                         network.outputs.append(incoming)
                     state_machine.process_message(payload, incoming)
+                    print("Processing message is done %s\n" % server.userid)
         for ready in writable:
             if ready in network.message_queues:
                 try:
@@ -256,17 +256,16 @@ def spin_server_forever(emulator, controller, state_machine):
 
         # Gossip only if we have not initiated another gossip round.
         if len(network.outgoing_connections) < 1:
+            print("No outgoing connections yet..\n")
             emulator.random_sleep()
             if emulator.block_limit > 0:
                 emulator.generate_new_block()
             gossip_status, connection = emulator.wake_up_to_gossip()
-            print("%s Gossip status -> %s\n" % (server.userid,
-                                                gossip_status))
             if gossip_status == rstate.HANDSHAKE:
                 print("%s GOSSIP STARTED SUCCESSFULLY!\n" % server.userid)
                 state_machine.update_state(connection, rstate.HANDSHAKE)
             else:
-                print("%s GOSSIPING FAILED, STATUS %s, INPUT\n" %
+                print("%s GOSSIPING FAILED, STATUS %s\n" %
                       (server.userid, gossip_status))
 
 

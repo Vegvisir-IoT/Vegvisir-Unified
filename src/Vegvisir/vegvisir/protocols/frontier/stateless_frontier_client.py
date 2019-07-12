@@ -46,29 +46,30 @@ class FrontierClient(Protocol):
         if state['state'] == rstate.HANDSHAKE:
             state['protocol'] = hs.FRONTIER
             state['cached_blocks'] = []
+            state['cache'] = {}
             state['start_time'] = time(),
             state['other_fset'] = other_frontier_set,
+            state['reconciled_blocks'] = 0
             state['client_socket'] = True
 
         if remote_server_is_subset:
             return rstate.LOCAL_DOMINATES
-        return rstate.RECONCILIATION
+        else:
+            return rstate.HANDSHAKE
 
 
-    def handle_reconciliation_request(self, outgoing_conn, message):
+    def handle_reconciliation_request(self, missing_hashes, state):
         """
            Handle the server's request to reconcile our view.
-           :param outgoing_conn: A connection object.
-           :param message: A Request message.
+           :param missing_hashes: A list of hashes.
+           :param state: A dictionary.
         """
-        other_frontier_set = []
-        for block_hash in message.hashes:
-            other_frontier_set.append(block_hash)
-        local_fset = self.blockchain.crdt.frontier_set()
+        missing_block_hashes = []
+        missing_block_hashes.extend(missing_hashes)
+        state['missing_blocks'] = missing_block_hashes 
 
-        frontier_difference = list(other_frontier_set.difference(local_fset))
-        state['missing_blocks'] =  frontier_difference
-        return rstate.RECONCILIATION 
+        # Emulate probability of crash in the middle of reconciliation.
+        self.emulate_crash_probability()
 
 
     def print_reconciliation_stats(self):

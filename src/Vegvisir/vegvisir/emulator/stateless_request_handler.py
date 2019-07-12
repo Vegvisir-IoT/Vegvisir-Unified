@@ -56,7 +56,7 @@ class PeerRequestHandler(object):
         size = response.ByteSize()
         response_bytes = _VarintBytes(size)
         response_bytes += response.SerializeToString()
-        return response
+        return response_bytes
 
 
     def handle_fset_request(self, remote_is_subset):

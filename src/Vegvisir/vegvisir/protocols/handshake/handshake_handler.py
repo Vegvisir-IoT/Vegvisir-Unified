@@ -10,14 +10,12 @@ __credits__ = ["Gloire Rubambiza"]
 class HandshakeHandler(object):
 
     """
-       :param request_handler: A PeerRequestHandler object.
-       :param request_creator: A ProtocolRequestHandler object.
        :param frontier_server: A FrontierServer object.
     """
-    def __init__(self, request_handler, request_creator, frontier_server):
-        self.request_handler = request_handler
-        self.request_creator = request_creator
+    def __init__(self, frontier_server):
         self.frontier_server = frontier_server
+        self.request_handler = self.frontier_server.request_handler
+        self.request_creator = self.frontier_server.request_creator
 
 
     def handle_message(self, message, state):

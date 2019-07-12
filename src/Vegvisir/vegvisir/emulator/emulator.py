@@ -54,7 +54,7 @@ class Emulator(object):
             :rtype: A ProtocolStatus enum.
         """
         if len(self.blockchain.blocks) == 1:
-            return "Nothing to gossip\n"
+            return "Nothing to gossip\n", None
 
         print("%s is ready to gossip!\n" % self.userid)
         random_idx = randint(0, (len(self.peers) - 1))

@@ -86,7 +86,7 @@ class ProtocolRequestCreator(object):
 
     def frontier_set_request(self):
         """
-            Creates a serialized frontier set request.
+            Create a serialized frontier set request.
         """
         message = network.VegvisirProtocolMessage()
         request = frontier.Request()
@@ -100,19 +100,20 @@ class ProtocolRequestCreator(object):
 
     def block_request(self, block_hash):
         """
-            Creates a serialized block request.
+            Create a serialized block request.
             :param block_hash: A bytes object.
         """
         message = network.VegvisirProtocolMessage()
         request = frontier.Request()
         request.type = frontier.Request.SEND_BLOCK
-        request.send = hashes.extend([block_hash])
+        request.send.hashes.extend([block_hash])
         message.frontier.request.CopyFrom(request)
         return self.serialize_message(message)
 
+
     def add_blocks_request(self, blocks, end_protocol):
         """
-            Creates a serialized request for the peer to add a pow block.
+            Create a serialized request for the peer to add a pow block.
             :param blocks: A list of Block objects.
             :param end_protocol: A boolean.
         """
@@ -148,9 +149,10 @@ class ProtocolRequestCreator(object):
             message.endProtocol = True
         return self.serialize_message(message)
 
+
     def add_all_blocks_request(self):
         """
-           Creates a serialized request for sending all blocks.
+           Create a serialized request for sending all blocks.
         """
         message = network.VegvisirProtocolMessage()
         sa_message = sa.SendallMessage() 
@@ -191,40 +193,25 @@ class ProtocolRequestCreator(object):
         return self.serialize_message(message)
      
 
-    def self_reconciliation_request(self, missing_hashes):
+    def reconciliation_request(self, missing_hashes):
         """
-            Creates a serialized reconciliation request.
-            :param missing_hashes: A list of hashes to reconciled.
+            Create a serialized reconciliation request.
+            :param missing_hashes: A list of hashes to be reconciled.
         """
         message = network.VegvisirProtocolMessage()
-        request = self.request_stub(vgp.PeerRequest.SELF_RECONCILIATION_NEEDED)
-        for block_hash in missing_hashes:
-            missing_hash = request.target_hashes.add()
-            missing_hash.hash = block_hash
-        message.request.CopyFrom(request)
+        request = frontier.Request()
+        request.type = frontier.Request.RECONCILIATION_NEEDED
+        request.send.hashes.extend(missing_hashes)
+        message.frontier.request.CopyFrom(request)
         return self.serialize_message(message)
 
-    def peer_reconciliation_request(self, missing_hashes):
-        """
-            Creates a serialized reconciliation request.
-            Lets the peer know we need to reconcile and triggers 
-            the peer to enter their reconciliation method.
-        """
-        message = network.VegvisirProtocolMessage()
-        request = self.request_stub(vgp.PeerRequest.PEER_RECONCILIATION_NEEDED)
-        for block_hash in missing_hashes:
-            requested_hash = request.target_hashes.add()
-            requested_hash.hash = block_hash
-        message.request.CopyFrom(request)
-        return self.serialize_message(message)
 
     def end_protocol_request(self):
         """
-            Creates a serialized request for ending the protocol.
+            Create a serialized request for ending the protocol.
         """
         message = network.VegvisirProtocolMessage()
         request = self.request_stub(vgp.PeerRequest.END_PROTOCOL)
         message.request.CopyFrom(request)
         return self.serialize_message(message)
        
-        

@@ -46,10 +46,12 @@ class StateMachine(object):
                            or frontier message.
            :param connection: A connection object.
         """
+        print("Current states %s\n" % self.states)
         if not connection in self.states:
             message_queue = self.network.message_queues[connection]
             self.states[connection] = {'message_queue': message_queue}
         state = self.states[connection]
+        print("Starting state %s\n" % state)
 
         # Channel the message to the right handler.
         message_type = message.WhichOneof("message_types")
@@ -68,20 +70,28 @@ class StateMachine(object):
            frontier_message = frontier.FrontierMessage()
            frontier_message.CopyFrom(message.frontier)
            nstate = self.frontier_handler.handle_message(frontier_message,
-                                                       self.states[connection]) 
-           self.states[connection] = nstate
+                                                       state) 
+           #self.states[connection]['state'] = nstate
            if state['client_socket']: # Outgoing connection
+               print("processed OUTBOUND conn's message\n")
                if nstate == rstate.REMOTE_DOMINATES:
-                   nstate = self.frontier_handler.request_next_missing_block()
+                   nstate = self.frontier_handler.request_next_missing_block(
+                                                                         state)
                    if nstate == rstate.EVEN:
                       nstate = self.frontier_handler.provide_pow(
                                                              end_protocol=True)
                       self.destroy_session(connection)
                    else:
                        self.states[connection]['state'] = nstate
+               #elif nstate ==
+               else: # Client has to reconcile.
+                   self.states[connection]['state'] = nstate
+               print("New state is %s\n" % nstate)
            else: # Incoming connection 
+               print("processed INBOUND conn's message\n")
                if nstate == rstate.REMOTE_DOMINATES:
-                   nstate = self.frontier_handler.request_next_missing_block()
+                   nstate = self.frontier_handler.request_next_missing_block(
+                                                                         state)
                    if nstate == rstate.EVEN and state['remote_is_subset']:
                        nstate = self.frontier_handler.provide_pow()
                        self.frontier_server.send_fset_request() 
@@ -91,6 +101,7 @@ class StateMachine(object):
                        self.destroy_session(connection)
                    else: # More missing blocks exist
                        self.states[connection]['state'] = nstate
+               print("New state is %s\n" % nstate)
         #elif message_type == "vector":
         #    continue
         elif message_type == "sendall":
