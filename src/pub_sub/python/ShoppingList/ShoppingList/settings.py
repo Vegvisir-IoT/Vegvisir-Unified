@@ -81,7 +81,8 @@ DATABASES = {
         'NAME': 'shoplist',
         'USER': 'postgres',
         'PASSWORD':'Superboy@514',
-        'HOST' : 'localhost'
+        'HOST' : 'localhost',
+        'PORT' : '5431'
 
     }
 }

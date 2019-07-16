@@ -3,14 +3,14 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.models import User, auth
 
-from .models import Item, Person, ShoppingList, Transaction, Mock
+from .models import Item, Person, Transaction
 
 
 # Create your views here.
 
-def login(request):
+'''def login(request):
     return redirect('')
-'''
+
     if(request.method == 'POST'):
         userid = request.POST['userid']
 
@@ -30,7 +30,7 @@ def login(request):
 def index(request):
    
     # applist = Mock.applist
-    applist=Item.objects.all()
+    applist = Item.objects.all()
     return render(request, 'index.html', {'shoplist' : applist})
 
 def add(request):
@@ -42,26 +42,26 @@ def add(request):
     
     apply(newTxn) #because only 1 witness is necessary
 
-    applist = Mock.applist
-    for x in applist.items:
+    applist = Item.objects.all()
+    for x in applist:
         print(x.name)
     return redirect('index')
 
 
 def apply(newTxn):
 
-    txns = Mock.txns
-    txn = Mock.txns[0] #valid transaction from blockchain
-    newItem = Item()
-    newItem.name = newTxn.payload
+    txns = Transaction.objects.all()
+    newItem = Item(name = newTxn.payload)
+    #newItem.name = newTxn.payload
     
-    applist = Mock.applist
+    applist = Item.objects.all()
 
     num = 0
-    for item in applist.items:
+    for item in applist:
         if item.name == newItem.name:
-            item.isOn = 0;
+            item.isOn = 0
+            item.save()
             num += 1
 
     newItem.isOn = not (num % 2)
-    applist.items = applist.items + [newItem]
+    newItem.save()

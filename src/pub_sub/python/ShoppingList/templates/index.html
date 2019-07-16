@@ -13,7 +13,10 @@
     <h1 style="margin-top: 5%; margin-bottom: 2%;">Shopping List</h1>
     </center>
     <div class = "list" style="border: 1px solid black; border-radius: 5%; margin: 0% 35%; padding: 2%;">
-       
+
+        {% if user.is_authenticated %}
+            <h1> DeviceID: {{user.username}} </h1>  
+
             {% for item in shoplist %}
                 {% if item.isOn %}
                     <p>{{item.name}}</p>
@@ -26,15 +29,13 @@
                 <input placeholder="Add to list" type="text" name="newitem"><br>
                 <input type="submit" value="add">
             </form>
-        <!-- {% if user.is_authenticated %}
-            <h1> {{user.username}} </h1> -->
-        <!--    
+
         {% else %}
             <form action="login">
                 <button type="submit">log in</button>
             </form>
         {% endif %}
-        -->
+        
     </div>
 </body>
 </html>

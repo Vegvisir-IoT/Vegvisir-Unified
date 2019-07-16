@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Login</title>
+    <title>Registration</title>
 </head>
 <body>
-    <form action = "login" method = "POST">
+    <form action = "register" method = "POST">
         {% csrf_token %}
         <input type = "text" name = "userid" placeholder="User ID"><br>
         <input type = "password" name = "pw" placeholder="Password"><br>
-        <input type = "submit" value="Enter">
+        <input type = "password" name = "pw2" placeholder="Confirm Password"><br>
+        <input type = "submit" value="Submit">
     </form>
 
     <div>
