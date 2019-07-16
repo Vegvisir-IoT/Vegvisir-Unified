@@ -8,8 +8,8 @@ from .models import Item, Person, Transaction
 
 # Create your views here.
 
-def login(request):
-    return redirect('/users/login')
+#def login(request):
+ #   return redirect('/users/login')
 '''
     if(request.method == 'POST'):
         userid = request.POST['userid']

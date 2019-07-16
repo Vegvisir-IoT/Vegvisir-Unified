@@ -37,23 +37,11 @@ def login(request):
             auth.login(request, user)
             return redirect('/')
         else:
-            messages.info(request, 'UserID not found')
+            messages.info(request, 'User not found')
             return redirect('login')
     else:
         return render(request, 'login.html')
-'''
-    if(request.method == 'POST'):
-        userid = request.POST['userid']
 
-        user = auth.authenticate(username = userid)
-
-        if user is not None:
-            auth.login(request, user)
-            return redirect('/')
-        else:    
-            messages.info(request, 'invalid credentials')
-            return redirect('login.html')
-
-    else:
-        return render(request, 'login.html')
-'''
+def logout(request):
+    auth.logout(request)
+    return redirect('/')

@@ -16,7 +16,10 @@
 
         {% if user.is_authenticated %}
             <h1> DeviceID: {{user.username}} </h1>  
-
+            <form action="users/logout">
+                <input type="submit" value="LOG OUT">
+            </form>
+            
             {% for item in shoplist %}
                 {% if item.isOn %}
                     <p>{{item.name}}</p>
@@ -31,8 +34,8 @@
             </form>
 
         {% else %}
-            <form action="login">
-                <button type="submit">log in</button>
+            <form action="users/login">
+                <input type="submit" value="LOG IN">
             </form>
         {% endif %}
         
