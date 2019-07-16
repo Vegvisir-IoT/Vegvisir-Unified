@@ -1,13 +1,15 @@
 from google.protobuf.internal.encoder import _VarintBytes
 
 
-from vegvisir.proto import handshake_pb2 as hs
-from vegvisir.proto import frontier_pb2 as frontier
-from vegvisir.proto import sendall_pb2 as sa
-from vegvisir.proto import vegvisirNetwork_pb2 as network
-from vegvisir.proto import charlotte_pb2 as charlotte
-import vegvisir.proto.vegvisir_pb2 as vegvisir
+from vegvisir.blockchain.crypto import sign, verify_signature
 from vegvisir.blockchain.block import Block
+from vegvisir.blockchain.blockchain_helpers import (int_to_bytestring,
+                                                     str_to_bytestring)
+from vegvisir.proto import (handshake_pb2 as hs, frontier_pb2 as frontier,
+                            sendall_pb2 as sa, vector_pb2 as vp,
+                            vegvisirNetwork_pb2 as network,
+                            charlotte_pb2 as charlotte,
+                            vegvisir_pb2 as vegvisir)
 
 __author__ = "Gloire Rubambiza"
 __email__ = "gbr26@cornell.edu"
@@ -19,25 +21,32 @@ class ProtocolRequestCreator(object):
     """
         A data structure for handling protocol requests.
     """
-    def __init__(self, blockchain, network):
+    def __init__(self, blockchain, network, private_key):
         self.blockchain = blockchain
         self.network = network
         self.userid = network.userid
+        self.private_key = private_key
 
 
     def create_update(self, local_vector_clock):
         """
            Create a vector clock update.
-           :param vector_clock: A VectorClock object.
+           :param local_vector_clock: A VectorClock object.
         """
         message = network.VegvisirProtocolMessage()
-        update = vgp.Update()
-        vectors = vgp.VectorClock()
+        vectors = vp.VectorClock()
+        bytestring = bytearray()
         for userid, mapping in local_vector_clock.vector.items():
-            vectors.vector_clocks.add(name=userid, leader=mapping['block'])
-        vectors.send_limit = 5 
-        update.current_view.CopyFrom(vectors)
-        message.update.CopyFrom(update)
+            vectors.clocks[userid] = mapping['block']
+            bytestring += str_to_bytestring(userid)
+            bytestring += int_to_bytestring(mapping['block'])
+        vectors.sendLimit = 5 
+        bytestring += int_to_bytestring(5)
+        signature = sign(bytestring, self.private_key)
+        vectors.signature = signature
+        pub_key = self.blockchain.keystore.get_public_key(self.userid)
+        vectors.publicKey = pub_key
+        message.vector.worldView.CopyFrom(vectors)
         return self.serialize_message(message) 
 
 

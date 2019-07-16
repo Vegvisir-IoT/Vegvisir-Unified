@@ -2,9 +2,10 @@ from time import time, sleep
 
 
 from vegvisir.emulator.socket_opcodes import ProtocolState as rstate
-from vegvisir.proto import handshake_pb2 as hs
-from vegvisir.proto import sendall_pb2 as sa
-from vegvisir.proto import frontier_pb2 as frontier
+from vegvisir.proto import (handshake_pb2 as hs,
+                           sendall_pb2 as sa,
+                           frontier_pb2 as frontier,
+                           vector_pb2 as vp)
 
 
 __author__ = "Gloire Rubambiza"
@@ -102,13 +103,30 @@ class StateMachine(object):
                    else: # More missing blocks exist
                        self.states[connection]['state'] = nstate
                print("New state is %s\n" % nstate)
-        #elif message_type == "vector":
-        #    continue
+        elif message_type == "vector":
+           v_message = vp.VectorMessage()
+           v_message.CopyFrom(message.vector) 
+           vector_message_type = v_message.WhichOneof("vector_message_type")
+           if vector_message_type == "worldView":
+                nstate = self.vector_server.handle_peer_update(
+                                                           v_message.worldView,
+                                                                         state)
+                if nstate == rstate.LOCAL_DOMINATES:
+                    print("Peer is behind...\n")
+                elif nstate == rstate.PROTOCOL_DISAGREEMENT:
+                    print("Peer sent invalid vector clock\n")
+                    message.endProtocol = True
+                else:
+                    print("Peer is not missing anything from local chain..\n")
+                self.states[connection]['state'] = nstate
+           else: # add blocks
+               nstate = self.vector_server.process_blocks(v_message)
+               self.states[connection]['state'] = nstate
         elif message_type == "sendall":
             sa_message = sa.SendallMessage()
             sa_message.CopyFrom(message.sendall)
-            state = self.sendall_server.process_all_blocks(sa_message) 
-            self.states[connection]['state'] = state
+            nstate = self.sendall_server.process_all_blocks(sa_message) 
+            self.states[connection]['state'] = nstate
         if message.endProtocol and connection in self.states: 
             self.destroy_session(connection)
 

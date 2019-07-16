@@ -32,7 +32,7 @@ class SendallServer(Protocol):
     def process_all_blocks(self, message):
         """
             Receive all blocks from remote peer.
-            :param peer_conn: A SendallMessage protobuf object.
+            :param message: A SendallMessage protobuf object.
         """
         start_time = time()
 
@@ -44,7 +44,7 @@ class SendallServer(Protocol):
         end_time = time() - start_time
         recon_data = {'recon_time': end_time}
 
-        print("----- %s SERVER SENDALL RECONCILIATION RESULTS -----\n\n" %
+        print("----- %s SENDALL RECONCILIATION STATS -----\n\n" %
 
               self.userid)
         print("Total rec time %s secs" % recon_data['recon_time'])

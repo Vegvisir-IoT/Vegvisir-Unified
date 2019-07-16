@@ -1,6 +1,11 @@
 from random import randint
 
 
+from vegvisir.blockchain.crypto import verify_signature
+from vegvisir.blockchain.blockchain_helpers import (int_to_bytestring,
+                                                     str_to_bytestring)
+
+
 __author__ = "Gloire Rubambiza"
 __email__ = "gbr26@cornell.edu"
 __credits__ = ["Gloire Rubambiza"]
@@ -143,11 +148,28 @@ class VectorClock(object):
         block_nums = [value['block'] for _, value in all_vectors] 
         return userids, block_nums
 
+    def verify_vector_clock(self, other):
+        """
+           Verify the vector clock data signed by remote peer.
+           :param other: A VectorClock protobuf object.
+        """
+        bytestring = bytearray()
+        for userid, latest_block in other.clocks.items():
+            bytestring += str_to_bytestring(userid)
+            bytestring += int_to_bytestring(latest_block)
+        bytestring += int_to_bytestring(other.sendLimit)
+        return verify_signature(bytestring, other.signature, other.publicKey)
+
     def compute_dependencies(self, other):
         """
            Find the correct dependencies among blocks for ease of sending.
-           :param other: a set of vector clocks received from peer.
+           :param other: A VectorClock protobuf object.
         """
+        # Verify the vector clock signature
+        is_signature_valid = self.verify_vector_clock(other)
+        if not is_signature_valid:
+            return "Invalid vector clock"
+
         print("\n\nCOMPUTING DEPENDENCIES\n\n")
         differences = self.compare(other)
         if len(differences) == 0:

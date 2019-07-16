@@ -16,6 +16,7 @@ class HandshakeHandler(object):
         self.frontier_server = frontier_server
         self.request_handler = self.frontier_server.request_handler
         self.request_creator = self.frontier_server.request_creator
+        self.vector_clock = self.request_handler.vector_clock
 
 
     def handle_message(self, message, state):

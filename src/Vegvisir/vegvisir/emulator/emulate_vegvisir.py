@@ -95,7 +95,7 @@ def create_components(userid, peer_names, gblock, blockchain,
 
     # Create the request handlers and creators.
     request_handler = PeerRequestHandler(blockchain, network, vector_clock, protocol)
-    request_creator = ProtocolRequestCreator(blockchain, network)
+    request_creator = ProtocolRequestCreator(blockchain, network, private_key)
 
 
     # Create the sendall protocol client and server.
