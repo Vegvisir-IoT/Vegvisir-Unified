@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 from .crypto import sign, verify_signature, hash_data
 from .blockchain_helpers import (int_to_bytestring, double_to_bytestring,
                                  str_to_bytestring)
