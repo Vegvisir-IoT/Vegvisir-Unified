@@ -25,10 +25,12 @@ class VectorServer(Protocol):
         :param vector_clock: A VectorClock object.
         :param crash_prob: A float.
     """
-    def __init__(self, request_creator, vector_clock, crash_prob):
+    def __init__(self, request_creator, request_handler, vector_clock,
+                 crash_prob):
         Protocol.__init__(self, request_creator.userid, request_creator.blockchain,
                           crash_prob)
         self.request_creator = request_creator
+        self.request_handler = request_handler
         self.network = request_creator.network
         self.reconciliations = [] 
         self.vector_clock = vector_clock
@@ -47,20 +49,20 @@ class VectorServer(Protocol):
         missing_hashes = self.vector_clock.compute_dependencies(all_clocks)
         print("MISSING HASHES %s\n" % missing_hashes)
         if missing_hashes == "Invalid vector clock":
-            print("Peer sent invalid vector clock\n")
             return rstate.PROTOCOL_DISAGREEMENT
         if missing_hashes != None:
             missing_blocks = []
             for block_hash in missing_hashes:
                 missing_blocks.append(self.blockchain.blocks[block_hash])
-            request = self.request_creator.add_blocks_request(
-                                                       blocks=missing_blocks)
+            request = self.request_creator.add_blocks_request("vector",
+                                                       blocks=missing_blocks,
+                                                       end_protocol=True)
             state['message_queue'].put(request)
             return rstate.LOCAL_DOMINATES 
         return rstate.EVEN
   
 
-    def process_all_blocks(self, message):
+    def process_blocks(self, message):
         """
             Process missing blocks received from remote peer.
             :param message: A SendallMessage protobuf object.
@@ -80,7 +82,7 @@ class VectorServer(Protocol):
               self.userid)
         print("Total rec time %s secs" % recon_data['recon_time'])
         self.reconciliations.append(recon_data)
-        return state.EVEN
+        return rstate.EVEN
 
 
     def print_reconciliation_stats(self):

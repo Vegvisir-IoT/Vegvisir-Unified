@@ -158,8 +158,9 @@ class FrontierHandler(object):
         pow_block.print_block()
             
         # Create a request for the peer to add our POW block
-        pow_request = self.request_creator.add_blocks_request([pow_block],
-                                                              end_protocol)
+        pow_request = self.request_creator.add_blocks_request("frontier",
+                                                            blocks=[pow_block],
+                                                             end_protocol=end_protocol)
         message_queue.put(pow_request)
         return rstate.RECONCILIATION
 

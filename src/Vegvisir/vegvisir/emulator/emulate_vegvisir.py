@@ -84,7 +84,7 @@ def create_components(userid, peer_names, gblock, blockchain,
        :param protocol: A string.
     """
     # Create the Vector clock to be used by the request handler and emulator.
-    vector_clock = VectorClock(userid, peer_names, gblock.hash()) 
+    vector_clock = VectorClock(userid, peer_names, gblock.hash(), blockchain) 
 
     # Create server and client.
     server = VegvisirServer(port, userid)
@@ -118,7 +118,7 @@ def create_components(userid, peer_names, gblock, blockchain,
                                        frontier_client)
 
     # Create the vector server to be used by the server_controllerl.
-    vector_server = VectorServer(request_creator, vector_clock,
+    vector_server = VectorServer(request_creator, request_handler, vector_clock,
                                  crash_prob)
 
     # Create the state machine for processing messages.

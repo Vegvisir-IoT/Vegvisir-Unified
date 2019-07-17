@@ -20,7 +20,7 @@ class VectorClock(object):
        :param peer_names: A list.
        :param genesis_hash: A bytestring.
     """
-    def __init__(self, userid, peer_names, genesis_hash):
+    def __init__(self, userid, peer_names, genesis_hash, blockchain):
         self.peer_names = peer_names
 
         # Maps userids to their leading blocks and block hashes.
@@ -42,6 +42,7 @@ class VectorClock(object):
         self.userid = userid
         for peer in self.peer_names:
            self.vector[peer] = {'block': 0, 'bhash': genesis_hash}
+        self.blockchain = blockchain
 
         print("Vector clock %s\n" % self.vector)
 
@@ -56,15 +57,15 @@ class VectorClock(object):
         view = [str(key) + str(value['block']) + "\n" for key,value in self.vector.items()] 
         print(view)
         print("Peer's view")
-        for vector in other.vector_clocks:
-            print("Name: %s, Block: %s" % (vector.name, vector.leader))
-            diff = self.vector[vector.name]['block'] - vector.leader 
+        for userid, latest in other.clocks.items():
+            print("Name: %s, Block: %s" % (userid, latest))
+            diff = self.vector[userid]['block'] - latest 
             if diff > 0:
-                if vector.name == self.userid and vector.leader == 0:
+                if userid == self.userid and latest == 0:
                     starting_point = 1
                 else:
-                    starting_point = vector.leader + 1
-                differences[vector.name] = tuple([diff, starting_point])
+                    starting_point = latest + 1
+                differences[userid] = tuple([diff, starting_point])
         print("Differences %s\n" % differences)
         return differences 
 
@@ -154,11 +155,14 @@ class VectorClock(object):
            :param other: A VectorClock protobuf object.
         """
         bytestring = bytearray()
-        for userid, latest_block in other.clocks.items():
-            bytestring += str_to_bytestring(userid)
-            bytestring += int_to_bytestring(latest_block)
+        #for userid, latest_block in other.clocks.items():
+        #    print("Verifying %s, %s\n" % (userid, latest_block))
+        #    bytestring += str_to_bytestring(userid)
+        #    bytestring += int_to_bytestring(latest_block)
+        bytestring += str_to_bytestring(other.userid)
         bytestring += int_to_bytestring(other.sendLimit)
-        return verify_signature(bytestring, other.signature, other.publicKey)
+        public_key = self.blockchain.keystore.get_public_key(other.userid)
+        return verify_signature(bytestring, other.signature, public_key)
 
     def compute_dependencies(self, other):
         """
@@ -195,7 +199,7 @@ class VectorClock(object):
                     while total_children == 1 and child != local_leading_tag:
                         child_hash = self.tag_map[child]['bhash']
                         hashes.append(child_hash)
-                        if len(hashes) == other.send_limit:
+                        if len(hashes) == other.sendLimit:
                             return hashes    
                         children = self.tag_map[child]['children']
                         total_children = len(children)

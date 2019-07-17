@@ -15,14 +15,14 @@ message VectorClock {
     // Signature of the above using the device's private key.
     bytes signature = 3;
 
-    // The public key that was used to sign the data.
-    bytes publicKey = 4;
+    // The userid that signs the data
+    string userid = 4;
 }
 
 message VectorMessage {
     oneof vector_message_type {
         VectorClock worldView = 1;
-        vegvisir.proto.AddBlocks add = 2;
+        AddBlocks add = 2;
     }
 }
 

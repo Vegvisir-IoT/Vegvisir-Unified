@@ -38,14 +38,14 @@ class ProtocolRequestCreator(object):
         bytestring = bytearray()
         for userid, mapping in local_vector_clock.vector.items():
             vectors.clocks[userid] = mapping['block']
-            bytestring += str_to_bytestring(userid)
-            bytestring += int_to_bytestring(mapping['block'])
+            #bytestring += str_to_bytestring(userid)
+            #bytestring += int_to_bytestring(mapping['block'])
+        vectors.userid = self.userid
+        bytestring += str_to_bytestring(self.userid)
         vectors.sendLimit = 5 
         bytestring += int_to_bytestring(5)
         signature = sign(bytestring, self.private_key)
         vectors.signature = signature
-        pub_key = self.blockchain.keystore.get_public_key(self.userid)
-        vectors.publicKey = pub_key
         message.vector.worldView.CopyFrom(vectors)
         return self.serialize_message(message) 
 
@@ -120,16 +120,20 @@ class ProtocolRequestCreator(object):
         return self.serialize_message(message)
 
 
-    def add_blocks_request(self, blocks, end_protocol):
+    def add_blocks_request(self, protocol, blocks=None, end_protocol=None):
         """
             Create a serialized request for the peer to add a pow block.
             :param blocks: A list of Block objects.
+            :param protocol: A string.
             :param end_protocol: A boolean.
         """
         message = network.VegvisirProtocolMessage()
-        request = frontier.Request()
+        if protocol == "sendall":
+            ordered_blocks = self.blockchain.get_topological_sort()
+            blocks = ordered_blocks[1:]
         blocks_to_add = []
         for block in blocks:
+            general_block = vegvisir.Block()
             _block = vegvisir.Block.UserBlock()
             _block.userid = block.userid
             _block.timestamp.utc_time = block.timestamp
@@ -150,57 +154,22 @@ class ProtocolRequestCreator(object):
                 outgoing_tx.payload = tx.comment
         
             # Add signature
-            _block.signature.sha256WithEcdsa.byteString = block.sig
-            blocks_to_add.append(_block)
-        request.blockResponse.blocksToAdd.extend(blocks_to_add)
-        message.frontier.request.CopyFrom(request)
-        if end_protocol:
-            message.endProtocol = True
-        return self.serialize_message(message)
-
-
-    def add_all_blocks_request(self):
-        """
-           Create a serialized request for sending all blocks.
-        """
-        message = network.VegvisirProtocolMessage()
-        sa_message = sa.SendallMessage() 
-        ordered_blocks = self.blockchain.get_topological_sort()
-        regular_blocks = ordered_blocks[1:]
-        blocks_to_add = []
- 
-        for block in regular_blocks:
-            general_block = vegvisir.Block()
-            _block = vegvisir.Block.UserBlock()
-            _block.userid = str(block.userid)
-            _block.timestamp.utc_time = block.timestamp
-        
-            # Implement location as needed here.
-
-            # Add the parent hashes.
-            for parent_hash in block.parents:
-                ref_parent = _block.parents.add()
-                ref_parent.hash.sha256 = parent_hash
-
-            # Add the transactions
-            for tx in block.tx:
-                outgoing_tx = _block.transactions.add()
-                outgoing_tx.userid = tx.userid
-                outgoing_tx.timestamp = tx.timestamp
-                outgoing_tx.recordid = tx.recordid
-                outgoing_tx.payload = tx.comment
- 
-            # Add signature
             general_block.signature.sha256WithEcdsa.byteString = block.sig
             general_block.user_block.CopyFrom(_block)
             serialized_block = general_block.SerializeToString()
             charlotte_block = charlotte.Block()
             charlotte_block.block = serialized_block
             blocks_to_add.append(charlotte_block)
-        sa_message.add.blocksToAdd.extend(blocks_to_add)
-        message.sendall.CopyFrom(sa_message)
+        if protocol == "sendall":
+            message.sendall.add.blocksToAdd.extend(blocks_to_add)
+        elif protocol == "frontier":
+            message.frontier.request.add.blocksToAdd.extend(blocks_to_add)
+        else: # Vector
+            message.vector.add.blocksToAdd.extend(blocks_to_add)
+        if end_protocol:
+            message.endProtocol = True
         return self.serialize_message(message)
-     
+
 
     def reconciliation_request(self, missing_hashes):
         """

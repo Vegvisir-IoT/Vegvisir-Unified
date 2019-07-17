@@ -29,7 +29,9 @@ class HandshakeHandler(object):
         
         if choice == hs.SEND_ALL:
             print("Peer speaks the sendall protocol!\n")
-            sendall_request = self.request_creator.add_all_blocks_request()
+            sendall_request = self.request_creator.add_blocks_request(
+                                                                   "sendall",
+                                                             end_protocol=True)
             state['message_queue'].put(sendall_request) 
             return rstate.RECONCILIATION
         elif choice == hs.FRONTIER:
