@@ -7,7 +7,7 @@ from multiprocessing.pool import Pool
 
 from vegvisir.emulator.chain_creator import BlockchainGenerator
 from vegvisir.emulator.emulation_helpers import parse_main_args
-from vegvisir.emulator.emulate_vegvisir import emulate_vegvisir
+from vegvisir.emulator.emulate_vegvisir import Emulator 
 
 
 __author__ = "Gloire Rubambiza"
@@ -40,6 +40,7 @@ def run_emulation(args):
                      the probability of a crash, the block limit,
                      and the list of protocols.
     """
+    emulator = Emulator(args)
     if args['run'] == "local":
         # Generate the users
         chainfile = args['chainfile']
@@ -56,7 +57,7 @@ def run_emulation(args):
         # Start pool and wait for handlers
         for username in user_list:
             args['username'] = username
-            pool.apply_async(emulate_vegvisir, (args,), 
+            pool.apply_async(emulator.emulate_vegvisir, (args,), 
                              callback=process_result,
                              error_callback=process_error)
             sleep(1)
@@ -64,7 +65,7 @@ def run_emulation(args):
         pool.close()
         pool.join()
     else:
-        emulate_vegvisir(args)
+        emulator.emulate_vegvisir(args)
 
 
 if __name__ == '__main__':
