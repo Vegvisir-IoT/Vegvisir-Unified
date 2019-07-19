@@ -14,11 +14,11 @@ __email__ = "gbr26@cornell.edu"
 __credits__ = ["Gloire Rubambiza"]
 
 
-# @brief: A class that handles node availability
-class Emulator(object):
+# @brief: A class that handles gossiping. 
+class GossipLayer(object):
 
     """
-        The representation of an emulator that contacts peers.
+        The representation of the layer for contacting peers.
         :param private_key: An _EllipticCurvePrivateKey for signing blocks.
         :param peers: A list of peers.
         :param block_limit: An int.
@@ -42,12 +42,12 @@ class Emulator(object):
         """
             Sleep a random amount of time between 0 and 1 second.
         """
-        sleepy_time = randint(0, 1)
+        sleepy_time = randint(0, 2)
         sleep(sleepy_time)
         print("%s woke up from %s sec nap!\n" % (self.userid, sleepy_time))
 
 
-    def wake_up_to_gossip(self):
+    def initiate_gossip(self):
         """
             Wake up from sleep and contact a random peer.
             :param inputs: A list of file descriptors.
