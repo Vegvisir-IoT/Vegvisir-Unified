@@ -21,9 +21,9 @@
             </form>
             
             {% for item in shoplist %}
-                {% if item.isOn %}
-                    <p>{{item.name}}</p>
-                {% endif %}
+                
+                    <div>{{item}} <input type="submit" value="remove"></div>
+               
             {% endfor %}
 
             <form action="add" method='POST'>
@@ -34,7 +34,7 @@
             </form>
 
         {% else %}
-            <form action="users/login">
+            <form action="/users/login">
                 <input type="submit" value="LOG IN">
             </form>
         {% endif %}
