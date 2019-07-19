@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.models import User, auth
 
-from .models import Item, Person, Transaction
+from .models import Item, Person, Transaction, TwoPSet, shop
 
 
 # Create your views here.
@@ -30,38 +30,55 @@ from .models import Item, Person, Transaction
 def index(request):
    
     # applist = Mock.applist
-    applist = Item.objects.all()
-    return render(request, 'index.html', {'shoplist' : applist})
+    applist = Transaction.objects.all()
+    info = shop.info
+
+    shown = []
+    for k,v in info.items():
+        if not( len(v.addSet - v.removeSet) == 0):
+            print(k)
+            shown += [k]
+    
+    return render(request, 'index.html', {'shoplist' : shown})
 
 def add(request):
     newTxn = Transaction()
     newTxn.payload = str(request.POST['newitem'])
+    newTxn.TransactionID = shop.txns
+    newTxn.isOn = True
 
     #push transaction to blockchain
     #shoplist = shoplist + newitem
+    info = shop.info
+    if newTxn.payload not in info:
+        TwoP = TwoPSet()
+        TwoP.addSet.add( (newTxn.TransactionID) )
+        info.update({newTxn.payload: TwoP})
+        shop.txns+=1
+    #apply(newTxn) #because only 1 witness is necessary
     
-    apply(newTxn) #because only 1 witness is necessary
+    applist = Transaction.objects.all()
 
-    applist = Item.objects.all()
-    for x in applist:
-        print(x.name)
+    
+    return redirect('index')
+
+def remove(request):
+    
     return redirect('index')
 
 
 def apply(newTxn):
 
     txns = Transaction.objects.all()
-    newItem = Item(name = newTxn.payload)
-    #newItem.name = newTxn.payload
     
-    applist = Item.objects.all()
+    applist = Transaction.objects.all()
 
     num = 0
     for item in applist:
-        if item.name == newItem.name:
+        if item.payload == newTxn.payload:
             item.isOn = 0
             item.save()
             num += 1
 
-    newItem.isOn = not (num % 2)
-    newItem.save()
+    newTxn.isOn = not (num % 2)
+    newTxn.save()
