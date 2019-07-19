@@ -1,0 +1,35 @@
+plugins {
+    id 'java-library'
+//    id 'com.google.protobuf'
+	id 'idea'
+}
+
+//protobuf {
+//
+//    protoc {
+//        // Download from repositories
+//        artifact = 'com.google.protobuf:protoc:3.6.1'
+//    }
+//
+//    generateProtoTasks {
+//        all().each { task ->
+//            task.builtins {
+////                python { }
+//            }
+//        }
+//    }
+//}
+//
+//idea {
+//	module {}
+//}
+
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+//    compile files('src/main/proto')
+    implementation 'com.google.protobuf:protobuf-java:3.6.1'
+    implementation 'org.bouncycastle:bcpkix-jdk15on:1.60'
+    implementation project(":vegvisirGossip")
+    implementation project(":vegvisirDatatype")
+}

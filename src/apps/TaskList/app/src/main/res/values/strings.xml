@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Task List</string>
+    <string name="add_button_text">Add</string>
+    <string name="item_editText_hint">Write the name of the item you want to add/remove</string>
+</resources>
