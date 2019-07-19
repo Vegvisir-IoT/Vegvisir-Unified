@@ -8,21 +8,39 @@ __email__ = "gbr26@cornell.edu"
 __credits__ = ["Gloire Rubambiza, Kolbeinn Karlsson, Pablo Fiori"]
 
 
+# @brief A class for handling transaction dependencies.
+class TransactionId(object):
+
+    def __init__(self, tx_height, device_id=None):
+        """
+           :param device_id: A string.
+           :param tx_height: An integer.
+        """
+        self.tx_height = tx_height
+        self.device_id = device_id
+
+
 # @brief A class for handling block transactions.
 class Transaction(object):
 
-    def __init__(self, userid, timestamp, tx_dict):
+    def __init__(self, userid, timestamp, tx_dict, tx_id=None,
+                 dependencies=None):
         """ Create a Transaction from a dictionary. 
 
             :param userid: a string.
             :param timestamp: a string representation of time in milliseconds.
             :param tx_dict: a dictionary of the record id and comment.
+            :param tx_id: A string.
+            :param dependencies: A list of TransactionId objects.
         """
 
         self.userid = userid
         self.timestamp = timestamp
         self.recordid = tx_dict['recordid']
         self.comment = tx_dict['comment']
+        self.tx_id = tx_id
+        self.dependencies = dependencies
+
 
     def serialize_partial(self):
         """ Serialize the transaction data. """
@@ -33,10 +51,12 @@ class Transaction(object):
         bytestring += self.comment
         return bytestring
 
+
     def hash(self):
         """ Hash the serialized transaction data. """
         data = self.serialize_partial()
         return hash_data(data)
+
 
     def print_tx(self):
         tx_string = "{ Userid: " + self.userid + "\n"
