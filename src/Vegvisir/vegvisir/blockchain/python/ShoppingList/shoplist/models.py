@@ -27,6 +27,14 @@ class shop():
     info = dict()
     txns = 0
 
+    def display(self) -> list():
+        shown = []
+        for k,v in self.info.items():
+            if not( len(v.addSet - v.removeSet) == 0):
+                print(k)
+                shown += [k]
+        return shown
+
 class TwoPSet():
     addSet : set()
     removeSet : set()
@@ -45,6 +53,7 @@ class TwoPSet():
         else:
             removeSet.update(txnid)
             addSet.discard(txnid)
+    
 
     
 

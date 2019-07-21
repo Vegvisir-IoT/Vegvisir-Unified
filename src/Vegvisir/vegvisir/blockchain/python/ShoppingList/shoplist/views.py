@@ -31,15 +31,9 @@ def index(request):
    
     # applist = Mock.applist
     applist = Transaction.objects.all()
-    info = shop.info
-
-    shown = []
-    for k,v in info.items():
-        if not( len(v.addSet - v.removeSet) == 0):
-            print(k)
-            shown += [k]
-    
-    return render(request, 'index.html', {'shoplist' : shown})
+    myShop = shop()
+    items = myShop.display()
+    return render(request, 'index.html', {'shoplist' : items})
 
 def add(request):
     newTxn = Transaction()
@@ -63,7 +57,13 @@ def add(request):
     return redirect('index')
 
 def remove(request):
-    
+    info = shop.info
+    item = str(request.POST[''])
+    TwoP = info.get(remove)
+    for i in TwoP.addSet:
+        txnid = i
+        break
+    TwoP.removeSet.add(txnid)
     return redirect('index')
 
 
