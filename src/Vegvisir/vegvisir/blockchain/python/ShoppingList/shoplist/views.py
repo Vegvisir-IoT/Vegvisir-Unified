@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.models import User, auth
 
-from .models import Item, Person, Transaction, TwoPSet, shop
+from .models import Item, Person, Transaction, TwoPSet, shop, TransactionTuple
 
 
 # Create your views here.
@@ -33,6 +33,8 @@ def index(request):
     applist = Transaction.objects.all()
     myShop = shop()
     items = myShop.display()
+    for i in items:
+        print(i.txnid)
     return render(request, 'index.html', {'shoplist' : items})
 
 def add(request):
@@ -49,6 +51,10 @@ def add(request):
         TwoP.addSet.add( (newTxn.TransactionID) )
         info.update({newTxn.payload: TwoP})
         shop.txns+=1
+    else: 
+        if len(info.get(newTxn.payload).removeSet) != 0:
+            info.get(newTxn.payload).addSet.add((newTxn.TransactionID))
+            shop.txns+=1
     #apply(newTxn) #because only 1 witness is necessary
     
     applist = Transaction.objects.all()
@@ -58,11 +64,10 @@ def add(request):
 
 def remove(request):
     info = shop.info
-    item = str(request.POST[''])
-    TwoP = info.get(remove)
-    for i in TwoP.addSet:
-        txnid = i
-        break
+    item = request.POST['payloadtoremove']
+    txnid = int(request.POST['txnidtoremove'])
+    TwoP = info.get(item)
+    #print(info)
     TwoP.removeSet.add(txnid)
     return redirect('index')
 

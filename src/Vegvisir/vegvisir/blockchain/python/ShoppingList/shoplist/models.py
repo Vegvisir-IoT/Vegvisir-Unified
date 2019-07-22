@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+#from blockchain.block import block #transaction id and transaction
 
 # Create your models here.
 
@@ -14,7 +15,7 @@ class Transaction(models.Model):
     dependencies = ArrayField(models.IntegerField(), default=list)
     #user = models.
 
-class TransactionID:
+class TransactionID():
     device_id : str
     tx_height : int
 
@@ -23,6 +24,14 @@ class Person(models.Model):
     deviceID = models.CharField(max_length=300)
     transactionHeight = models.IntegerField()
 
+class TransactionTuple():
+    payload : str
+    txnid : int
+    
+    def __init__(self, payload, txnid):
+        self.payload = payload
+        self.txnid = txnid
+
 class shop():
     info = dict()
     txns = 0
@@ -30,11 +39,19 @@ class shop():
     def display(self) -> list():
         shown = []
         for k,v in self.info.items():
-            if not( len(v.addSet - v.removeSet) == 0):
-                print(k)
-                shown += [k]
+            diff = v.addSet - v.removeSet
+            if not( len(diff) == 0):
+                txnid = self.getValfromSet(diff)
+                t = TransactionTuple(k, txnid) #tuple of payload value and txn id
+                print(t)
+                shown += [t]
         return shown
 
+    def getValfromSet(self, x):
+        for i in x:
+            result = i
+            return result
+            
 class TwoPSet():
     addSet : set()
     removeSet : set()
