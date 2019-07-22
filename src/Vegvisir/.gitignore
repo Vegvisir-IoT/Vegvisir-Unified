@@ -84,7 +84,6 @@ run_now
 *.swp
 
 # Evaluation generated files
-*.html
 extremes.txt
 *.vscode/
 EvaluationResults/
