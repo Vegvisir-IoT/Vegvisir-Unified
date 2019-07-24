@@ -155,10 +155,11 @@ class VectorClock(object):
            :param other: A VectorClock protobuf object.
         """
         bytestring = bytearray()
-        #for userid, latest_block in other.clocks.items():
-        #    print("Verifying %s, %s\n" % (userid, latest_block))
-        #    bytestring += str_to_bytestring(userid)
-        #    bytestring += int_to_bytestring(latest_block)
+        for userid in sorted(other.clocks):
+            mapping = other.clocks[userid]
+            print("Verifying %s, %s\n" % (userid, mapping))
+            bytestring += str_to_bytestring(userid)
+            bytestring += int_to_bytestring(mapping)
         bytestring += str_to_bytestring(other.userid)
         bytestring += int_to_bytestring(other.sendLimit)
         public_key = self.blockchain.keystore.get_public_key(other.userid)
