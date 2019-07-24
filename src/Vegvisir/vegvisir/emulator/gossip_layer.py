@@ -19,13 +19,14 @@ class GossipLayer(object):
 
     """
         The representation of the layer for contacting peers.
+        :param network: An EmulationNetworkOperator object.
         :param private_key: An _EllipticCurvePrivateKey for signing blocks.
         :param peers: A list of peers.
         :param block_limit: An int.
         :request_handler: A PeerRequestHandler object.
         :request_creator: A PeerRequestCreator object.
     """
-    def __init__(self, private_key, peers, block_limit, request_handler,
+    def __init__(self, network, private_key, peers, block_limit, request_handler,
                  request_creator):
         self.private_key = private_key
         self.peers = peers
@@ -33,7 +34,7 @@ class GossipLayer(object):
         self.request_creator = request_creator
         self.userid = request_handler.userid
         self.blockchain = request_handler.blockchain
-        self.network = request_handler.network
+        self.network = network
         self.vector_clock = request_handler.vector_clock
         self.protocol = request_handler.protocol
 

@@ -26,17 +26,14 @@ class PeerRequestHandler(object):
     """
         A data structure representing a handle on blockchain operations.
         :param blockchain: A Blockchain object {blockhash -> Block}.
-        :param network: A SimulationNetworkOperator object.
-        :param client: A Socket object.
         :param vector_clock: A VectorClock object.
         :param protocol_spoken: A string.
     """
 
-    def __init__(self, blockchain, network, vector_clock, protocol_spoken):
+    def __init__(self, blockchain, vector_clock, protocol_spoken):
         self.blockchain = blockchain
-        self.network = network
-        self.userid = network.userid
         self.vector_clock = vector_clock
+        self.userid = self.vector_clock.userid
         if protocol_spoken == "VECTOR":
            self.protocol = hs.VECTOR 
         elif protocol_spoken == "FRONTIER":

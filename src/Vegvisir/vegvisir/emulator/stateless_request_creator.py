@@ -36,17 +36,18 @@ class ProtocolRequestCreator(object):
         message = network.VegvisirProtocolMessage()
         vectors = vp.VectorClock()
         bytestring = bytearray()
-        for userid, mapping in local_vector_clock.vector.items():
-            vectors.clocks[userid] = mapping['block']
-            #bytestring += str_to_bytestring(userid)
-            #bytestring += int_to_bytestring(mapping['block'])
+        for userid in sorted(local_vector_clock.vector):
+            mapping = local_vector_clock.vector[userid]['block']
+            vectors.clocks[userid] = mapping 
+            bytestring += str_to_bytestring(userid)
+            bytestring += int_to_bytestring(mapping)
         vectors.userid = self.userid
         bytestring += str_to_bytestring(self.userid)
         vectors.sendLimit = 5 
         bytestring += int_to_bytestring(5)
         signature = sign(bytestring, self.private_key)
-        vectors.signature = signature
         message.vector.worldView.CopyFrom(vectors)
+        message.vector.signature = signature
         return self.serialize_message(message) 
 
 
