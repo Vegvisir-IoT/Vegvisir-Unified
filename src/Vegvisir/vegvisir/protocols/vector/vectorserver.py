@@ -37,16 +37,16 @@ class VectorServer(Protocol):
         self.reconciliations = []
 
 
-    def handle_peer_update(self, all_clocks, state):
+    def handle_peer_update(self, vmessage, state):
         """
             Respond to a peer's update based on their clock.
-            :param all_clocks: a vgp.VectorClock protobuf object.
+            :param vmessage: a vgp.VectorMessage protobuf object.
             :param state: A dictionary. 
         """
         # Emulate probability of crash in the middle of reconciliation.
         self.emulate_crash_probability()
 
-        missing_hashes = self.vector_clock.compute_dependencies(all_clocks)
+        missing_hashes = self.vector_clock.compute_dependencies(vmessage)
         print("MISSING HASHES %s\n" % missing_hashes)
         if missing_hashes == "Invalid vector clock":
             return rstate.PROTOCOL_DISAGREEMENT

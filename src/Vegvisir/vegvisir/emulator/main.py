@@ -8,7 +8,9 @@ from multiprocessing.pool import Pool
 from vegvisir.emulator.chain_creator import BlockchainGenerator
 from vegvisir.emulator.emulation_helpers import parse_main_args
 from vegvisir.emulator.emulate_vegvisir import Emulator 
-
+from vegvisir.pub_sub.vegvisir_instance import VirtualVegvisirInstance
+from vegvisir.pub_sub.watch_dog import WatchDog
+from vegvisir.pub_sub.application_context import VegvisirAppContext
 
 __author__ = "Gloire Rubambiza"
 __email__ = "gbr26@cornell.edu"
@@ -41,6 +43,18 @@ def run_emulation(args):
                      and the list of protocols.
     """
     emulator = Emulator(args)
+    emulator.activate_gossip_layer()
+    emulator.blockchain.synchronize_functions()
+
+    instance = VirtualVegvisirInstance(emulator, 1)
+    # Add an application context for testing
+    app_context = VegvisirAppContext("tasklist", "coordinate yay!",
+                                      ["apples", "bananas"])
+    instance.register_application_delegator(app_context)
+    watch_dog = WatchDog(instance.incoming_tx_queue, app_context.channels)
+    emulator.blockchain.add_observer(watch_dog)
+
+
     if args['run'] == "local":
         # Generate the users
         chainfile = args['chainfile']
@@ -57,7 +71,7 @@ def run_emulation(args):
         # Start pool and wait for handlers
         for username in user_list:
             args['username'] = username
-            pool.apply_async(emulator.emulate_vegvisir, (args,), 
+            pool.apply_async(emulator.run_core, 
                              callback=process_result,
                              error_callback=process_error)
             sleep(1)
@@ -65,7 +79,7 @@ def run_emulation(args):
         pool.close()
         pool.join()
     else:
-        emulator.emulate_vegvisir(args)
+        emulator.run_core()
 
 
 if __name__ == '__main__':

@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='vector.proto',
   package='vegvisir.proto',
   syntax='proto3',
-  serialized_pb=_b('\n\x0cvector.proto\x12\x0evegvisir.proto\x1a\x14vegvisirCommon.proto\"\xab\x01\n\x0bVectorClock\x12\x37\n\x06\x63locks\x18\x01 \x03(\x0b\x32\'.vegvisir.proto.VectorClock.ClocksEntry\x12\x11\n\tsendLimit\x18\x02 \x01(\x05\x12\x11\n\tsignature\x18\x03 \x01(\x0c\x12\x0e\n\x06userid\x18\x04 \x01(\t\x1a-\n\x0b\x43locksEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03:\x02\x38\x01\"\x82\x01\n\rVectorMessage\x12\x30\n\tworldView\x18\x01 \x01(\x0b\x32\x1b.vegvisir.proto.VectorClockH\x00\x12(\n\x03\x61\x64\x64\x18\x02 \x01(\x0b\x32\x19.vegvisir.proto.AddBlocksH\x00\x42\x15\n\x13vector_message_typeb\x06proto3')
+  serialized_pb=_b('\n\x0cvector.proto\x12\x0evegvisir.proto\x1a\x14vegvisirCommon.proto\"\x98\x01\n\x0bVectorClock\x12\x37\n\x06\x63locks\x18\x01 \x03(\x0b\x32\'.vegvisir.proto.VectorClock.ClocksEntry\x12\x11\n\tsendLimit\x18\x02 \x01(\x05\x12\x0e\n\x06userid\x18\x04 \x01(\t\x1a-\n\x0b\x43locksEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03:\x02\x38\x01\"\xcb\x01\n\rVectorMessage\x12\x30\n\tworldView\x18\x01 \x01(\x0b\x32\x1b.vegvisir.proto.VectorClockH\x00\x12(\n\x03\x61\x64\x64\x18\x02 \x01(\x0b\x32\x19.vegvisir.proto.AddBlocksH\x00\x12\x11\n\tsignature\x18\x03 \x01(\x0c\x12\x34\n\x0f\x61llVectorClocks\x18\x04 \x03(\x0b\x32\x1b.vegvisir.proto.VectorClockB\x15\n\x13vector_message_typeb\x06proto3')
   ,
   dependencies=[vegvisirCommon__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -61,8 +61,8 @@ _VECTORCLOCK_CLOCKSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=181,
-  serialized_end=226,
+  serialized_start=162,
+  serialized_end=207,
 )
 
 _VECTORCLOCK = _descriptor.Descriptor(
@@ -87,14 +87,7 @@ _VECTORCLOCK = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='signature', full_name='vegvisir.proto.VectorClock.signature', index=2,
-      number=3, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b(""),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='userid', full_name='vegvisir.proto.VectorClock.userid', index=3,
+      name='userid', full_name='vegvisir.proto.VectorClock.userid', index=2,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -113,7 +106,7 @@ _VECTORCLOCK = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=55,
-  serialized_end=226,
+  serialized_end=207,
 )
 
 
@@ -138,6 +131,20 @@ _VECTORMESSAGE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='signature', full_name='vegvisir.proto.VectorMessage.signature', index=2,
+      number=3, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='allVectorClocks', full_name='vegvisir.proto.VectorMessage.allVectorClocks', index=3,
+      number=4, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -153,14 +160,15 @@ _VECTORMESSAGE = _descriptor.Descriptor(
       name='vector_message_type', full_name='vegvisir.proto.VectorMessage.vector_message_type',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=229,
-  serialized_end=359,
+  serialized_start=210,
+  serialized_end=413,
 )
 
 _VECTORCLOCK_CLOCKSENTRY.containing_type = _VECTORCLOCK
 _VECTORCLOCK.fields_by_name['clocks'].message_type = _VECTORCLOCK_CLOCKSENTRY
 _VECTORMESSAGE.fields_by_name['worldView'].message_type = _VECTORCLOCK
 _VECTORMESSAGE.fields_by_name['add'].message_type = vegvisirCommon__pb2._ADDBLOCKS
+_VECTORMESSAGE.fields_by_name['allVectorClocks'].message_type = _VECTORCLOCK
 _VECTORMESSAGE.oneofs_by_name['vector_message_type'].fields.append(
   _VECTORMESSAGE.fields_by_name['worldView'])
 _VECTORMESSAGE.fields_by_name['worldView'].containing_oneof = _VECTORMESSAGE.oneofs_by_name['vector_message_type']

@@ -12,9 +12,6 @@ message VectorClock {
     // protocol reconciliation round.
     int32 sendLimit = 2;
 
-    // Signature of the above using the device's private key.
-    bytes signature = 3;
-
     // The userid that signs the data
     string userid = 4;
 }
@@ -24,5 +21,11 @@ message VectorMessage {
         VectorClock worldView = 1;
         AddBlocks add = 2;
     }
+
+    // Signature of the message using the user's private key.
+    bytes signature = 3;
+
+    // A repeated list of vector clocks for anti-entropy gossip
+    repeated VectorClock allVectorClocks = 4;
 }
 
