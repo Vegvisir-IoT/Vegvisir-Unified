@@ -1,12 +1,15 @@
 
+from vegvisir.design_pattern.synchronization import Synchronization, synchronized 
+
+
 __author__ = "Bruce Eckel & Friends"
 __email__ = "gbr26@cornell.edu"
 __credits__ = ["Bruce Eckel & Friends"]
+__adapted__ = ["https://python-3-patterns-idioms-test.readthedocs.io/\
+                en/latest/Observer.html"]
 
-from vegvisir.design_pattern.synchronization import Synchronization, synchronized 
 
 # @brief: A module to support the "observer" pattern found in Java.
-
 class Observer:
 
     def update(observable, arg):
@@ -28,25 +31,15 @@ class Observable(Synchronization):
         self.changed = 0
         Synchronization.__init__(self)
 
-    #def __setattr__(self, name, value):
-    #    """
-    #       Set the attribute for the instance.
-    #       :param name: A string.
-    #       :param value: An object.
-    #    """
-    #    super().__setattr__(name, value)
-
 
     def add_observer(self, observer):
         if observer not in self.observers:
             self.observers.append(observer)
         print("All attributes %s\n" % self.__dict__)
-    #add_observer = synchronized(add_observer)
 
 
     def delete_observer(self, observer):
         self.observers.remove(observer)
-    #delete_observer = synchronized(delete_observer)
 
 
     def notify_observers(self, arg=None):
@@ -72,7 +65,6 @@ class Observable(Synchronization):
     def synchronize_functions(self):
         self.delete_observer = synchronized(self.delete_observer)
         self.count_observers = synchronized(self.count_observers)
-    
 
 
     def delete_observers(self): self.observers = []
