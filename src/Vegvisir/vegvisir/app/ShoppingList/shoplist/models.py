@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from vegvisir.blockchain.block import TransactionId
-#from ShoppingList.pubsub.Context import Context
+from pubsub.Context import Context
 
 # Create your models here.
 
@@ -32,9 +32,8 @@ class TwoPSet():
             twoPset.removeSet = twoPset.removeSet.union(txn)
       
 class app():
-    deviceID = 'mac' 
-    #context = Context('shopping list', 'a shopping list', set(['costco']))
-    topic = set(['costco']) #allow user to select/add new topics
+    context = Context('shopping list', 'a shopping list', set(['costco']))
+    topics = set(['costco']) #allow user to select/add new topics
     lastTxnID = None
     TwoP = TwoPSet() #contains dependency add and remove sets
 

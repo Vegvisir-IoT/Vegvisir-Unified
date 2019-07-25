@@ -5,7 +5,7 @@ from django.contrib.auth.models import User, auth
 
 from .models import TwoPSet, app #Transaction, TwoPSet, shop, TransactionTuple
 from vegvisir.blockchain.block import Transaction, TransactionId
-#from ShoppingList.pubsub.VegInstance import VegInstance
+from pubsub.VegInstance import VegInstance
 
 # Create your views here.
 
@@ -30,6 +30,8 @@ from vegvisir.blockchain.block import Transaction, TransactionId
 
 def index(request):
     show = app.TwoP.addSet.difference(app.TwoP.removeSet)
+    print(request.user.username)
+
     return render(request, 'index.html', {'shoplist' : show})
 
 
@@ -48,7 +50,8 @@ def add(request):
     
     payload = bytes().join( [bytes([operation]), bytes(item, 'utf-8')] )
     #push to vegvisir at this pt
-    #VegInstance.addTransaction(app.context, app.topics, payload, deps)
+    userid = request.user.username
+    VegInstance.addTransaction(app.context, app.topics, payload, deps, userid)
 
     lastTxnID = 'item'
     return redirect('index')
