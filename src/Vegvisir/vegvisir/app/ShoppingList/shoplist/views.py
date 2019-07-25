@@ -3,8 +3,9 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.models import User, auth
 
-from .models import Transaction, TwoPSet, shop, TransactionTuple
-
+from .models import TwoPSet, app #Transaction, TwoPSet, shop, TransactionTuple
+from vegvisir.blockchain.block import Transaction, TransactionId
+#from ShoppingList.pubsub.VegInstance import VegInstance
 
 # Create your views here.
 
@@ -26,6 +27,70 @@ from .models import Transaction, TwoPSet, shop, TransactionTuple
     else:
         return render(request, 'login.html')
 '''
+
+def index(request):
+    show = app.TwoP.addSet.difference(app.TwoP.removeSet)
+    return render(request, 'index.html', {'shoplist' : show})
+
+
+def add(request):
+
+    #filling in transaction fields
+    item = str(request.POST['item'])
+    print(item)
+    if 'remove' in request.POST:
+        operation = 0
+    else:
+        operation = 1
+    deps = [app.lastTxnID]
+
+    app.TwoP.updateSet(item, operation, app.TwoP)
+    
+    payload = bytes().join( [bytes([operation]), bytes(item, 'utf-8')] )
+    #push to vegvisir at this pt
+    #VegInstance.addTransaction(app.context, app.topics, payload, deps)
+
+    lastTxnID = 'item'
+    return redirect('index')
+    
+def remove(request):
+    
+    return redirect('index')
+
+'''
+def add(request):
+
+    #filling in transaction fields
+    newTxn = Txn()
+    newTxn.payload = str(request.POST['newitem'])
+    newTxn.operation = 1
+    app.txnHeight = app.txnHeight+1    
+    newTxn.txnid = TransactionId(app.txnHeight, app.deviceID)
+    
+    newTxn.pay2 = [app.lastTxnID]
+    
+    
+    app.lastTxnID = newTxn.txnid
+
+    app.things += [newTxn]
+    #push to vegvisir at this pt
+    return redirect('index')
+    
+def remove(request):
+    #filling in transaction fields
+    newTxn = Txn()
+    newTxn.payload = str(request.POST['payloadtoremove'])
+    newTxn.operation = 0
+    app.txnHeight = app.txnHeight+1
+    newTxn.txnid = TransactionId(app.txnHeight, app.deviceID)
+    
+    newTxn.pay2 = [app.lastTxnID]
+    
+    app.lastTxnID = newTxn.txnid
+
+    app.things += [newTxn]
+    #push to vegvisir at this pt
+    return redirect('index')
 
 def index(request):
    
@@ -76,3 +141,4 @@ def remove(request):
 def apply(newTxn):
     newTxn.isOn = not (num % 2)
     newTxn.save()
+'''

@@ -1,9 +1,45 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
-#from vegvisir.blockchain.block import Transaction #transaction id and transaction
+from vegvisir.blockchain.block import TransactionId
+#from ShoppingList.pubsub.Context import Context
 
 # Create your models here.
 
+class Txn():
+    payload : str
+    operation : bool #1 = add, 0 = remove
+    txnid : TransactionId
+    pay2 : list
+
+class TwoPSet():
+    addSet : set()
+    removeSet : set()
+
+    def __init__(self):
+        self.addSet = set()
+        self.removeSet = set()
+
+    def lookup(self, x) -> bool:
+        return (x in addSet) and not(x in removeSet)
+    
+    def updateSet(self,payload, op, twoPset):
+        txn = set({payload})
+        if op:
+            twoPset.addSet = twoPset.addSet.union(txn)
+            twoPset.removeSet = twoPset.removeSet.difference(txn)
+        else:
+            twoPset.addSet = twoPset.addSet.difference(txn)
+            twoPset.removeSet = twoPset.removeSet.union(txn)
+      
+class app():
+    deviceID = 'mac' 
+    #context = Context('shopping list', 'a shopping list', set(['costco']))
+    topic = set(['costco']) #allow user to select/add new topics
+    lastTxnID = None
+    TwoP = TwoPSet() #contains dependency add and remove sets
+
+
+'''
 class Transaction():
     TransactionID : int
     deps : list
@@ -11,11 +47,11 @@ class Transaction():
     timestamp : str
     userid : str
 
-'''
+
 class TransactionID():
     deviceid : str
     tx_height : int
-'''
+
 
 class TransactionTuple():
     payload : str
@@ -46,26 +82,8 @@ class shop():
             result = i
             return result
             
-class TwoPSet():
-    addSet : set()
-    removeSet : set()
 
-    def __init__(self):
-        self.addSet = set()
-        self.removeSet = set()
-
-    def lookup(x) -> bool:
-        return (x in addSet) and not(x in removeSet)
-    
-    def update(isOn, txnid):
-        if isOn:
-            addSet.update(txnid)
-            removeSet.discard(txnid)
-        else:
-            removeSet.update(txnid)
-            addSet.discard(txnid)
-    
-
+'''
     
 
     

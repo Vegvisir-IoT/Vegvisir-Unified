@@ -1,0 +1,3 @@
+class AppDelegator():
+
+    def applyTransaction():
