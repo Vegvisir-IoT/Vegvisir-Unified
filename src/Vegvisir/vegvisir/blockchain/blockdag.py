@@ -128,7 +128,7 @@ class Blockchain(Observable):
 
         # Update all the observers for the blockchain
         self.set_changed()
-        self.notify_observers()
+        self.notify_observers(block)
 
         return True
 

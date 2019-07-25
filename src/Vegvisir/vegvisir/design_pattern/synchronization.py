@@ -9,14 +9,20 @@ __credits__ = ["Bruce Eckel & Friends"]
 # @brief: Emulation of Java's 'synchronized' keyword
 def synchronized(method):
     def f(*args):
+        print("About to run %s\n" % method.__name__)
+        print("Args len before accessing self %s\n" % len(args))
+        print(args)
         self = args[0]
         print("self is %s\n" % self)
         self.mutex.acquire()
         try:
-            print(args)
-            print("About to run %s\n" % method.__name__)
+            print("Remaining args\n") 
+            print(args[1:])
             print("Observers %s\n" % self.observers)
-            return method(self, args[1:])
+            if len(args) > 1:
+                return method(self, args[1:])
+            else:
+                return method(self)
         finally:
             self.mutex.release()
             print("%s released" % method.__name__)

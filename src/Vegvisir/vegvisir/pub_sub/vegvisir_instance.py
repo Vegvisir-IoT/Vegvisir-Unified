@@ -21,13 +21,12 @@ class VirtualVegvisirInstance(VegvisirInstance):
        :param emulator: An Emulator object.
        :param limit: An int, the max number of transactions to put in a block.
     """
-    def __init__(self, emulator, limit, topics=None):  
+    def __init__(self, emulator, limit):  
         self.emulator = emulator
         self.authorized_users = set(emulator.users)
         self.blockchain = emulator.request_creator.blockchain
         self.revoked_users = []
         self.transaction_limt = limit
-        self.topics = topics
         self.outgoing_tx_queue = Queue()
         self.incoming_tx_queue = Queue()
         self.tx_list = []
@@ -39,8 +38,12 @@ class VirtualVegvisirInstance(VegvisirInstance):
         self.subscription_list = {}
 
 
-    def register_application_delegator(self, delegator):
-        self.app_delegator = delegator
+    def register_application_delegator(self, context):
+        """
+           Register a delegator and context to handle new txs for the app.
+           :param context: A VegvisirAppContext object.
+        """
+        self.app_context = context 
 
 
     def update_subscription_list(device_id, applicable_channels):

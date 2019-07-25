@@ -9,11 +9,13 @@ __credits__ = ["Gloire Rubambiza"]
 # @brief A simple class to observe the blockchain for any new updates.
 class WatchDog(Observer):
 
-    def __init__(self, incoming_tx_queue):
+    def __init__(self, incoming_tx_queue, topics):
         """
            :param incoming_tx_queue: a Queue.
+           :param topics: A set of strings.
         """
         self.incoming_tx_queue = incoming_tx_queue
+        self.topics = topics
 
 
     def update(self, observable, arg):

@@ -216,7 +216,7 @@ class Emulator(object):
                     payload = self.network.receive(incoming) 
                     print("Payload \n %s\n" % payload)
                     if payload in error_statuses:
-                        state_machine.destroy_session(incoming)
+                        self.state_machine.destroy_session(incoming)
                         if incoming in self.network.outputs:
                             self.network.outputs.remove(incoming)
                     else:

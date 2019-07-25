@@ -10,10 +10,10 @@ __credits__ = ["Gloire Rubambiza"]
 class VegvisirInstance(metaclass=ABCMeta):
 
     @abstractmethod
-    def register_application_delegator(delegator):
+    def register_application_delegator(context):
         """
            Register a delegator to handle new transactions for the app.
-           :param delegator: A derivative of VegvisirAppDelegator.
+           :param context: A VegvisirAppContext object .
         """
         pass
 

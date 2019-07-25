@@ -111,6 +111,8 @@ class GossipLayer(object):
                      self.private_key, self.block_limit)
         for block in block_list:
             self.blockchain.add(block, Operation.ADDED_REQUEST)
+            #self.blockchain.set_changed()
+            #self.blockchain.notify_observers(block)
             print("Newly minted block hash %s\n" % block.hash())
             if self.protocol == hs.VECTOR:
                 update_local_vector_maps(self.vector_clock, block)

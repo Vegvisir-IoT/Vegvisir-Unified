@@ -24,7 +24,7 @@ class TransactionId(object):
 class Transaction(object):
 
     def __init__(self, userid, timestamp, tx_dict, tx_id=None,
-                 dependencies=None):
+                 dependencies=None, topics=None):
         """ Create a Transaction from a dictionary. 
 
             :param userid: a string.
@@ -32,6 +32,7 @@ class Transaction(object):
             :param tx_dict: a dictionary of the record id and comment.
             :param tx_id: A string.
             :param dependencies: A list of TransactionId objects.
+            :param topics: A set of strings.
         """
 
         self.userid = userid
@@ -40,6 +41,7 @@ class Transaction(object):
         self.comment = tx_dict['comment']
         self.tx_id = tx_id
         self.dependencies = dependencies
+        self.topics = topics
 
 
     def serialize_partial(self):

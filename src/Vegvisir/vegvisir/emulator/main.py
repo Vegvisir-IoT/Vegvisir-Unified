@@ -10,6 +10,7 @@ from vegvisir.emulator.emulation_helpers import parse_main_args
 from vegvisir.emulator.emulate_vegvisir import Emulator 
 from vegvisir.pub_sub.vegvisir_instance import VirtualVegvisirInstance
 from vegvisir.pub_sub.watch_dog import WatchDog
+from vegvisir.pub_sub.application_context import VegvisirAppContext
 
 __author__ = "Gloire Rubambiza"
 __email__ = "gbr26@cornell.edu"
@@ -43,10 +44,17 @@ def run_emulation(args):
     """
     emulator = Emulator(args)
     emulator.activate_gossip_layer()
-    #emulator.blockchain.synchronize_functions()
-    instance = VirtualVegvisirInstance(emulator, 1, topics=["apple"])
-    watch_dog = WatchDog(instance.incoming_tx_queue)
+    emulator.blockchain.synchronize_functions()
+
+    instance = VirtualVegvisirInstance(emulator, 1)
+    # Add an application context for testing
+    app_context = VegvisirAppContext("tasklist", "coordinate yay!",
+                                      ["apples", "bananas"])
+    instance.register_application_delegator(app_context)
+    watch_dog = WatchDog(instance.incoming_tx_queue, app_context.channels)
     emulator.blockchain.add_observer(watch_dog)
+
+
     if args['run'] == "local":
         # Generate the users
         chainfile = args['chainfile']

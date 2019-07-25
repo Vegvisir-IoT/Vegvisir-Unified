@@ -41,12 +41,12 @@ class Observable(Synchronization):
         if observer not in self.observers:
             self.observers.append(observer)
         print("All attributes %s\n" % self.__dict__)
-    add_observer = synchronized(add_observer)
+    #add_observer = synchronized(add_observer)
 
 
     def delete_observer(self, observer):
         self.observers.remove(observer)
-    delete_observer = synchronized(delete_observer)
+    #delete_observer = synchronized(delete_observer)
 
 
     def notify_observers(self, arg=None):
@@ -70,25 +70,14 @@ class Observable(Synchronization):
             observer.update(self, arg)
 
     def synchronize_functions(self):
-        self.delete_observers = synchronized(self.delete_observers)
-        self.set_changed = synchronized(self.set_changed)
-        self.clear_changed = synchronized(self.clear_changed)
-        self.has_changed = synchronized(self.has_changed)
+        self.delete_observer = synchronized(self.delete_observer)
         self.count_observers = synchronized(self.count_observers)
     
 
 
     def delete_observers(self): self.observers = []
-    delete_observers = synchronized(delete_observers)
     def set_changed(self): self.changed = 1
-    set_changed = synchronized(set_changed)
     def clear_changed(self): self.changed = 0
-    clear_changed = synchronized(clear_changed)
     def has_changed(self): return self.changed
-    has_changed = synchronized(has_changed)
     def count_observers(self): return len(self.observers)
-    count_observers = synchronized(count_observers)
 
-#synchronize(Observable, "add_observer delete_observer delete_observers" +
-#                        "set_changed clear_changed has_changed" +
-#                        "count_observers")
