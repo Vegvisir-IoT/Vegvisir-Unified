@@ -46,6 +46,7 @@ class VectorClock(object):
 
         print("Vector clock %s\n" % self.vector)
 
+
     def compare(self, other):
         """
            Compare a peer's vector clock to ours.
@@ -57,7 +58,7 @@ class VectorClock(object):
         view = [str(key) + str(value['block']) + "\n" for key,value in self.vector.items()] 
         print(view)
         print("Peer's view")
-        for userid, latest in other.clocks.items():
+        for userid, latest in other.worldView.clocks.items():
             print("Name: %s, Block: %s" % (userid, latest))
             diff = self.vector[userid]['block'] - latest 
             if diff > 0:
@@ -68,6 +69,7 @@ class VectorClock(object):
                 differences[userid] = tuple([diff, starting_point])
         print("Differences %s\n" % differences)
         return differences 
+
 
     def create_tag(self, userid, number):
         """
@@ -152,23 +154,25 @@ class VectorClock(object):
     def verify_vector_clock(self, other):
         """
            Verify the vector clock data signed by remote peer.
-           :param other: A VectorClock protobuf object.
+           :param other: A VectorMessage protobuf object.
         """
         bytestring = bytearray()
-        for userid in sorted(other.clocks):
-            mapping = other.clocks[userid]
+        for userid in sorted(other.worldView.clocks):
+            mapping = other.worldView.clocks[userid]
             print("Verifying %s, %s\n" % (userid, mapping))
             bytestring += str_to_bytestring(userid)
             bytestring += int_to_bytestring(mapping)
-        bytestring += str_to_bytestring(other.userid)
-        bytestring += int_to_bytestring(other.sendLimit)
-        public_key = self.blockchain.keystore.get_public_key(other.userid)
+        userid = other.worldView.userid
+        bytestring += str_to_bytestring(userid)
+        bytestring += int_to_bytestring(other.worldView.sendLimit)
+        public_key = self.blockchain.keystore.get_public_key(userid)
         return verify_signature(bytestring, other.signature, public_key)
+
 
     def compute_dependencies(self, other):
         """
            Find the correct dependencies among blocks for ease of sending.
-           :param other: A VectorClock protobuf object.
+           :param other: A VectorMessage protobuf object.
         """
         # Verify the vector clock signature
         is_signature_valid = self.verify_vector_clock(other)
@@ -200,7 +204,7 @@ class VectorClock(object):
                     while total_children == 1 and child != local_leading_tag:
                         child_hash = self.tag_map[child]['bhash']
                         hashes.append(child_hash)
-                        if len(hashes) == other.sendLimit:
+                        if len(hashes) == other.worldView.sendLimit:
                             return hashes    
                         children = self.tag_map[child]['children']
                         total_children = len(children)
