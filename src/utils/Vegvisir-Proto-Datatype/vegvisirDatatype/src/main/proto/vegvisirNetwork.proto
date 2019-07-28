@@ -1,20 +1,42 @@
-syntax = "proto3";
+syntax = "proto3"; 
 
-package vegvisir.network.datatype;
+package vegvisir.proto;
 
 option java_multiple_files = true;
 option java_package = "com.vegvisir.network.datatype.proto";
 option java_outer_classname = "VegvisirNetworkDatatypeProto";
 option objc_class_prefix = "VEGVISIR";
 
-import "vegvisirCommon.proto";
-import "charlotte.proto";
+import "handshake.proto";
+import "generic.proto";
+import "vegvisir.proto";
+import "vector.proto";
+import "frontier.proto";
+import "sendall.proto";
+
+
 
 
 message VegvisirProtocolMessage {
-    vegvisir.common.datatype.ControlSignal cmd = 1;
-    repeated charlotte.Block blocks = 2;
-    vegvisir.common.datatype.ProtocolVersion version = 3;
+    bool endProtocol = 1;
+
+    enum MessageType {
+        OTHERS = 0;
+        END = 1;
+        HANDSHAKE = 2;
+        SEND_ALL = 3;
+        FRONTIER = 4;
+        VECTOR_CLOCK = 5;
+    }
+
+    oneof message_body {
+        vegvisir.proto.HandshakeMessage handshake  = 2;
+        vegvisir.proto.GenericMessage generic = 3;
+        vegvisir.proto.SendallMessage sendall = 4;
+        vegvisir.proto.VectorMessage vector = 5;
+        vegvisir.proto.FrontierMessage frontier = 6;
+    }
+    MessageType message_type = 7;
 }
 
 message Payload {
@@ -41,13 +63,11 @@ message PeerView {
   repeated Peer connected_peers = 2;
 }
 
-
-
 // EndPointConnection
 message Connection {
   Identifier remote_id = 1;
-  vegvisir.common.datatype.Timestamp connected_time = 2;
-  vegvisir.common.datatype.Timestamp wakeup_time = 3;
+  Timestamp connected_time = 2;
+  Timestamp wakeup_time = 3;
 }
 
 message ConnectionCloseResponse {

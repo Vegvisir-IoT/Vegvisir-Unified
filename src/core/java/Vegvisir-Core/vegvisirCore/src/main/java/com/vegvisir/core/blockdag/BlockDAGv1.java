@@ -1,5 +1,6 @@
 package com.vegvisir.core.blockdag;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.isaacsheff.charlotte.proto.Block;
 import com.isaacsheff.charlotte.proto.Reference;
 import com.vegvisir.core.config.Config;
@@ -48,8 +49,8 @@ public class BlockDAGv1 extends BlockDAG {
      * @param block
      * @return
      */
-    public boolean verifyBlock(Block block) {
-        if (block.hasVegvisirBlock()) {
+    public boolean verifyBlock(com.vegvisir.core.datatype.proto.Block block) {
+        if (!block.hasUserBlock()) {
             return true;
         } else {
             return false;
@@ -76,8 +77,12 @@ public class BlockDAGv1 extends BlockDAG {
         blocks.forEach(b -> {
             putBlock(b);
             manager.saveBlock(b);
-            frontierReference.removeAll(b.getVegvisirBlock().getBlock().getParentsList());
-            frontierReference.add(BlockUtil.byRef(b));
+            try {
+                frontierReference.removeAll(com.vegvisir.core.datatype.proto.Block.parseFrom(b.getBlock()).getUserBlock().getParentsList());
+                frontierReference.add(BlockUtil.byRef(b));
+            } catch (InvalidProtocolBufferException ex) {
+                System.err.println(ex.getMessage());
+            }
         });
     }
 
@@ -87,8 +92,12 @@ public class BlockDAGv1 extends BlockDAG {
         manager.loadBlockSet().forEach(b -> {
             blockStorage.putIfAbsent(BlockUtil.byRef(b), b);
             newBlockListener.onNewBlock(b);
-            frontierReference.removeAll(b.getVegvisirBlock().getBlock().getParentsList());
-            frontierReference.add(BlockUtil.byRef(b));
+            try {
+                frontierReference.removeAll(com.vegvisir.core.datatype.proto.Block.parseFrom(b.getBlock()).getUserBlock().getParentsList());
+                frontierReference.add(BlockUtil.byRef(b));
+            } catch (InvalidProtocolBufferException ex) {
+                System.err.println(ex.getMessage());
+            }
         });
     }
 
@@ -107,14 +116,14 @@ public class BlockDAGv1 extends BlockDAG {
         com.vegvisir.core.datatype.proto.Block.UserBlock content = com.vegvisir.core.datatype.proto.Block.UserBlock.newBuilder().addAllParents(parents)
                 .setUserid(getConfig().getNodeId())
                 .setCryptoID(getConfig().getCryptoId())
-                .setTimestamp(com.vegvisir.common.datatype.proto.Timestamp.newBuilder().setUtcTime(new Date().getTime()).build())
+                .setTimestamp(com.vegvisir.core.datatype.proto.Timestamp.newBuilder().setUtcTime(new Date().getTime()).build())
                 .addAllTransactions(transactions)
                 .build();
         com.isaacsheff.charlotte.proto.Block block = com.isaacsheff.charlotte.proto.Block.newBuilder()
-                .setVegvisirBlock(
-                        com.vegvisir.core.datatype.proto.Block.newBuilder().setBlock(content)
+                .setBlock(
+                        com.vegvisir.core.datatype.proto.Block.newBuilder().setUserBlock(content)
                                 .setSignature(getConfig().signProtoObject(content))
-                                .build()
+                                .build().toByteString()
                 ).build();
         addAllBlocks(Collections.singleton(block));
     }

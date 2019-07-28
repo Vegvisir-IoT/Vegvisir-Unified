@@ -1,13 +1,3 @@
-// ################################################################
-
-// Hetcons
-
-// ################################################################
-
-// Hetcons version 1.
-// Because Protobuf does not support mutual depenency, I temporarily put hetcons code here.
-
-
 syntax = "proto3";
 
 option java_multiple_files = true;

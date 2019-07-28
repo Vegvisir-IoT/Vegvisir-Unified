@@ -98,7 +98,6 @@ public class EndPointConnection {
     /**
      * Wait until next payload available for this connection.
      * @return the arrived payload.
-     * @throws InterruptedException
      */
     @Deprecated
     public Payload blockingRecv() throws InterruptedException {
@@ -139,14 +138,14 @@ public class EndPointConnection {
         return connected;
     }
 
-    @Deprecated
-    public com.vegvisir.network.datatype.proto.Connection toProtoConnection() {
-        return com.vegvisir.network.datatype.proto.Connection.newBuilder()
-                .setRemoteId(Identifier.newBuilder().setName(endPointId).build())
-                .setWakeupTime(Timestamp.newBuilder().setUtcTime(wakeupTime).build())
-                .setConnectedTime(Timestamp.newBuilder().setElapsedTime(connectedTime).build())
-                .build();
-    }
+//    @Deprecated
+//    public com.vegvisir.network.datatype.proto.Connection toProtoConnection() {
+//        return com.vegvisir.network.datatype.proto.Connection.newBuilder()
+//                .setRemoteId(Identifier.newBuilder().setName(endPointId).build())
+//                .setWakeupTime(Timestamp.newBuilder().setUtcTime(wakeupTime).build())
+//                .setConnectedTime(Timestamp.newBuilder().setElapsedTime(connectedTime).build())
+//                .build();
+//    }
 
     public String getEndPointId() {
         return endPointId;

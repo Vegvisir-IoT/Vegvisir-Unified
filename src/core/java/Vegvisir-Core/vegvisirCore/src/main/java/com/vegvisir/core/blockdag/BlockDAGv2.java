@@ -1,11 +1,11 @@
 package com.vegvisir.core.blockdag;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.isaacsheff.charlotte.proto.Block;
 import com.isaacsheff.charlotte.proto.Reference;
 
 import com.isaacsheff.charlotte.proto.CryptoId;
 import com.vegvisir.core.config.Config;
-import com.vegvisir.core.datatype.proto.Block.VectorClock;
 
 import java.sql.Ref;
 import java.util.ArrayDeque;
@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import vegvisir.proto.Vector.VectorClock;
 
 public class BlockDAGv2 extends BlockDAG {
 
@@ -53,15 +55,15 @@ public class BlockDAGv2 extends BlockDAG {
      * @return
      */
     @Override
-    public boolean verifyBlock(Block block) {
-        if (block.getVegvisirBlock().hasGenesisBlock())
+    public boolean verifyBlock(com.vegvisir.core.datatype.proto.Block block) {
+        if (block.hasGenesisBlock())
             return true;
-        for (Reference r :  block.getVegvisirBlock().getBlock().getParentsList()) {
+        for (Reference r :  block.getUserBlock().getParentsList()) {
             if(!this.blockStorage.containsKey(r))
                 return false;
         }
-        return Config.checkSignature(block.getVegvisirBlock().getBlock().toByteArray(),
-                block.getVegvisirBlock().getSignature());
+        return Config.checkSignature(block.getUserBlock().toByteArray(),
+                block.getSignature());
     }
 
 
@@ -87,9 +89,15 @@ public class BlockDAGv2 extends BlockDAG {
     public Reference addBlock(Block block, boolean save) {
         CryptoId blockId;
         Reference blockRef;
-        if (!verifyBlock(block))
+        com.vegvisir.core.datatype.proto.Block _block;
+        try {
+            _block = com.vegvisir.core.datatype.proto.Block.parseFrom(block.getBlock());
+        } catch (InvalidProtocolBufferException ex) {
             return null;
-        blockId = block.getVegvisirBlock().getBlock().getCryptoID();
+        }
+        if (!verifyBlock(_block))
+            return null;
+        blockId = _block.getUserBlock().getCryptoID();
         if (!blockchains.containsKey(BlockUtil.cryptoId2Str(blockId))) {
             if (validatePeer(blockId)) {
                 addNewChain(blockId);
@@ -99,8 +107,8 @@ public class BlockDAGv2 extends BlockDAG {
         }
         synchronized (leadingSet) {
             putBlock(block);
-            blockRef = blockchains.get(BlockUtil.cryptoId2Str(block.getVegvisirBlock().getBlock().getCryptoID())).appendBlock(block);
-            leadingSet.removeAll(block.getVegvisirBlock().getBlock().getParentsList());
+            blockRef = blockchains.get(BlockUtil.cryptoId2Str(_block.getUserBlock().getCryptoID())).appendBlock(block);
+            leadingSet.removeAll(_block.getUserBlock().getParentsList());
             leadingSet.add(blockRef);
         }
         if (save)
@@ -167,10 +175,11 @@ public class BlockDAGv2 extends BlockDAG {
     public VectorClock computeFrontierSet() {
         VectorClock.Builder builder = VectorClock.newBuilder();
         blockchains.entrySet().forEach(entry -> {
-            VectorClock.Value value = VectorClock.Value.newBuilder()
-                    .setIndex(entry.getValue().getBlockList().size())
-                    .setCryptoId(entry.getValue().getCryptoId()).build();
-            builder.putValues(entry.getKey(), value);
+//            VectorClock.Value value = VectorClock.Value.newBuilder()
+//                    .setIndex(entry.getValue().getBlockList().size())
+//                    .setCryptoId(entry.getValue().getCryptoId()).build();
+//            builder.putValues(entry.getKey(), value);
+            builder.putClocks(entry.getKey(), entry.getValue().getBlockList().size());
         });
         return builder.build();
     }
@@ -186,18 +195,17 @@ public class BlockDAGv2 extends BlockDAG {
         /* finding the last common frontier set */
         Set<Reference> commonFrontierSet = new HashSet<>();
         VectorClock myClock = computeFrontierSet();
-        int index = 0;
-        for (Map.Entry<String, VectorClock.Value> entry: myClock.getValuesMap().entrySet()) {
+        long index = 0;
+        for (Map.Entry<String, Long> entry: myClock.getClocksMap().entrySet()) {
             index = 0;
-            if (remoteVC.getValuesMap().containsKey(entry.getKey())) {
-                VectorClock.Value value = remoteVC.getValuesMap().get(entry.getKey());
-                index = Math.min(value.getIndex(), entry.getValue().getIndex());
+            if (remoteVC.getClocksMap().containsKey(entry.getKey())) {
+                index = Math.min(remoteVC.getClocksOrDefault(entry.getKey(), 0L), entry.getValue());
             }
             if (index > 0) {
                 commonFrontierSet.add(
                         blockchains.get(entry.getKey())
                                 .getBlockList()
-                                .get(index-1));
+                                .get((int)index-1));
             }
         }
 //        Blockchain thisChain = blockchains.get(BlockUtil.cryptoId2Str(this.config.getCryptoId()));
@@ -227,8 +235,13 @@ public class BlockDAGv2 extends BlockDAG {
             if (!dupRefs.add(next) || commonFrontierSet.contains(next))
                 continue;
             Block nextBlock = this.getBlock(next);
-            references.addAll(nextBlock.getVegvisirBlock().getBlock().getParentsList());
-            blocks.add(nextBlock);
+            try {
+                com.vegvisir.core.datatype.proto.Block _block = com.vegvisir.core.datatype.proto.Block.parseFrom(nextBlock.getBlock());
+                references.addAll(_block.getUserBlock().getParentsList());
+                blocks.add(nextBlock);
+            } catch (InvalidProtocolBufferException ex) {
+                System.err.println(ex.getMessage());
+            }
         }
         Collections.reverse(blocks);
         return blocks;
@@ -288,11 +301,17 @@ public class BlockDAGv2 extends BlockDAG {
     public Set<String> computeWitness(Reference ref) {
         Set<String> witnessDevices = new HashSet<>();
         Block block = blockStorage.get(ref);
-        long height = block.getVegvisirBlock().getBlock().getHeight();
-        String id = BlockUtil.cryptoId2Str(block.getVegvisirBlock().getBlock().getCryptoID());
+        com.vegvisir.core.datatype.proto.Block _block;
+        try {
+            _block = com.vegvisir.core.datatype.proto.Block.parseFrom(block.getBlock());
+        } catch (InvalidProtocolBufferException ex) {
+            throw new RuntimeException(ex.getLocalizedMessage());
+        }
+        long height = _block.getUserBlock().getHeight();
+        String id = BlockUtil.cryptoId2Str(_block.getUserBlock().getCryptoID());
         blockchains.entrySet().forEach(bc -> {
-            VectorClock.Value vc = bc.getValue().getLatestVC().getValuesMap().getOrDefault(id, null);
-            if (vc != null && vc.getIndex() >= height) {
+            Long vc = bc.getValue().getLatestVC().getClocksMap().getOrDefault(id, null);
+            if (vc != null && vc >= height) {
                 witnessDevices.add(bc.getKey());
             }
         });

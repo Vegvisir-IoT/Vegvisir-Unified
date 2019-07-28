@@ -1,21 +1,16 @@
 package com.vegvisir.application;
 
 import android.content.Context;
-import android.util.Log;
-
-import androidx.core.util.Pair;
 
 import com.google.protobuf.ByteString;
 import com.isaacsheff.charlotte.proto.Block;
-import com.isaacsheff.charlotte.proto.Reference;
 import com.vegvisir.VegvisirCore;
 import com.vegvisir.core.blockdag.DataManager;
 import com.vegvisir.core.blockdag.NewBlockListener;
 import com.vegvisir.core.blockdag.ReconciliationEndListener;
 import com.vegvisir.core.config.Config;
 import com.vegvisir.core.datatype.proto.Block.Transaction;
-import com.vegvisir.core.reconciliation.ReconciliationV1;
-import com.vegvisir.core.reconciliation.ReconciliationV2;
+import com.vegvisir.core.reconciliation.VectorClockProtocol;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
 import com.vegvisir.pub_sub.VegvisirApplicationDelegator;
@@ -99,7 +94,7 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
         dataManager = VegvisirDataManager.getDataManager(ctx);
         backupCount = dataManager.loadAppCount();
         core = new VegvisirCore(new AndroidAdapter(ctx, deviceID),
-                ReconciliationV2.class,
+                VectorClockProtocol.class,
                 dataManager,
                 this,
                 createGenesisBlock(keyPair),

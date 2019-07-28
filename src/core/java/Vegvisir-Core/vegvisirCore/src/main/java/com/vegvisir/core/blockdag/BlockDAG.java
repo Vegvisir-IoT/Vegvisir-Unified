@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import vegvisir.proto.Vector;
+
 public abstract class BlockDAG {
 
     /**
@@ -110,7 +112,7 @@ public abstract class BlockDAG {
      * @param block
      * @return
      */
-    public abstract boolean verifyBlock(Block block);
+    public abstract boolean verifyBlock(com.vegvisir.core.datatype.proto.Block block);
 
 
     /**
@@ -164,7 +166,7 @@ public abstract class BlockDAG {
      * [V2 Features]
      * @return a vector clock represented the frontier set of current node.
      */
-    public com.vegvisir.core.datatype.proto.Block.VectorClock computeFrontierSet() {
+    public Vector.VectorClock computeFrontierSet() {
         return null;
     }
 
@@ -193,7 +195,7 @@ public abstract class BlockDAG {
      * @param remoteVC
      * @return
      */
-    public Iterable<Block> findMissedBlocksByVectorClock(com.vegvisir.core.datatype.proto.Block.VectorClock remoteVC) {
+    public Iterable<Block> findMissedBlocksByVectorClock(Vector.VectorClock remoteVC) {
         return null;
     }
 

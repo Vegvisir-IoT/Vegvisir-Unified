@@ -5,28 +5,20 @@ import com.vegvisir.core.blockdag.BlockDAGv2;
 import com.vegvisir.core.blockdag.ReconciliationEndListener;
 import com.vegvisir.core.datatype.proto.Block;
 import com.vegvisir.common.datatype.proto.ControlSignal;
-import com.vegvisir.core.blockdag.BlockDAG;
 import com.vegvisir.network.datatype.proto.Payload;
 import com.vegvisir.network.datatype.proto.VegvisirProtocolMessage;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.management.RuntimeErrorException;
+public class VectorClockProtocol implements ReconciliationProtocol {
 
-public class ReconciliationV2 extends ReconciliationV1 {
-
-    protected Block.VectorClock remoteVector;
-
-    boolean connEnded = false;
 
     private static final int TIMEOUT = 3000;
 
     BlockDAGv2 dag;
 
-    ReconciliationV2() {
-        super();
-        setVersion(2, 0, 0);
+    VectorClockProtocol() {
     }
 
     @Override
@@ -42,20 +34,7 @@ public class ReconciliationV2 extends ReconciliationV1 {
      * @param remoteConnectionID
      */
     public void exchangeBlocks(BlockDAGv2 myDAG, String remoteConnectionID, ReconciliationEndListener listener) {
-        /**
-         * Send protocol version to the remote side and figure out a version that both can understand.
-         * The final version should be the highest one that both can understand.
-         */
-//        sendVersion();
 
-//        if (this.runningVersion.compareTo(this.getVersion()) < 0) {
-//            /*
-//             * If current version is higher than running version, then we let parent class handle this.
-//             * This will eventually be handled because all nodes should be able to run version 1.
-//             */
-//            super.exchangeBlocks(myDAG, remoteConnectionID, listener);
-//            return;
-//        }
 
         this.dag = myDAG;
         this.remoteId = remoteConnectionID;
