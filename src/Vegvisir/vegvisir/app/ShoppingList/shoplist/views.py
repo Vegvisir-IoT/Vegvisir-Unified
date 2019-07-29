@@ -4,8 +4,12 @@ from django.contrib import messages
 from django.contrib.auth.models import User, auth
 
 from .models import TwoPSet, app #Transaction, TwoPSet, shop, TransactionTuple
+
 from vegvisir.blockchain.block import Transaction, TransactionId
-from pubsub.VegInstance import VegInstance
+#from pubsub.VegInstance import VegInstance
+from vegvisir.pub_sub.vegvisir_instance import VirtualVegvisirInstance
+from vegvisir.pub_sub.app_delegator import VirtualVegvisirAppDelegator
+from vegvisir import emulator
 
 # Create your views here.
 
@@ -46,12 +50,15 @@ def add(request):
         operation = 1
     deps = [app.lastTxnID]
 
-    app.TwoP.updateSet(item, operation, app.TwoP)
+    TwoP = TwoPSet()
+    TwoP.updateSet(item, operation, app.TwoP)
     
     payload = bytes().join( [bytes([operation]), bytes(item, 'utf-8')] )
     #push to vegvisir at this pt
     userid = request.user.username
-    VegInstance.addTransaction(app.context, app.topics, payload, deps, userid)
+    vegI = VirtualVegvisirInstance(emulator, 1)
+    delegator = VirtualVegvisirAppDelegator(vegI, app.context)
+    vegI.add_transaction(app.context, app.topics, payload, deps, userid)
 
     lastTxnID = 'item'
     return redirect('index')

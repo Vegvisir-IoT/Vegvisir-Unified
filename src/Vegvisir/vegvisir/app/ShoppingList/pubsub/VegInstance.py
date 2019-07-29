@@ -12,10 +12,10 @@ class VegInstance():
 
     def addTransaction(self, context : Context, topics : set, payload : bytes, dependencies : set, userid : str) -> bool:
         
-        if not device2txnhgt.contains(self.deviceID):
-            device2txnhgt.put(self.deviceID, height)
+        if self.deviceID not in self.device2txnhgt:
+            self.device2txnhgt[self.deviceID] = self.height
 
-        return _addTransaction(self.deviceID, device2txnhgt.get(self.deviceID), topics, payload, dependencies, userid)
+        return self._addTransaction(self.deviceID, self.device2txnhgt[self.deviceID], topics, payload, dependencies, userid)
 
     '''
      * Append a transaction to the transaction queue with given device id and height, then increase
@@ -32,14 +32,15 @@ class VegInstance():
         
         deps = list()
         for tid in dependencies:
-            deps += [ TransactionId(tid.tx_height, tid.device_id) ]
+            if isinstance(tid, TransactionId):
+                deps += [ TransactionId(tid.tx_height, tid.device_id) ]
         
         txdict = {'comment' : payload, 'recordid' : None}
         txnID = TransactionId(self.deviceID, self.height)
         txn = Transaction(userid, datetime.now(), txdict, txnID, deps)
 
         nxtheight = self.height + 1
-        self.device2txnhgt.put(self.deviceID, nxtheight)
-        txQueue.add(txn)
+        self.device2txnhgt[self.deviceID] = nxtheight
+        self.txQueue.put(txn)
 
         return True
