@@ -149,6 +149,8 @@ public class VegvisirCore implements Runnable {
                         if (disconnectHandlers.containsKey(remoteId)) {
                             disconnectHandlers.remove(remoteId);
                         }
+                        if (reconciliationEndListener != null)
+                            reconciliationEndListener.onReconciliationEnd();
                     }
                 });
             }

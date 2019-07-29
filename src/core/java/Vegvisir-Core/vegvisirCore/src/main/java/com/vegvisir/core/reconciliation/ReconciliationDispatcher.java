@@ -46,7 +46,9 @@ public class ReconciliationDispatcher {
         this.remoteId = remoteId;
         this.dag = dag;
         this.registeredProtocols = new HashSet<>();
-        this.config = new ProtocolConfig(remoteId, gossipLayer, registeredProtocols);
+        this.config = new ProtocolConfig(remoteId, gossipLayer, registeredProtocols, dag);
+        registerProtocol(Handshake.ProtocolVersion.SEND_ALL, new SendAllProtocol(config));
+        registerProtocol(Handshake.ProtocolVersion.VECTOR, new VectorClockProtocol(config));
         reconciliationProtocolHandlers = new ConcurrentHashMap<>();
         handshakeHandler = new HandshakeHandler(config);
         dispatchThread = gossipLayer.setHandlerForPeerMessage(remoteId, this::dispatcherHandler);

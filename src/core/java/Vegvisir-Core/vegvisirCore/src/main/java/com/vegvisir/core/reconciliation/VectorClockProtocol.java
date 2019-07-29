@@ -7,6 +7,8 @@ import com.vegvisir.core.datatype.proto.Block;
 import com.vegvisir.common.datatype.proto.ControlSignal;
 import com.vegvisir.network.datatype.proto.Payload;
 import com.vegvisir.network.datatype.proto.VegvisirProtocolMessage;
+import vegvisir.proto.Handshake;
+import vegvisir.proto.Vector;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -16,203 +18,179 @@ public class VectorClockProtocol implements ReconciliationProtocol {
 
     private static final int TIMEOUT = 3000;
 
+    private Vector.VectorClock remoteVector;
+
+    private String remoteId;
+
+
+    private ProtocolConfig config;
+
     BlockDAGv2 dag;
 
-    VectorClockProtocol() {
+    private final Object lock = new Object();
+
+    VectorClockProtocol(ProtocolConfig config) {
+        this.config = config;
+        dag = config.getDag();
     }
 
     @Override
-    public void exchangeBlocks(BlockDAG myDAG, String remoteConnectionID, ReconciliationEndListener listener) {
-        if (!(myDAG instanceof BlockDAGv2))
-            throw new RuntimeException("Reconciliation V2 must use BlockDAGv2 or higher. Got "+myDAG.getClass().getName());
-        exchangeBlocks((BlockDAGv2)myDAG, remoteConnectionID, listener);
-    }
-
-    /**
-     * This is a pull based reconciliation algorithm.
-     * @param myDAG
-     * @param remoteConnectionID
-     */
-    public void exchangeBlocks(BlockDAGv2 myDAG, String remoteConnectionID, ReconciliationEndListener listener) {
+    public void startReconciliation() throws InterruptedException {
 
 
-        this.dag = myDAG;
-        this.remoteId = remoteConnectionID;
-        currentThread = Thread.currentThread();
 
-        dispatchThread = gossipLayer.setHandlerForPeerMessage(remoteId, this::dispatcherHandler);
+        this.remoteId = config.getRemoteId();
+
 
         /*
          * Compute frontier set. Now this is a vector clock.
          */
-        Block.VectorClock clock = myDAG.computeFrontierSet();
+        Vector.VectorClock clock = dag.computeFrontierSet();
 
-        exchangeVectorClock(clock);
+        sendVectorClock(clock);
+
+        synchronized (lock) {
+            lock.wait(TIMEOUT);
+        }
 
         /* Wait for remote vector clock */
 
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-             currentThread.interrupt();
-            }
-        }, TIMEOUT);
-
-        try {
-            if (remoteVector == null) {
-                synchronized (lock) {
-                    if (remoteVector == null) {
-                        lock.wait();
-                        timer.cancel();
-                    }
-                }
-            }
-        } catch (InterruptedException ex) {
-            reconciliationEndCleaner();
-            return;
-        }
-
-        /* Figure out dependencies */
-        if (remoteVector == null) {
-            /*TODO: Set error message, remote vector unknown */
-            return;
-        }
-        dag.updateVCForDevice(remoteConnectionID, remoteVector);
-        Iterable<com.isaacsheff.charlotte.proto.Block> blocks =
-                dag.findMissedBlocksByVectorClock(remoteVector);
-
-        /* Send blocks */
-        blocks.forEach(this::sendBlock);
-
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                currentThread.interrupt();
-            }
-        }, TIMEOUT);
-
-        synchronized (lock) {
-            if (!connEnded) {
-                try {
-                    lock.wait();
-                } catch (InterruptedException ex) {
-                }
-            }
-        }
-        reconciliationEndCleaner();
-    }
-
-    private void reconciliationEndCleaner() {
-        connEnded = true;
-        dispatchThread.interrupt();
-        gossipLayer.disconnect(this.remoteId);
-//        if (connEnded) {
-            /* If connection ended by remote peer */
-//            dag.addLeadingBlock();
+//        Timer timer = new Timer();
+//        timer.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//             currentThread.interrupt();
+//            }
+//        }, TIMEOUT);
+//
+//        try {
+//            if (remoteVector == null) {
+//                synchronized (lock) {
+//                    if (remoteVector == null) {
+//                        lock.wait();
+//                        timer.cancel();
+//                    }
+//                }
+//            }
+//        } catch (InterruptedException ex) {
+//            reconciliationEndCleaner();
+//            return;
 //        }
+//
+//        /* Figure out dependencies */
+//        if (remoteVector == null) {
+//            /*TODO: Set error message, remote vector unknown */
+//            return;
+//        }
+//        dag.updateVCForDevice(remoteConnectionID, remoteVector);
+//        Iterable<com.isaacsheff.charlotte.proto.Block> blocks =
+//                dag.findMissedBlocksByVectorClock(remoteVector);
+//
+//        /* Send blocks */
+//        blocks.forEach(this::sendBlock);
+//
+//        timer = new Timer();
+//        timer.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                currentThread.interrupt();
+//            }
+//        }, TIMEOUT);
+//
+//        synchronized (lock) {
+//            if (!connEnded) {
+//                try {
+//                    lock.wait();
+//                } catch (InterruptedException ex) {
+//                }
+//            }
+//        }
+//        reconciliationEndCleaner();
     }
+//
+//    private void reconciliationEndCleaner() {
+//        connEnded = true;
+//        dispatchThread.interrupt();
+//        gossipLayer.disconnect(this.remoteId);
+////        if (connEnded) {
+//            /* If connection ended by remote peer */
+////            dag.addLeadingBlock();
+////        }
+//    }
 
 
     /**
      * Send this device's vector clock to the remote peer device.
      * @param clock
      */
-    protected void exchangeVectorClock(Block.VectorClock clock) {
+    protected void sendVectorClock(Vector.VectorClock clock) {
 
         VegvisirProtocolMessage message = VegvisirProtocolMessage.newBuilder()
-                .setCmd(ControlSignal.VECTOR_CLOCK)
-                .addBlocks(com.isaacsheff.charlotte.proto.Block.newBuilder()
-                .setVegvisirBlock(Block.newBuilder().setVectorClock(clock).build()).build())
+                .setMessageType(VegvisirProtocolMessage.MessageType.VECTOR_CLOCK)
+                .setVector(Vector.VectorMessage.newBuilder()
+                        .setType(Vector.VectorMessage.MessageType.LOCAL_VECTOR_CLOCK)
+                        .setLocalView(clock)
+                        .build())
                 .build();
-        Payload payload = Payload.newBuilder().setMessage(message).build();
-        this.gossipLayer.sendToPeer(this.remoteId, payload);
+        config.send(message);
+    }
+
+    private void computeSendBlocks(Vector.VectorClock remoteVector) {
+        dag.updateVCForDevice(config.getRemoteId(), remoteVector);
+        Iterable<com.isaacsheff.charlotte.proto.Block> blocks =
+                dag.findMissedBlocksByVectorClock(remoteVector);
+
+        /* Send blocks */
+        VegvisirProtocolMessage message = VegvisirProtocolMessage
+                .newBuilder().setMessageType(VegvisirProtocolMessage.MessageType.VECTOR_CLOCK)
+                .setVector(
+                        Vector.VectorMessage.newBuilder()
+                                .setAdd(
+                                        com.vegvisir.common.datatype.proto.AddBlocks.newBuilder()
+                                                .addAllBlocksToAdd(blocks)
+                                                .build()
+                                )
+                                .build()
+                )
+                .build();
+        config.send(message);
     }
 
 
     @Override
-    public void onDisconnected(String remoteId) {
-        return;
-    }
+    public void onNewMessage(VegvisirProtocolMessage message) {
 
-    /**
-     * Send block @block to remote device.
-     * @param block
-     */
-    protected void sendBlock(com.isaacsheff.charlotte.proto.Block block) {
-        VegvisirProtocolMessage message = VegvisirProtocolMessage.newBuilder()
-                .addBlocks(block)
-                .setCmd(block == null ? ControlSignal.END : ControlSignal.ADD_BLOCKS)
-//                .setVersion(this.runningVersion.toProtoVersion())
-                .build();
-        Payload payload = Payload.newBuilder()
-                .setMessage(message)
-                .build();
-        this.gossipLayer.sendToPeer(remoteId, payload);
-    }
+    /* Assume both ends using vector clock protocol */
 
 
-    @Override
-    protected void dispatcherHandler(Payload payload) {
-        /* Assume both ends using vector clock protocol */
-        if (!payload.hasMessage()) {
-            return;
-        }
+        switch (message.getVector().getType()) {
 
-        com.vegvisir.common.datatype.proto.ProtocolVersion remoteV = payload.getMessage().getVersion();
-        Version remoteVersion = new Version(remoteV.getMajor(), remoteV.getMinor(), remoteV.getPatch());
-
-        switch (payload.getMessage().getCmd()) {
-//            case VERSION:
-//                synchronized (lock) {
-//                    this.runningVersion = checkVersion(remoteVersion);
-//                    lock.notifyAll();
-//                }
-//                break;
-
-            case ADD_BLOCKS:
-//                synchronized (lock) {
-//                    if (this.runningVersion == null) {
-//                        try {
-//                            lock.wait();
-//                        } catch (InterruptedException ex) {
-//
-//                        }
-//                    }
-//                }
-//                if(remoteVersion.compareTo(this.runningVersion) != 0)
-//                {
-//                    /* all operations other than sync version will be run with the same version between two nodes. This is because the first step for running reconciliation is syncing up versions */
-//                    return;
-//                }
-                handleAddBlocks(payload.getMessage().getBlocksList());
-                break;
-
-            case VECTOR_CLOCK:
-                remoteVector = payload.getMessage().getBlocks(0).getVegvisirBlock().getVectorClock();
-                try {
-                    synchronized (lock) {
-                        lock.notifyAll();
-                    }
-                } catch (IllegalMonitorStateException ex) {
-
-                }
-                break;
-
-            case END:
+            case BLOCKS:
+                handleAddBlocks(message.getVector().getAdd().getBlocksToAddList());
+                config.endProtocol();
                 synchronized (lock) {
-                    if (!connEnded)
-                        connEnded = true;
-                    else
-                        lock.notifyAll();
+                    lock.notifyAll();
                 }
-
+                break;
+            case LOCAL_VECTOR_CLOCK:
+                computeSendBlocks(message.getVector().getLocalView());
+                break;
+            case ALL_VECTOR_CLOCKS:
+                break;
             case UNRECOGNIZED:
         }
     }
 
     @Override
+    public void onDisconnected() {
+
+    }
+
+    @Override
+    public Handshake.ProtocolVersion getVersion() {
+        return Handshake.ProtocolVersion.VECTOR;
+    }
+
     protected void handleAddBlocks(Iterable<com.isaacsheff.charlotte.proto.Block> blocks) {
         dag.addAllBlocks(blocks);
     }

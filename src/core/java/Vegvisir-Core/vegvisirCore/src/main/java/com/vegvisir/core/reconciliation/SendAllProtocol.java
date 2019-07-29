@@ -30,6 +30,7 @@ public class SendAllProtocol implements ReconciliationProtocol
 
     public SendAllProtocol(ProtocolConfig config) {
         this.config = config;
+        this.dag = config.getDag();
         this.remoteId = config.getRemoteId();
     }
 

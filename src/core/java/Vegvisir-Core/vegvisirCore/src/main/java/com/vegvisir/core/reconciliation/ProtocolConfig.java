@@ -1,5 +1,6 @@
 package com.vegvisir.core.reconciliation;
 
+import com.vegvisir.core.blockdag.BlockDAGv2;
 import com.vegvisir.gossip.Gossip;
 import com.vegvisir.network.datatype.proto.Payload;
 import com.vegvisir.network.datatype.proto.VegvisirProtocolMessage;
@@ -11,13 +12,15 @@ import java.util.Set;
 
 public class ProtocolConfig {
 
-    String remoteId;
+    private String remoteId;
 
-    Gossip gossipLayer;
+    private Gossip gossipLayer;
 
-    Set<Handshake.ProtocolVersion> protocols;
+    private BlockDAGv2 dag;
 
-    Handshake.ProtocolVersion runningProtocol;
+    private Set<Handshake.ProtocolVersion> protocols;
+
+    private Handshake.ProtocolVersion runningProtocol;
 
     private boolean remoteEnd = false;
 
@@ -26,10 +29,14 @@ public class ProtocolConfig {
     private final Object lock = new Object();
     private boolean locked = false;
 
-    public ProtocolConfig(String remoteId, Gossip gossipLayer, Set<Handshake.ProtocolVersion> protocols) {
+    public ProtocolConfig(String remoteId,
+                          Gossip gossipLayer,
+                          Set<Handshake.ProtocolVersion> protocols,
+                          BlockDAGv2 dag) {
         this.remoteId = remoteId;
         this.gossipLayer = gossipLayer;
         this.protocols = protocols;
+        this.dag = dag;
     }
 
     public void send(VegvisirProtocolMessage message) {
@@ -57,6 +64,10 @@ public class ProtocolConfig {
 
     public String getRemoteId() {
         return remoteId;
+    }
+
+    public BlockDAGv2 getDag() {
+        return dag;
     }
 
     public void endProtocol() {

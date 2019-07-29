@@ -173,15 +173,19 @@ public class BlockDAGv2 extends BlockDAG {
      */
     @Override
     public VectorClock computeFrontierSet() {
-        VectorClock.Builder builder = VectorClock.newBuilder();
+        VectorClock.Body.Builder builder = VectorClock.Body.newBuilder();
         blockchains.entrySet().forEach(entry -> {
 //            VectorClock.Value value = VectorClock.Value.newBuilder()
 //                    .setIndex(entry.getValue().getBlockList().size())
 //                    .setCryptoId(entry.getValue().getCryptoId()).build();
 //            builder.putValues(entry.getKey(), value);
-            builder.putClocks(entry.getKey(), entry.getValue().getBlockList().size());
+                    builder.putClocks(entry.getKey(), entry.getValue().getBlockList().size());
         });
-        return builder.build();
+        VectorClock.Body body = builder.build();
+        return VectorClock.newBuilder()
+                .setBody(body)
+                .setSignature(config.signProtoObject(body))
+                .build();
     }
 
 
@@ -196,10 +200,10 @@ public class BlockDAGv2 extends BlockDAG {
         Set<Reference> commonFrontierSet = new HashSet<>();
         VectorClock myClock = computeFrontierSet();
         long index = 0;
-        for (Map.Entry<String, Long> entry: myClock.getClocksMap().entrySet()) {
+        for (Map.Entry<String, Long> entry: myClock.getBody().getClocksMap().entrySet()) {
             index = 0;
-            if (remoteVC.getClocksMap().containsKey(entry.getKey())) {
-                index = Math.min(remoteVC.getClocksOrDefault(entry.getKey(), 0L), entry.getValue());
+            if (remoteVC.getBody().getClocksMap().containsKey(entry.getKey())) {
+                index = Math.min(remoteVC.getBody().getClocksOrDefault(entry.getKey(), 0L), entry.getValue());
             }
             if (index > 0) {
                 commonFrontierSet.add(
@@ -310,7 +314,7 @@ public class BlockDAGv2 extends BlockDAG {
         long height = _block.getUserBlock().getHeight();
         String id = BlockUtil.cryptoId2Str(_block.getUserBlock().getCryptoID());
         blockchains.entrySet().forEach(bc -> {
-            Long vc = bc.getValue().getLatestVC().getClocksMap().getOrDefault(id, null);
+            Long vc = bc.getValue().getLatestVC().getBody().getClocksMap().getOrDefault(id, null);
             if (vc != null && vc >= height) {
                 witnessDevices.add(bc.getKey());
             }
