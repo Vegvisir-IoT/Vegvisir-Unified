@@ -7,7 +7,7 @@ from vegvisir.blockchain.authentication import Certificate, Keystore
 from vegvisir.blockchain.crdt import Crdt
 from vegvisir.emulator.server import VegvisirServer
 from vegvisir.emulator.client import VegvisirClient
-from vegvisir.emulator.serverside_controller import ServerController
+#from vegvisir.emulator.serverside_controller import ServerController
 from vegvisir.emulator.stateless_request_handler import PeerRequestHandler
 from vegvisir.emulator.stateless_request_creator import ProtocolRequestCreator
 from vegvisir.emulator.gossip_layer import GossipLayer 

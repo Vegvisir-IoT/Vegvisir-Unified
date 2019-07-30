@@ -1,7 +1,7 @@
 from socket import error
 
 
-import vegvisir.protos.vegvisirprotocol_pb2 as vgp
+#import vegvisir.protos.vegvisirprotocol_pb2 as vgp
 import vegvisir.proto.vegvisirNetwork_pb2 as network
 from vegvisir.simulator.opcodes import Operation
 from vegvisir.blockchain.block import Block, Transaction

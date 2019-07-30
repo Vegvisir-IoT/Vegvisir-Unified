@@ -1,7 +1,7 @@
 from random import randint, uniform
 from time import time
 
-import vegvisir.protos.vegvisirprotocol_pb2 as vgp
+#import vegvisir.protos.vegvisirprotocol_pb2 as vgp
 from vegvisir.emulator.socket_opcodes import ProtocolState as state
 from vegvisir.protocols.protocol import Protocol
 

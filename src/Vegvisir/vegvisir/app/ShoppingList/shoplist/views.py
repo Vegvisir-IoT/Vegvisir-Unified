@@ -9,7 +9,7 @@ from vegvisir.blockchain.block import Transaction, TransactionId
 #from pubsub.VegInstance import VegInstance
 from vegvisir.pub_sub.vegvisir_instance import VirtualVegvisirInstance
 from vegvisir.pub_sub.app_delegator import VirtualVegvisirAppDelegator
-from vegvisir import emulator
+from vegvisir.emulator.emulate_vegvisir import Emulator
 
 # Create your views here.
 
@@ -55,7 +55,11 @@ def add(request):
     
     payload = bytes().join( [bytes([operation]), bytes(item, 'utf-8')] )
     #push to vegvisir at this pt
-    userid = request.user.username
+    userid = request.çuser.username
+    args = {'username': userid, 'chainfile' : 'gloirechain.txt', 'crash_prob' : 0.0, 'block_limit' : 1, 'protocol' : 'sendall'}
+    emulator = Emulator(args)
+    emulator = emulator.activate_gossip_layer()
+    emulator.blockchain.synchronize_functions()
     vegI = VirtualVegvisirInstance(emulator, 1)
     delegator = VirtualVegvisirAppDelegator(vegI, app.context)
     vegI.add_transaction(app.context, app.topics, payload, deps, userid)

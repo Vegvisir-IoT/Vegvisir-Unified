@@ -1,5 +1,6 @@
 from vegvisir.blockchain.block import TransactionId
 from vegvisir.app.ShoppingList.shoplist.models import app
+from vegvisir.pub_sub.abstract_app_delegator import VegvisirAppDelegator
 
 class VirtualVegvisirAppDelegator(VegvisirAppDelegator):
 
