@@ -55,9 +55,9 @@ class App():
     delegator = VirtualVegvisirAppDelegator(vegInstance, context)
 
     vegInstance.register_application_delegator(context, delegator)
-    watch_dog = WatchDog(vegInstance.incoming_tx_queue, context.channels)
+    watch_dog = WatchDog(vegInstance, context.channels)
     emulator.blockchain.add_observer(watch_dog)
-    pool = ThreadPoolExecutor(1)
+    pool = ThreadPoolExecutor(2)
     pool.submit(vegInstance.poll_new_transactions)
 
 '''

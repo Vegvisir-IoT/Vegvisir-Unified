@@ -9,12 +9,12 @@ __credits__ = ["Gloire Rubambiza"]
 # @brief A simple class to observe the blockchain for any new updates.
 class WatchDog(Observer):
 
-    def __init__(self, incoming_tx_queue, topics):
+    def __init__(self, instance, topics):
         """
            :param incoming_tx_queue: a Queue.
            :param topics: A set of strings.
         """
-        self.incoming_tx_queue = incoming_tx_queue
+        self.instance = instance
         self.topics = topics
 
 
@@ -26,14 +26,20 @@ class WatchDog(Observer):
             :param arg: A Block object.
          """
          # Check if the application is subscribed to any topics.
-         print(arg)
-         block_topics = [tx.topics for tx in arg.tx]
-         if not self.topics:
+         block_topics = []
+         for tx in arg.tx:
+            block_topics += tx.topics
+         print("block topics: %s \n" % block_topics)
+         if len(self.topics) == 0:
              return
          elif any(topic in self.topics for topic in block_topics):
              for tx in arg.tx:
                  for topic in tx.topics:
                      if topic in self.topics:
-                         if not tx in self.incoming_tx_queue:
-                             self.incoming_tx_queue.put(tx)
+                        topics = set([topic])
+                        payload = tx.comment
+                        tx_id = tx.tx_id
+                        deps = tx.dependencies
+                        self.instance.app_delegator.apply_transaction(topics, payload, tx_id, deps)
+
 

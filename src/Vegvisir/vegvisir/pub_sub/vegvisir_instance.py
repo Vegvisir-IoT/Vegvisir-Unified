@@ -26,7 +26,7 @@ class VirtualVegvisirInstance(VegvisirInstance):
         self.authorized_users = set(emulator.users)
         self.blockchain = emulator.request_creator.blockchain
         self.revoked_users = []
-        self.transaction_limt = limit
+        self.transaction_limit = limit
         self.outgoing_tx_queue = Queue()
         self.incoming_tx_queue = Queue()
         self.tx_list = []
@@ -104,6 +104,9 @@ class VirtualVegvisirInstance(VegvisirInstance):
                                                  dependencies=deps,
                                                  topics=topics,
                                                  payload=payload)
+        print("Topics to add %s\n" % transaction.topics)
+        print("Dependencies to add %s\n" % transaction.dependencies)
+        #transaction.dependencies.extend(dependencies)
         transaction.transactionId.deviceId = self.device_id
         transaction.transactionId.transactionHeight = self.height
         print("Adding tx %s\n" % transaction.__str__())
@@ -122,26 +125,23 @@ class VirtualVegvisirInstance(VegvisirInstance):
             tx = None
             try:
                 tx = self.outgoing_tx_queue.get_nowait()
-                print("The transaction we polled is %s\n" % tx.__str__())
-                self.tx_list.append(tx)
-                print("Tx list %s\n" % self.tx_list) 
-            except Exception as e:
-                print("Queue exception %s\n" % e)
+                self.tx_list.append(tx) 
+            except queue_is_empty:
+                print("No txs to poll\n")
             
             # Check if we have enough transactions to make a block.
-            print("Transaction limit is %s\n" % self.transaction_limit)
-            print("Current tx list length %s\n" % len(self.tx_list))
-            if tx and len(self.tx_list) == self.transaction_limit:
+            if tx != None and len(self.tx_list) == self.transaction_limit:
                 userid = self.tx_list[0].userid
                 parents = self.blockchain.crdt.frontier_set()
+                tx_list = []
                 for tx in self.tx_list:
                     userid = tx.userid
-                    print("The tx userid is %s\n" % userid)
                     height = tx.transactionId.transactionHeight
                     device_id = tx.transactionId.deviceId
                     tx_id = TransactionId(height, device_id)
                     timestamp = tx.timestamp
                     comment = tx.payload
+                    topics = tx.topics
                     tx_dict = {'recordid': height, 'comment': comment}
                     if len(tx.dependencies) > 0: 
                         dependencies= []
@@ -150,13 +150,17 @@ class VirtualVegvisirInstance(VegvisirInstance):
                                                     dependency.transactionHeight,
                                                         dependency.deviceId)
                             dependencies.append(_dependency)
-                            
-                        user_tx = Transaction(userid, timestamp, tx_dict, tx_id,
-                                            dependencies)
+                        user_tx = Transaction(userid, timestamp, tx_dict, tx_id=tx_id, topics=topics,
+                                            dependencies=dependencies)
+                        user_tx.print_tx()
                     else:
-                        user_tx = Transaction(userid, timestamp, tx_dict)
+                        user_tx = Transaction(userid, timestamp, tx_dict, tx_id=tx_id, topics=topics,
+                                              dependencies=[])
+                        user_tx.print_tx()
                     tx_list.append(user_tx)
-                vegblock = Block(userid, time(), parents, self.tx_list)
+                vegblock = Block(userid, time(), parents, tx_list)
+                vegblock.sign(self.emulator.private_key)
+                vegblock.print_block()
                 self.blockchain.add(vegblock, Operation.ADDED_REQUEST)
                 self.tx_list = []
         return True 

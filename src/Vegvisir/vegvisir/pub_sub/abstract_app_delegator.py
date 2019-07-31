@@ -13,12 +13,12 @@ class VegvisirAppDelegator(metaclass=ABCMeta):
         :param instance: A VegvisirInstance for the application to use.
     """
     def __init__(self, instance : VirtualVegvisirInstance, context : VegvisirAppContext):
-         instance.register_application_delegator(context, self)
+         #instance.register_application_delegator(context, self)
          self.vegvisir_instance = instance
          self.context = context
 
     @abstractmethod
-    def applyTransaction(self, topics, payload, tx_id, deps):
+    def apply_transaction(self, topics, payload, tx_id, deps):
         pass
 
 

@@ -11,6 +11,8 @@ from vegvisir.pub_sub.vegvisir_instance import VirtualVegvisirInstance
 from vegvisir.pub_sub.app_delegator import VirtualVegvisirAppDelegator
 from vegvisir.emulator.emulate_vegvisir import Emulator
 from vegvisir.pub_sub.watch_dog import WatchDog
+from vegvisir.blockchain.blockchain_helpers import (int_to_bytestring, double_to_bytestring,
+                                 str_to_bytestring)
 
 # Create your views here.
 
@@ -53,20 +55,22 @@ def add(request):
     deps = [App.lastTxnID]
 
     twoP = TwoPSet()
-    twoP.updateSet(item, operation, App.twoP)
-    
-    payload = bytes().join( [bytes([operation]), bytes(item, 'utf-8')] )
+    twoP.updateSet(item, operation, twoP)
+    #payload = bytes().join( [bytes([operation]), bytes(item, 'utf-8')] )
+    pay = (str(operation) + item)
+    payload = str_to_bytestring(pay)
     #push to vegvisir at this pt
     
     userid = request.user.username
     App.vegInstance.add_transaction(App.context, App.topics, payload, deps, 'Alpha')
-    print(item)
+    #print(item)
     lastTxnID = 'item'
     App.fromAdd = True
     return redirect('index')
     
 def apply(request):
     
+    App.TwoP.updateSet(item, operation, App.TwoP)
     return redirect('index')
 
 '''
