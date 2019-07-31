@@ -12,8 +12,7 @@ class VirtualVegvisirAppDelegator(VegvisirAppDelegator):
     def apply_transaction(self, topics, payload, tx_id, deps):
         for topic in topics:
             print("Interesting topic %s \n " % topic)
-        print("Payload %s \n" % payload)
-
+        
         item = payload[1:]
         operation = payload[0]
 
