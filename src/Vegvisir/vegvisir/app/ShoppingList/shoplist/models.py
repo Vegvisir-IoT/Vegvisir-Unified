@@ -4,7 +4,12 @@ from django.contrib.postgres.fields import ArrayField
 from vegvisir.blockchain.block import TransactionId
 #from pubsub.Context import Context
 from vegvisir.pub_sub.application_context import VegvisirAppContext
+from vegvisir.pub_sub.vegvisir_instance import VirtualVegvisirInstance
+from vegvisir.pub_sub.app_delegator import VirtualVegvisirAppDelegator
+from vegvisir.emulator.emulate_vegvisir import Emulator
+from vegvisir.pub_sub.watch_dog import WatchDog
 
+from concurrent.futures import ThreadPoolExecutor
 # Create your models here.
 
 class Txn():
@@ -33,12 +38,27 @@ class TwoPSet():
             twoPset.addSet = twoPset.addSet.difference(txn)
             twoPset.removeSet = twoPset.removeSet.union(txn)
       
-class app():
+class App():
+
+    fromAdd = False
+
     context = VegvisirAppContext('shopping list', 'a shopping list', set(['costco']))
     topics = set(['costco']) #allow user to select/add new topics
     lastTxnID = None
-    TwoP = TwoPSet() #contains dependency add and remove sets
+    twoP = TwoPSet() #contains dependency add and remove sets
 
+    args = {'username': 'Alpha', 'chainfile' : 'gloirechain.txt', 'crash_prob' : 0.0, 'block_limit' : 1, 'protocol' : 'sendall', 'paramsfile' : 'gloireparams.txt'}
+    emulator = Emulator(args)
+    emulator.activate_gossip_layer()
+    emulator.blockchain.synchronize_functions()
+    vegInstance = VirtualVegvisirInstance(emulator, 1)
+    delegator = VirtualVegvisirAppDelegator(vegInstance, context)
+
+    vegInstance.register_application_delegator(context, delegator)
+    watch_dog = WatchDog(vegInstance.incoming_tx_queue, context.channels)
+    emulator.blockchain.add_observer(watch_dog)
+    pool = ThreadPoolExecutor(1)
+    pool.submit(vegInstance.poll_new_transactions)
 
 '''
 class Transaction():

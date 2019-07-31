@@ -3,13 +3,14 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.models import User, auth
 
-from .models import TwoPSet, app #Transaction, TwoPSet, shop, TransactionTuple
+from .models import TwoPSet, App #Transaction, TwoPSet, shop, TransactionTuple
 
 from vegvisir.blockchain.block import Transaction, TransactionId
 #from pubsub.VegInstance import VegInstance
 from vegvisir.pub_sub.vegvisir_instance import VirtualVegvisirInstance
 from vegvisir.pub_sub.app_delegator import VirtualVegvisirAppDelegator
 from vegvisir.emulator.emulate_vegvisir import Emulator
+from vegvisir.pub_sub.watch_dog import WatchDog
 
 # Create your views here.
 
@@ -33,8 +34,9 @@ from vegvisir.emulator.emulate_vegvisir import Emulator
 '''
 
 def index(request):
-    show = app.TwoP.addSet.difference(app.TwoP.removeSet)
-    print(request.user.username)
+    
+    show = App.twoP.addSet.difference(App.twoP.removeSet)
+    #print(request.user.username)
 
     return render(request, 'index.html', {'shoplist' : show})
 
@@ -43,31 +45,27 @@ def add(request):
 
     #filling in transaction fields
     item = str(request.POST['item'])
-    print(item)
+    #print(item)
     if 'remove' in request.POST:
         operation = 0
     else:
         operation = 1
-    deps = [app.lastTxnID]
+    deps = [App.lastTxnID]
 
-    TwoP = TwoPSet()
-    TwoP.updateSet(item, operation, app.TwoP)
+    twoP = TwoPSet()
+    twoP.updateSet(item, operation, App.twoP)
     
     payload = bytes().join( [bytes([operation]), bytes(item, 'utf-8')] )
     #push to vegvisir at this pt
-    userid = request.çuser.username
-    args = {'username': userid, 'chainfile' : 'gloirechain.txt', 'crash_prob' : 0.0, 'block_limit' : 1, 'protocol' : 'sendall'}
-    emulator = Emulator(args)
-    emulator = emulator.activate_gossip_layer()
-    emulator.blockchain.synchronize_functions()
-    vegI = VirtualVegvisirInstance(emulator, 1)
-    delegator = VirtualVegvisirAppDelegator(vegI, app.context)
-    vegI.add_transaction(app.context, app.topics, payload, deps, userid)
-
+    
+    userid = request.user.username
+    App.vegInstance.add_transaction(App.context, App.topics, payload, deps, 'Alpha')
+    print(item)
     lastTxnID = 'item'
+    App.fromAdd = True
     return redirect('index')
     
-def remove(request):
+def apply(request):
     
     return redirect('index')
 
@@ -78,15 +76,15 @@ def add(request):
     newTxn = Txn()
     newTxn.payload = str(request.POST['newitem'])
     newTxn.operation = 1
-    app.txnHeight = app.txnHeight+1    
-    newTxn.txnid = TransactionId(app.txnHeight, app.deviceID)
+    App.txnHeight = App.txnHeight+1    
+    newTxn.txnid = TransactionId(App.txnHeight, App.deviceID)
     
-    newTxn.pay2 = [app.lastTxnID]
+    newTxn.pay2 = [App.lastTxnID]
     
     
-    app.lastTxnID = newTxn.txnid
+    App.lastTxnID = newTxn.txnid
 
-    app.things += [newTxn]
+    App.things += [newTxn]
     #push to vegvisir at this pt
     return redirect('index')
     
@@ -95,20 +93,20 @@ def remove(request):
     newTxn = Txn()
     newTxn.payload = str(request.POST['payloadtoremove'])
     newTxn.operation = 0
-    app.txnHeight = app.txnHeight+1
-    newTxn.txnid = TransactionId(app.txnHeight, app.deviceID)
+    App.txnHeight = App.txnHeight+1
+    newTxn.txnid = TransactionId(App.txnHeight, App.deviceID)
     
-    newTxn.pay2 = [app.lastTxnID]
+    newTxn.pay2 = [App.lastTxnID]
     
-    app.lastTxnID = newTxn.txnid
+    App.lastTxnID = newTxn.txnid
 
-    app.things += [newTxn]
+    App.things += [newTxn]
     #push to vegvisir at this pt
     return redirect('index')
 
 def index(request):
    
-    # applist = Mock.applist
+    # Applist = Mock.Applist
     myShop = shop()
     items = myShop.display()
     for i in items:
@@ -137,7 +135,7 @@ def add(request):
         if len(TwoP.removeSet) != 0:
             info.get(newTxn.payload).addSet.add((newTxn.TransactionID))
             shop.txns+=1
-    #apply(newTxn) #because only 1 witness is necessary
+    #Apply(newTxn) #because only 1 witness is necessary
 
     
     return redirect('index')
@@ -152,7 +150,7 @@ def remove(request):
     return redirect('index')
 
 
-def apply(newTxn):
+def Apply(newTxn):
     newTxn.isOn = not (num % 2)
     newTxn.save()
 '''

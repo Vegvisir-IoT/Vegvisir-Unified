@@ -26,6 +26,7 @@ class WatchDog(Observer):
             :param arg: A Block object.
          """
          # Check if the application is subscribed to any topics.
+         print(arg)
          block_topics = [tx.topics for tx in arg.tx]
          if not self.topics:
              return

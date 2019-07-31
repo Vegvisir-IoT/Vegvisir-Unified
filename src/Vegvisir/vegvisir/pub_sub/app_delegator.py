@@ -1,5 +1,5 @@
 from vegvisir.blockchain.block import TransactionId
-from vegvisir.app.ShoppingList.shoplist.models import app
+#from vegvisir.app.ShoppingList.shoplist.models import App
 from vegvisir.pub_sub.abstract_app_delegator import VegvisirAppDelegator
 
 class VirtualVegvisirAppDelegator(VegvisirAppDelegator):
@@ -14,6 +14,6 @@ class VirtualVegvisirAppDelegator(VegvisirAppDelegator):
 
         item = payload[1:]
         operation = payload[0]
-        app.TwoP.updateSet(item, operation, app.TwoP)
+        #App.TwoP.updateSet(item, operation, App.TwoP)
         return
 

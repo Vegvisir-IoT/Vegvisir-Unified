@@ -34,7 +34,7 @@ class VirtualVegvisirInstance(VegvisirInstance):
         # Device specific things.
         self.device_to_tx_height = {}
         self.device_id = "Device B"
-        self.height = 1
+        self.height = 0
         self.subscription_list = {}
 
 
@@ -75,8 +75,7 @@ class VirtualVegvisirInstance(VegvisirInstance):
            :param userid: a str representing the user
         """
         timestamp = time()   
-        if self.height != 1:
-            self.height += 1
+        self.height += 1
         if not (self.device_id in self.device_to_tx_height):
             self.device_to_tx_height[self.device_id] = self.height
         self._add_transaction(self.device_id, self.height, topics, payload,
@@ -96,18 +95,21 @@ class VirtualVegvisirInstance(VegvisirInstance):
         """
         deps = []
         for tx_id in dependencies:
-            dep_pointer = vegvisir.Block.Transaction.TransactionId()
-            dep_pointer.deviceId = tx_id.device_id
-            dep_pointer.transactionHeight = tx_id.tx_height
-            deps.append(dep_pointer)
-        transaction = vegvisir.Block.Transaction(userid = userid, timestamp=time(),
+            if isinstance(tx_id, TransactionId):
+                dep_pointer = vegvisir.Block.Transaction.TransactionId()
+                dep_pointer.deviceId = tx_id.device_id
+                dep_pointer.transactionHeight = tx_id.tx_height
+                deps.append(dep_pointer)
+        transaction = vegvisir.Block.Transaction(userid=userid, timestamp=time(),
                                                  dependencies=deps,
                                                  topics=topics,
                                                  payload=payload)
         transaction.transactionId.deviceId = self.device_id
         transaction.transactionId.transactionHeight = self.height
-        self.device_to_tx_height.put(device_id, height + 1) 
-        self.outoing_tx_queue.put(transaction)
+        print("Adding tx %s\n" % transaction.__str__())
+        self.device_to_tx_height[device_id] = height + 1 
+        self.outgoing_tx_queue.put(transaction)
+        print("Putting transaction in the queue, height %s, size %s\n\n" % (self.height, self.outgoing_tx_queue.qsize())) 
         return True
 
 
@@ -115,42 +117,47 @@ class VirtualVegvisirInstance(VegvisirInstance):
         """
            Check if there are new transactions to be added to a block.
         """
-        tx = None
-        try:
-            tx = self.outoing_tx_queue.get_nowait()
-            self.tx_list.append(tx)
-             
-        except queue_is_empty:
-            print("No txs currently enqueued...\n")
-        
-         # Check if we have enough transactions to make a block.
-        if tx and len(self.block_queue) == self.transaction_limt:
-            tx_list = []
-            userid = self.tx_list[0].userid
-            parents = self.blockchain.crdt.frontier_set()
-            for tx in self.tx_list:
-                userid = tx.userid
-                height = tx.transactionId.transactionHeight
-                device_id = tx.transactionId.deviceId
-                tx_id = TransactionId(height, device_id)
-                timestamp = tx.timestamp
-                comment = tx.payload
-                tx_dict = {'recordid': height, 'comment': comment}
-                if len(tx.dependencies) > 0: 
-                    dependencies= []
-                    for dependency in tx.dependencies:
-                        _dependency = TransactionId(
-                                                   dependency.transactionHeight,
-                                                    dependency.deviceId)
-                        dependencies.append(_dependency)
-                        
-                    user_tx = Transaction(userid, timestamp, tx_dict, tx_id,
-                                          dependencies)
-                else:
-                    user_tx = Transaction(userid, timestamp, tx_dict)
-                tx_list.append(user_tx)
-            vegblock = Block(userid, time(), parents, self.tx_list)
-            self.blockchain.add(vegblock, Operation.ADDED_REQUEST)
-            self.tx_list = []
+        while True:
+            sleep(5)
+            tx = None
+            try:
+                tx = self.outgoing_tx_queue.get_nowait()
+                print("The transaction we polled is %s\n" % tx.__str__())
+                self.tx_list.append(tx)
+                print("Tx list %s\n" % self.tx_list) 
+            except Exception as e:
+                print("Queue exception %s\n" % e)
+            
+            # Check if we have enough transactions to make a block.
+            print("Transaction limit is %s\n" % self.transaction_limit)
+            print("Current tx list length %s\n" % len(self.tx_list))
+            if tx and len(self.tx_list) == self.transaction_limit:
+                userid = self.tx_list[0].userid
+                parents = self.blockchain.crdt.frontier_set()
+                for tx in self.tx_list:
+                    userid = tx.userid
+                    print("The tx userid is %s\n" % userid)
+                    height = tx.transactionId.transactionHeight
+                    device_id = tx.transactionId.deviceId
+                    tx_id = TransactionId(height, device_id)
+                    timestamp = tx.timestamp
+                    comment = tx.payload
+                    tx_dict = {'recordid': height, 'comment': comment}
+                    if len(tx.dependencies) > 0: 
+                        dependencies= []
+                        for dependency in tx.dependencies:
+                            _dependency = TransactionId(
+                                                    dependency.transactionHeight,
+                                                        dependency.deviceId)
+                            dependencies.append(_dependency)
+                            
+                        user_tx = Transaction(userid, timestamp, tx_dict, tx_id,
+                                            dependencies)
+                    else:
+                        user_tx = Transaction(userid, timestamp, tx_dict)
+                    tx_list.append(user_tx)
+                vegblock = Block(userid, time(), parents, self.tx_list)
+                self.blockchain.add(vegblock, Operation.ADDED_REQUEST)
+                self.tx_list = []
         return True 
 
