@@ -75,4 +75,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
     }       // End of method onCreate()
+
+    @Override
+    public void onBackPressed() {
+    }
 }

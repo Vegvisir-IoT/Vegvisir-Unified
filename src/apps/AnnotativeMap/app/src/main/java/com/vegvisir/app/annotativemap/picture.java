@@ -26,6 +26,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
     final String DEL = "Delete";
     String anno = "";
     String cur_time = "";
+    AnnotativeMapApplication thisApp;
 
 
     @Override
@@ -47,6 +48,7 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 
         logout = findViewById(R.id.logout);
         logout.setOnClickListener(this);
+        thisApp = (AnnotativeMapApplication)this.getApplication();
     }
 
     @Override
@@ -57,9 +59,9 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
                 startActivity(intent);
 //                MainActivity.pause();
                 MainActivity.runningMainActivity = false;
-                Set<Coordinates> coords = LoginActivity.annotations.keySet();
+                Set<Coordinates> coords = thisApp.getAnnotations().keySet();
                 for (Coordinates c: coords) {
-                    LoginActivity.annotations.get(c).setAlreadyAdded(false);
+                    thisApp.getAnnotations().get(c).setAlreadyAdded(false);
                 }
                 break;
             default:
@@ -149,8 +151,8 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
 //                    dependencies.add(MainActivity.mapLatestTransactions.get(LoginActivity.deviceId));
 //                }
 
-                if (LoginActivity.annotations.containsKey(coords)) {
-                    anno = LoginActivity.annotations.get(coords).getAnnotation();
+                if (thisApp.getAnnotations().containsKey(coords)) {
+                    anno = thisApp.getAnnotations().get(coords).getAnnotation();
                 } else {
                     Log.i("How did we", "get here");
                 }
@@ -222,4 +224,8 @@ public class picture extends AppCompatActivity implements View.OnClickListener{
         return (findViewById(R.id.image));
     }
 
+    @Override
+    public void onBackPressed() {
+        Log.d("Picture ", "onBackPressed: Pressed");
+    }
 }

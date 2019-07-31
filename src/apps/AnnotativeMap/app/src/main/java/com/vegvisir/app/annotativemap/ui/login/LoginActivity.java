@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -45,7 +46,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static ConcurrentHashMap<Coordinates, Annotation> annotations = new ConcurrentHashMap<>();
     public static HashMap<Coordinates,Set<TransactionID>> mapDependencySets = new HashMap<>();
     public static HashMap<String, TransactionID> mapLatestTransactions = new HashMap<>();
     public static HashMap<TransactionID, TwoPSet> mapTwoPSets = new HashMap<>();
@@ -236,5 +236,11 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.d("LOGIN ACT", "onBackPressed: Pressed");
+        return;
     }
 }

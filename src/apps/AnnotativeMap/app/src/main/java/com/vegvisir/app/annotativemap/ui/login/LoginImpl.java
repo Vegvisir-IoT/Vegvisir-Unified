@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.vegvisir.app.annotativemap.Annotation;
+import com.vegvisir.app.annotativemap.AnnotativeMapApplication;
 import com.vegvisir.app.annotativemap.Coordinates;
 import com.vegvisir.app.annotativemap.FullAnnotation;
 import com.vegvisir.app.annotativemap.MainActivity;
@@ -73,7 +74,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
             TransactionID tx_id,
             Set<TransactionID> deps) {
 
-
+        AnnotativeMapApplication thisApp = (AnnotativeMapApplication) loginActivity.getApplication();
         String payloadString = new String(payload);
         Log.i("payload",payloadString);
         int transactionType = Integer.parseInt(payloadString.substring(0,1));
@@ -148,7 +149,7 @@ public class LoginImpl implements VegvisirApplicationDelegator {
                 if (transactionType == 0) {
                     String item = payloadString.substring(1);
                     boolean entryFound = false;
-                    for (Map.Entry<Coordinates, Annotation> entry : LoginActivity.annotations.entrySet()) {
+                    for (Map.Entry<Coordinates, Annotation> entry : thisApp.getAnnotations().entrySet()) {
                         Coordinates c = entry.getKey();
                         Annotation a = entry.getValue();
                         if (item.equals(a.getAnnotation())) {
@@ -327,27 +328,27 @@ public class LoginImpl implements VegvisirApplicationDelegator {
                 v = image.justHasView(coords.getX(), coords.getY());
             }
             if (v != null) {
-                if (LoginActivity.annotations.containsKey(coords)) {
+                if (thisApp.getAnnotations().containsKey(coords)) {
                     Log.i("set","case");
-                    LoginActivity.annotations.get(coords).setAnnotation(anno);
+                    thisApp.getAnnotations().get(coords).setAnnotation(anno);
 
                 }
                 else {
-                    LoginActivity.annotations.put(coords,new Annotation(anno));
+                    thisApp.getAnnotations().put(coords,new Annotation(anno));
                 }
             }
             else {
                 Log.i("View","does not exist");
-                LoginActivity.annotations.put(coords,new Annotation(anno));
+                thisApp.getAnnotations().put(coords,new Annotation(anno));
             }
 
             for (FullAnnotation fa: addSetTop) {
                 Coordinates c = fa.getCoords();
                 String annotation = fa.getAnnotation();
 
-                if (!LoginActivity.annotations.containsKey(c)) {
+                if (!thisApp.getAnnotations().containsKey(c)) {
                     Log.i("hashmap","doesn't contain anno");
-                    LoginActivity.annotations.put(c, new Annotation(annotation));
+                    thisApp.getAnnotations().put(c, new Annotation(annotation));
                 }
 
             }
@@ -355,20 +356,18 @@ public class LoginImpl implements VegvisirApplicationDelegator {
 
             for (FullAnnotation fa: removeSetTop) {
                 Coordinates c = fa.getCoords();
-                if (LoginActivity.annotations.containsKey(c)) {
-                    Log.i("removefound", LoginActivity.annotations.get(c).getAnnotation());
-                    LoginActivity.annotations.get(c).setShouldRemove(true);
+                if (thisApp.getAnnotations().containsKey(c)) {
+                    Log.i("removefound", thisApp.getAnnotations().get(c).getAnnotation());
+                    thisApp.getAnnotations().get(c).setShouldRemove(true);
                 }
             }
 
             HashSet<Coordinates> entriesToRemove = new HashSet<>();
 
 
-            Log.i("annosinimpl", LoginActivity.annotations.toString());
+            Log.i("annosinimpl", thisApp.getAnnotations().toString());
             MainActivity.printedOnce = false;
-
         }
-
     }
 
     public void onNewReconciliationFinished(){
