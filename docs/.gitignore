@@ -6,3 +6,4 @@
 *.bbl
 *.blg
 veg_white.pdf
+.DS_Store

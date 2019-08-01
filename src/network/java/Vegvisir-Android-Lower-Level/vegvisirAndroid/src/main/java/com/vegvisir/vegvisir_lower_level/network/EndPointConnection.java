@@ -1,19 +1,18 @@
 package com.vegvisir.vegvisir_lower_level.network;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.Task;
 import com.vegvisir.vegvisir_lower_level.utils.Utils;
 import com.vegvisir.vegvisir_lower_level.network.Exceptions.ConnectionNotAvailableException;
-import com.vegvisir.network.datatype.proto.Identifier;
-import com.vegvisir.network.datatype.proto.Payload;
-import com.vegvisir.common.datatype.proto.Timestamp;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
+import com.vegvisir.network.datatype.proto.Payload;
+import com.vegvisir.network.datatype.proto.Identifier;
+import com.vegvisir.common.datatype.proto.Timestamp;
 
 /**
  * Used for storing states for each connection
@@ -21,6 +20,8 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class EndPointConnection {
 
     private String endPointId;
+
+    private String remoteID;
 
     private java.util.function.Function<Payload, Void> recvHandler;
 
@@ -40,9 +41,12 @@ public class EndPointConnection {
 
     private Boolean flushCondition = false;
 
-    public EndPointConnection(@NonNull String endPointId,
-                              @NonNull Context context,
-                              @NonNull ByteStream stream) {
+
+    public EndPointConnection(String endPointId,
+                              String remoteID,
+                              Context context,
+                              ByteStream stream) {
+        this.remoteID = remoteID;
         this.endPointId = endPointId;
         this.stream = stream;
         this.recvQueue = new LinkedBlockingDeque<>();
@@ -96,6 +100,7 @@ public class EndPointConnection {
      * @return the arrived payload.
      * @throws InterruptedException
      */
+    @Deprecated
     public Payload blockingRecv() throws InterruptedException {
         return recvQueue.take();
     }
@@ -145,6 +150,10 @@ public class EndPointConnection {
 
     public String getEndPointId() {
         return endPointId;
+    }
+
+    public String getRemoteID() {
+        return remoteID;
     }
 
     public void waitUntilFlushAllData() {
