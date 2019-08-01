@@ -28,7 +28,7 @@ class TwoPSet():
 
     def lookup(self, x) -> bool:
         return (x in addSet) and not(x in removeSet)
-    
+   
     def updateSet(self,payload, op, twoPset):
         txn = set({payload})
         if op:

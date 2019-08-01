@@ -7,10 +7,6 @@ from .models import TwoPSet, App #Transaction, TwoPSet, shop, TransactionTuple
 
 from vegvisir.blockchain.block import Transaction, TransactionId
 #from pubsub.VegInstance import VegInstance
-from vegvisir.pub_sub.vegvisir_instance import VirtualVegvisirInstance
-from vegvisir.pub_sub.app_delegator import VirtualVegvisirAppDelegator
-from vegvisir.emulator.emulate_vegvisir import Emulator
-from vegvisir.pub_sub.watch_dog import WatchDog
 from vegvisir.blockchain.blockchain_helpers import (int_to_bytestring, double_to_bytestring,
                                  str_to_bytestring)
 
@@ -37,7 +33,9 @@ from vegvisir.blockchain.blockchain_helpers import (int_to_bytestring, double_to
 
 def index(request):
     
-    show = App.twoP.addSet.difference(App.twoP.removeSet)
+    #show = App.twoP.addSet.difference(App.twoP.removeSet)
+    #show = App.vegInstance.app_delegator.twoP.addSet - App.vegInstance.app_delegator.twoP.removeSet
+    show = App.vegInstance.app_delegator.items
     #print(request.user.username)
 
     return render(request, 'index.html', {'shoplist' : show})
@@ -52,25 +50,30 @@ def add(request):
         operation = 0
     else:
         operation = 1
-    deps = [App.lastTxnID]
-
-    twoP = TwoPSet()
-    twoP.updateSet(item, operation, twoP)
-    #payload = bytes().join( [bytes([operation]), bytes(item, 'utf-8')] )
-    pay = (str(operation) + item)
-    payload = str_to_bytestring(pay)
+    
+    #twoP = TwoPSet()
+    #twoP.updateSet(item, operation, twoP)
+    payload = bytes().join( [bytes([operation]), bytes(item, 'utf-8')] )
+    #pay = int_to_bytestring(operation)
+    #payload = pay + str_to_bytestring(item)
     #push to vegvisir at this pt
     
     userid = request.user.username
+
+    deps = [None]
+    if App.lastTxnID is not None:
+        deps = [App.lastTxnID]
+
     App.vegInstance.add_transaction(App.context, App.topics, payload, deps, 'Alpha')
     #print(item)
-    lastTxnID = 'item'
+    App.lastTxnID = App.vegInstance.last_tx
+
     App.fromAdd = True
     return redirect('index')
     
-def apply(request):
+def apply():
     
-    App.TwoP.updateSet(item, operation, App.TwoP)
+    #App.TwoP.updateSet(item, operation, App.TwoP)
     return redirect('index')
 
 '''

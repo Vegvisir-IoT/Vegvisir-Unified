@@ -36,6 +36,7 @@ class VirtualVegvisirInstance(VegvisirInstance):
         self.device_id = "Device B"
         self.height = 0
         self.subscription_list = {}
+        self.last_tx = None
 
 
     def register_application_delegator(self, context, delegator):
@@ -104,12 +105,13 @@ class VirtualVegvisirInstance(VegvisirInstance):
                                                  dependencies=deps,
                                                  topics=topics,
                                                  payload=payload)
-        print("Topics to add %s\n" % transaction.topics)
-        print("Dependencies to add %s\n" % transaction.dependencies)
+        #print("Topics to add %s\n" % transaction.topics)
+        #print("Dependencies to add %s\n" % transaction.dependencies)
         #transaction.dependencies.extend(dependencies)
         transaction.transactionId.deviceId = self.device_id
         transaction.transactionId.transactionHeight = self.height
-        print("Adding tx %s\n" % transaction.__str__())
+        #print("Adding tx %s\n" % transaction.__str__())
+        self.last_tx = TransactionId(self.height, self.device_id)
         self.device_to_tx_height[device_id] = height + 1 
         self.outgoing_tx_queue.put(transaction)
         print("Putting transaction in the queue, height %s, size %s\n\n" % (self.height, self.outgoing_tx_queue.qsize())) 
@@ -121,11 +123,12 @@ class VirtualVegvisirInstance(VegvisirInstance):
            Check if there are new transactions to be added to a block.
         """
         while True:
-            sleep(5)
+            #sleep(5)
             tx = None
             try:
                 tx = self.outgoing_tx_queue.get_nowait()
                 self.tx_list.append(tx) 
+                #print("THIS FARRRRRRRRRRRRRRRRRRRRRRR \n")
             except queue_is_empty:
                 print("No txs to poll\n")
             
