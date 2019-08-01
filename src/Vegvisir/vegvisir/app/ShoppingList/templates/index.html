@@ -23,14 +23,12 @@
             {% for item in shoplist %}
                 
                     <div>
-                            <form action="remove" method='POST'>
+                            <form action="add" method='POST'>
 
                                     {% csrf_token %}
-                                    {{item.payload}}
-                                    <input type="hidden" name="toremove" value="{{item}}">
-                                    <input type="hidden" name="payloadtoremove" value="{{item.payload}}">
-                                    <input type="hidden" name="txnidtoremove" value="{{item.txnid}}"><br>
-                                    <input type="submit" value="remove">
+                                    {{item}} 
+                                    <input type="hidden" name="item" value="{{item}}">
+                                    <input type="submit" name="remove" value="remove">
                             </form>   
 
                       
@@ -43,8 +41,8 @@
             <form action="add" method='POST'>
 
                 {% csrf_token %}
-                <input placeholder="Add to list" type="text" name="newitem"><br>
-                <input type="submit" value="add">
+                <input placeholder="Add to list" type="text" name="item"><br>
+                <input type="submit" name="add" value="add">
             </form>
 
         {% else %}

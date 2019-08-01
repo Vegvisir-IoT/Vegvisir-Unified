@@ -1,7 +1,7 @@
 from random import randint, uniform
 from time import time, sleep
 
-import vegvisir.protos.vegvisirprotocol_pb2 as vgp
+#import vegvisir.protos.vegvisirprotocol_pb2 as vgp
 from vegvisir.simulator.opcodes import Operation
 from vegvisir.blockchain.block import Block, Transaction
 from vegvisir.emulator.socket_opcodes import (ProtocolStatus as ps,

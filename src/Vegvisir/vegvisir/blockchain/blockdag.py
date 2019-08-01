@@ -3,6 +3,7 @@ from .blockchain_helpers import (int_to_bytestring, double_to_bytestring,
                                  str_to_bytestring)
 from .crypto import sign, hash_data
 from vegvisir.simulator.opcodes import Operation
+from vegvisir.design_pattern.observer import Observable
 
 
 __author__ = "Gloire Rubambiza"
@@ -51,7 +52,7 @@ class GenesisBlock(object):
 
 
 # @brief A class representing the block dag.
-class Blockchain(object):
+class Blockchain(Observable):
 
     def __init__(self, genesis_block, keystore, crdt):
         """
@@ -61,6 +62,7 @@ class Blockchain(object):
             :param keystore: Keystore.
             :param crdt: Crdt.
         """
+        Observable.__init__(self)
         self.blocks = {genesis_block.hash(): genesis_block}
         for cert in genesis_block.certlist:
             keystore.add_certificate(cert)
@@ -123,6 +125,11 @@ class Blockchain(object):
 
         # Update frontier set
         self.frontier_nodes = self.crdt.frontier_set()
+
+        # Update all the observers for the blockchain
+        self.set_changed()
+        self.notify_observers(block)
+
         return True
 
     def _topological_sort_dfs(self, block, blocklist):

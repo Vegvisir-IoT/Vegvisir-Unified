@@ -33,6 +33,8 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
 
     'shoplist.apps.ShoplistConfig',
+    'users.apps.UsersConfig',
+    'pubsub.apps.PubsubConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -82,7 +84,7 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD':'Superboy@514',
         'HOST' : 'localhost',
-        'PORT' : '5432'
+        'PORT' : '5431'
 
     }
 }

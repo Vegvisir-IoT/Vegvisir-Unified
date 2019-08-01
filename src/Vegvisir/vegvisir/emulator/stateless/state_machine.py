@@ -108,9 +108,8 @@ class StateMachine(object):
            v_message.CopyFrom(message.vector) 
            vector_message_type = v_message.WhichOneof("vector_message_type")
            if vector_message_type == "worldView":
-                nstate = self.vector_server.handle_peer_update(
-                                                           v_message.worldView,
-                                                                         state)
+                nstate = self.vector_server.handle_peer_update(v_message,
+                                                               state)
                 if nstate == rstate.LOCAL_DOMINATES:
                     print("Peer is behind...\n")
                 elif nstate == rstate.PROTOCOL_DISAGREEMENT:
