@@ -123,7 +123,7 @@ class VirtualVegvisirInstance(VegvisirInstance):
            Check if there are new transactions to be added to a block.
         """
         while True:
-            #sleep(5)
+            # sleep(5)
             tx = None
             try:
                 tx = self.outgoing_tx_queue.get_nowait()

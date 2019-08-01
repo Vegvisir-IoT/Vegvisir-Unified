@@ -985,3 +985,38 @@ table#change-history tbody th {
 .popup #header {
     padding: 10px 20px;
 }
+
+nav li{
+    display: inline;
+  }
+  
+  nav{
+    text-align: center;
+  }
+  
+  ul{
+    margin:0px;
+  }
+  li {
+    color: black;
+    font-style: normal; /* removes italics */
+    font-weight: normal; /* adds bold */
+    font-family: serif;
+    font-size: 14px;
+  }
+  a:link{
+    text-decoration: none;
+    color: #4a76d6;
+  }
+  P
+  a:visited{
+    color: #727add;
+  }
+  
+  a:hover{
+    color: #5bed85;
+  }
+  
+  a:active{
+    color: #727add;
+  }

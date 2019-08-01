@@ -41,7 +41,7 @@ class TwoPSet():
 class App():
 
     fromAdd = False
-
+    txnhistory=[]
     context = VegvisirAppContext('shopping list', 'a shopping list', set(['costco']))
     topics = set(['costco']) #allow user to select/add new topics
     lastTxnID = None

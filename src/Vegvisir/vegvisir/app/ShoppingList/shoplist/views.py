@@ -35,11 +35,18 @@ def index(request):
     
     #show = App.twoP.addSet.difference(App.twoP.removeSet)
     #show = App.vegInstance.app_delegator.twoP.addSet - App.vegInstance.app_delegator.twoP.removeSet
-    show = App.vegInstance.app_delegator.items
+    show = App.txnhistory
     #print(request.user.username)
 
     return render(request, 'index.html', {'shoplist' : show})
+def apply(request):
+    
+    #show = App.twoP.addSet.difference(App.twoP.removeSet)
+    #show = App.vegInstance.app_delegator.twoP.addSet - App.vegInstance.app_delegator.twoP.removeSet
+    show = App.vegInstance.app_delegator.items
+    #print(request.user.username)
 
+    return render(request, 'apply.html', {'shoplist' : show})
 
 def add(request):
 
@@ -48,11 +55,16 @@ def add(request):
     #print(item)
     if 'remove' in request.POST:
         operation = 0
+        App.txnhistory.append(str(item)+': '+'was removed')
     else:
         operation = 1
+        App.txnhistory.append(str(item)+': '+'was added')
+
+    
     
     #twoP = TwoPSet()
     #twoP.updateSet(item, operation, twoP)
+    
     payload = bytes().join( [bytes([operation]), bytes(item, 'utf-8')] )
     #pay = int_to_bytestring(operation)
     #payload = pay + str_to_bytestring(item)
@@ -71,10 +83,10 @@ def add(request):
     App.fromAdd = True
     return redirect('index')
     
-def apply():
+# def apply():
     
-    #App.TwoP.updateSet(item, operation, App.TwoP)
-    return redirect('index')
+#     #App.TwoP.updateSet(item, operation, App.TwoP)
+#     return redirect('index')
 
 '''
 def add(request):

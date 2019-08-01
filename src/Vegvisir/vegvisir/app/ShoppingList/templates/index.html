@@ -9,6 +9,16 @@
     <title>Shopping List</title>
 </head>
 <body>
+        <nav>
+
+                <ul>
+          
+                  <!-- <li><a href="/">Home</a></li> -->
+                  <li><a href="apply">Verified</a></li>
+          
+                </ul>
+          
+              </nav>
     <center>
     <h1 style="margin-top: 5%; margin-bottom: 2%;">Shopping List</h1>
     </center>
@@ -23,17 +33,7 @@
             {% for item in shoplist %}
                 
                     <div>
-                            <form action="add" method='POST'>
-
-                                    {% csrf_token %}
-                                    {{item}} 
-                                    <input type="hidden" name="item" value="{{item}}">
-                                    <input type="submit" name="remove" value="remove">
-                            </form>   
-
-                      
-                    
-                    
+                                  <p> {{item}}  </p> 
                     </div>
                
             {% endfor %}
