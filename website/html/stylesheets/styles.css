@@ -1,0 +1,101 @@
+body {
+    font-family: Geneva, Verdana, Tahoma, sans-serif;
+    font-size: 0.9rem;
+    font-weight: 400;
+    line-height: 1;
+    background-color: FAEBD7
+}
+
+a:link {
+    color: red;
+}
+
+a:visited {
+    color:grey
+}
+
+a:active {
+    color: blue
+}
+
+div.main-div {
+    max-width: 800px;
+    margin: auto;
+}
+
+div.cornell-banner {
+    margin: auto;
+    background-color: B31B1B
+}
+
+div.grid-container {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: 120;
+    justify-content: space-evenly
+}
+
+div.people {
+    font-size: 15;
+    font-family: inherit;
+}
+
+div.white-containers {
+    border: 5px bold black;
+    background: white
+}
+
+div.slide-container {
+    height: 40px;
+}
+
+div.demo-container {
+    height: 180px;
+}
+
+div.publication-container {
+    height: 50px;
+}
+
+/* Style for paragraphs */
+p.title {
+    max-width: 600px;
+    font-size: 20;
+    font-family: inherit;
+    align-self: center
+}
+
+p.body_content {
+    align-content: justify
+}
+
+/* page-container sets its minimum height to 100% of the viewport */
+#page-container {
+    position: relative;
+    min-height: 100vh;
+}
+
+/* Style for content wrap */
+/* Given same padding as height of footer to ensure that exactly enough
+   space is left for the footer inside the container they are both in.
+*/
+#content-wrap {
+    padding-bottom: 2.5rem /* Footer height */
+}
+
+#footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 2.5rem; /* Footer height */
+    background-color: lightgray;
+    font: 10;
+    text-align: center;
+}
+
+.image-center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
