@@ -34,7 +34,7 @@ Has the views.py that gets user info and displays, models.py that initializes th
 
 **'users' app**
 deals with registering, logining in, and logging out
-
+ 
 ## HTML files and static files
 '*app/ShoppingList/templates*' contains the html templates
 
