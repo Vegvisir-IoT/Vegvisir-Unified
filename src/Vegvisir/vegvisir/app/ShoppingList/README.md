@@ -6,11 +6,11 @@ The command to use is: *python manage.py runserver*
 
 Once you have run this command, if you have no errors, you should see something like this:
 
-*System check identified no issues (0 silenced).
+System check identified no issues (0 silenced).
 August 02, 2019 - 18:12:11
 Django version 2.2.2, using settings 'ShoppingList.settings'
 Starting development server at http://127.0.0.1:8000/
-Quit the server with CONTROL-C.*
+Quit the server with CONTROL-C.
 
 Then you can view this app in your browser at '*localhost:8000*' or '*127.0.0.1:8000*'
 
