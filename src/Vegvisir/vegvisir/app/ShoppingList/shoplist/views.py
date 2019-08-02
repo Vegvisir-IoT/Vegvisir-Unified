@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth.models import User, auth
 
-from .models import TwoPSet, App #Transaction, TwoPSet, shop, TransactionTuple
+from .models import App
 
 from vegvisir.blockchain.block import Transaction, TransactionId
 #from pubsub.VegInstance import VegInstance
@@ -11,165 +11,60 @@ from vegvisir.blockchain.blockchain_helpers import (int_to_bytestring, double_to
                                  str_to_bytestring)
 
 # Create your views here.
-
-#def login(request):
- #   return redirect('/users/login')
-'''
-    if(request.method == 'POST'):
-        userid = request.POST['userid']
-
-        user = auth.authenticate(username = userid)
-
-        if user is not None:
-            auth.login(request, user)
-            return redirect('/')
-        else:    
-            messages.info(request, 'invalid credentials')
-            return redirect('login.html')
-
-    else:
-        return render(request, 'login.html')
-'''
-
 def index(request):
+    '''
+        Renders view with all valid transactions attempted by the user.
+        
+        :param request: an html request
+    '''
+    show = App.txn_history
     
-    #show = App.twoP.addSet.difference(App.twoP.removeSet)
-    #show = App.vegInstance.app_delegator.twoP.addSet - App.vegInstance.app_delegator.twoP.removeSet
-    show = App.txnhistory
-    #print(request.user.username)
-
     return render(request, 'index.html', {'shoplist' : show})
+
 def apply(request):
-    
+    '''
+        Renders view of transactions that have been pushed down to the blockchain, 
+        been witnessed, and applied.
+
+        :param request: an html request
+    '''
     #show = App.twoP.addSet.difference(App.twoP.removeSet)
     #show = App.vegInstance.app_delegator.twoP.addSet - App.vegInstance.app_delegator.twoP.removeSet
     show = App.vegInstance.app_delegator.items
-    #print(request.user.username)
-
+    
     return render(request, 'apply.html', {'shoplist' : show})
 
 def add(request):
+    '''
+        Sends a input from user to pub-sub where it will be turned into a transaction 
+        and send down to the blockchain.
 
-    #filling in transaction fields
+        Also adds user input into the list of transactions they have made so far.
+
+        :param request: an html request
+    '''
+    #get item name and operation from POST request
     item = str(request.POST['item'])
-    #print(item)
+    
     if 'remove' in request.POST:
         operation = 0
-        App.txnhistory.append(str(item)+': '+'was removed')
+        App.txn_history.append(str(item)+': '+'was removed')
     else:
-        operation = 1
-        App.txnhistory.append(str(item)+': '+'was added')
+        alr_added_deleted = App.txn_history.count(item + ': was added') ==  App.txn_history.count(item + ': was removed')
+        if item + ': was added' not in App.txn_history or alr_added_deleted:
+            operation = 1
+            App.txn_history.append(str(item)+': '+'was added')
+        else: #item is added before it is removed = nop
+            return redirect('index')
+  
+    payload = bytes().join( [bytes([operation]), bytes(item, 'utf-8')] ) #turns operation and item name into bytestring
+    
+    #userid = request.user.username
 
-    
-    
-    #twoP = TwoPSet()
-    #twoP.updateSet(item, operation, twoP)
-    
-    payload = bytes().join( [bytes([operation]), bytes(item, 'utf-8')] )
-    #pay = int_to_bytestring(operation)
-    #payload = pay + str_to_bytestring(item)
-    #push to vegvisir at this pt
-    
-    userid = request.user.username
-
-    deps = [None]
-    if App.lastTxnID is not None:
-        deps = [App.lastTxnID]
+    deps = [App.last_tx_id]
 
     App.vegInstance.add_transaction(App.context, App.topics, payload, deps, 'Alpha')
-    #print(item)
-    App.lastTxnID = App.vegInstance.last_tx
+    App.last_tx_id = App.vegInstance.last_tx #gets txid of tx that was just added
 
-    App.fromAdd = True
     return redirect('index')
-    
-# def apply():
-    
-#     #App.TwoP.updateSet(item, operation, App.TwoP)
-#     return redirect('index')
-
-'''
-def add(request):
-
-    #filling in transaction fields
-    newTxn = Txn()
-    newTxn.payload = str(request.POST['newitem'])
-    newTxn.operation = 1
-    App.txnHeight = App.txnHeight+1    
-    newTxn.txnid = TransactionId(App.txnHeight, App.deviceID)
-    
-    newTxn.pay2 = [App.lastTxnID]
-    
-    
-    App.lastTxnID = newTxn.txnid
-
-    App.things += [newTxn]
-    #push to vegvisir at this pt
-    return redirect('index')
-    
-def remove(request):
-    #filling in transaction fields
-    newTxn = Txn()
-    newTxn.payload = str(request.POST['payloadtoremove'])
-    newTxn.operation = 0
-    App.txnHeight = App.txnHeight+1
-    newTxn.txnid = TransactionId(App.txnHeight, App.deviceID)
-    
-    newTxn.pay2 = [App.lastTxnID]
-    
-    App.lastTxnID = newTxn.txnid
-
-    App.things += [newTxn]
-    #push to vegvisir at this pt
-    return redirect('index')
-
-def index(request):
-   
-    # Applist = Mock.Applist
-    myShop = shop()
-    items = myShop.display()
-    for i in items:
-        print(i.txnid)
-    return render(request, 'index.html', {'shoplist' : items})
-
-def add(request):
-    newTxn = Transaction()
-    newTxn.payload = str(request.POST['newitem'])
-    newTxn.TransactionID = shop.txns
-    #set timestamp -- get system time
-
-    #push transaction to blockchain
-    #shoplist = shoplist + newitem
-    info = shop.info
-    if newTxn.payload not in info:
-        TwoP = TwoPSet()
-        TwoP.addSet.add( (newTxn.TransactionID) )
-        #newTxn.deps += [shop.lastOp]
-        info.update({newTxn.payload: TwoP})
-        shop.lastOp = newTxn.TransactionID
-        shop.txns+=1
-    else: 
-        TwoP = info.get(newTxn.payload)
-        #newTxn.deps += [shop.lastOp]
-        if len(TwoP.removeSet) != 0:
-            info.get(newTxn.payload).addSet.add((newTxn.TransactionID))
-            shop.txns+=1
-    #Apply(newTxn) #because only 1 witness is necessary
-
-    
-    return redirect('index')
-
-def remove(request):
-    info = shop.info
-    item = request.POST['payloadtoremove']
-    txnid = int(request.POST['txnidtoremove'])
-    TwoP = info.get(item)
-    #print(info)
-    TwoP.removeSet.add(txnid)
-    return redirect('index')
-
-
-def Apply(newTxn):
-    newTxn.isOn = not (num % 2)
-    newTxn.save()
-'''
+ 

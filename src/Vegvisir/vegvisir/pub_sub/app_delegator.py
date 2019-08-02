@@ -12,24 +12,32 @@ class VirtualVegvisirAppDelegator(VegvisirAppDelegator):
         self.items = []
 
     def apply_transaction(self, topics, payload, tx_id, deps):
-        for topic in topics:
-            print("Interesting topic %s \n " % topic)
-        
+        '''
+            Breaks payload up into str item and int operation (payload[0]).
+
+            Adds this str item to the self.items which is a list of applied transactions
+            that the app will display.
+            
+            Uses payload to update self.twoP
+
+            :param topics: set of str topics app is interested in
+            :param payload: bytestring of app specific info
+            :param tx_id: TransactionId of this transaction
+            :param deps: set of TransactionIds of transactions this transaction depends on
+        '''
         item = payload[1:].decode("utf-8")
         print("ITEM TO ADD ---- %s" % item)
         print(payload[0])
-        # operation = int.from_bytes(payload[0], byteorder="big")
-        # print("OPERATIONSSS ---- type %s -----" % operation)
-        self.twoP.updateSet(item, payload[0], self.twoP)
         
-        if item not in self.twoP.removeSet and item in self.twoP.addSet:
+        self.twoP.updateSets(item, payload[0])
+        difference = self.twoP.addSet - self.twoP.removeSet
+        if item in difference and item not in self.items:
             self.items += [item]
 
+        #gets rid of duplicates from list
         for item in self.items:
             if item in self.twoP.removeSet or item not in self.twoP.addSet:
                 self.items.remove(item)
-        #put every item in list and if item not in set difference remove from list, so display not random
-        #App.TwoP.updateSet(item, operation, App.TwoP)
         return
 
 class TwoPSet():
@@ -43,12 +51,17 @@ class TwoPSet():
     def lookup(self, x) -> bool:
         return (x in addSet) and not(x in removeSet)
     
-    def updateSet(self,payload, op, twoPset):
+    def updateSets(self, payload, op):
+        '''
+            Updates add and remove sets of this 2P set with this payload based on the operation
+            :param payload: str
+            :param op: int
+        '''
         txn = set({payload})
         if op:
-            twoPset.addSet = twoPset.addSet.union(txn)
-            twoPset.removeSet = twoPset.removeSet.difference(txn)
+            self.addSet = self.addSet.union(txn)
+            self.removeSet = self.removeSet.difference(txn)
         else:
-            twoPset.addSet = twoPset.addSet.difference(txn)
-            twoPset.removeSet = twoPset.removeSet.union(txn)
+            self.addSet = self.addSet.difference(txn)
+            self.removeSet = self.removeSet.union(txn)
             
