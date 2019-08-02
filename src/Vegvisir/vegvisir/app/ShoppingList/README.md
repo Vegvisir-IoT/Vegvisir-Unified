@@ -19,7 +19,7 @@ If you type "*python manage.py*" it will give you a list of other commands you c
 
 
 
-#General
+# General
 
 ## ShoppingList is the main app that everything runs from. 
 It contains settings.py:
