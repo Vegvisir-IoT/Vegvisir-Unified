@@ -17,12 +17,12 @@ class CabData(object):
         self.filename = self.data_path / (filename)
         self.cab_user_names = []
         self.cab_struct = {}
-    
+
     def cab_triage(self, update_lower_bound, num_users):
         """ Find cabs that fit the limits for the number of updates and
             number of users. Limit users to 200 to comply with MacOS
             file descriptor limits.
-            
+
             :param update_lower_bound: An int.
             :param num_users: An int.
         """
@@ -86,7 +86,7 @@ class CabData(object):
                     line = fd.readline()
                     if not line:
                         print("DONE READING FROM CAB %s!\n" % cab_data[0])
-        
+
         fd = open(output, "w+")
         fd.write("max_lat %s\n" % max_lat)
         fd.write("min_lat %s\n" % min_lat)

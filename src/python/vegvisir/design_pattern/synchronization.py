@@ -29,4 +29,3 @@ def synchronized(method):
 class Synchronization:
     def __init__(self):
         self.mutex = threading.RLock()
-    
