@@ -14,6 +14,7 @@ import "google/protobuf/timestamp.proto";
 message Hash {
   oneof hashalgorithm_oneof {
     bytes sha3 = 1;
+    bytes sha256 = 2;
   }
 }
 
