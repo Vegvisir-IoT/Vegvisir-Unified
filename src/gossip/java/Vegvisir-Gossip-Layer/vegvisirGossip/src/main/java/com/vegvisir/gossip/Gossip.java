@@ -1,6 +1,7 @@
 package com.vegvisir.gossip;
 
 import com.vegvisir.gossip.adapter.NetworkAdapter;
+import com.vegvisir.gossip.adapter.NetworkAdapterManager;
 import com.vegvisir.network.datatype.proto.Payload;
 
 import java.util.Collections;
@@ -16,7 +17,7 @@ public class Gossip {
     /* Key is peer id and value the meta data for that peer */
     private Map<String, GossipConnection> connections;
 
-    NetworkAdapter adapter;
+    NetworkAdapterManager adapterManager;
 
     Random rnd = new Random(new Date().getTime() + this.hashCode());
 
@@ -24,11 +25,11 @@ public class Gossip {
      * Constructor or Gossip layer
      * @param adapter an adapter for the underlying network layer. This could be an adapter for android, TCP or etc.
      */
-    public Gossip(NetworkAdapter adapter) {
+    public Gossip(NetworkAdapterManager adapter) {
         connections = new HashMap<>();
-        this.adapter = adapter;
-        this.adapter.onReceiveBlock(this::onNewPayload);
-        this.adapter.onConnectionLost(this::onLostConnection);
+        this.adapterManager = adapter;
+        this.adapterManager.onReceiveBlock(this::onNewPayload);
+        this.adapterManager.onConnectionLost(this::onLostConnection);
     }
 
     /**
@@ -36,7 +37,7 @@ public class Gossip {
      * @return
      */
     public String randomPickAPeer() {
-        List<String> view = adapter.getAvailableConnections(); // This call is blocking
+        List<String> view = adapterManager.getAvailableConnections(); // This call is blocking
         Collections.shuffle(view, rnd);
         String next;
         for (int i = 0; i < view.size(); i ++)
@@ -56,7 +57,7 @@ public class Gossip {
      * @return
      */
     public List<String> getNearbyView() {
-        return adapter.getNearbyDevices();
+        return adapterManager.getNearbyDevices();
     }
 
     /**
@@ -66,7 +67,7 @@ public class Gossip {
      * @return true if remote side is still connected.
      */
     public boolean sendToPeer(String id, Payload payload) {
-        boolean alive = adapter.sendBlock(id, payload);
+        boolean alive = adapterManager.sendBlock(id, payload);
         if (!alive)
             connections.get(id).disconnect();
         return alive;
@@ -123,7 +124,7 @@ public class Gossip {
      * @param id
      */
     public void disconnect(String id) {
-        adapter.disconnect(id);
+        adapterManager.disconnect(id);
 
     }
 

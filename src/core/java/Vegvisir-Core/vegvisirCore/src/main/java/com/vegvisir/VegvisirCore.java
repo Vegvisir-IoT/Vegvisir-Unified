@@ -16,6 +16,7 @@ import com.vegvisir.gossip.*;
 import com.vegvisir.gossip.adapter.NetworkAdapter;
 import com.isaacsheff.charlotte.proto.Block;
 import com.vegvisir.core.datatype.proto.Block.Transaction;
+import com.vegvisir.gossip.adapter.NetworkAdapterManager;
 
 
 import java.security.KeyPair;
@@ -71,18 +72,18 @@ public class VegvisirCore implements Runnable {
     /**
      * Constructor for a Core instance. Core contains a block dag for storing all blocks; a gossip layer to disseminate new blocks.
      * And a protocol blueprint for doing reconciliation.
-     * @param adapter an adapter for network layer. This could be an adapter for TCP or Google Nearby.
+     * @param adapterManager an adapter for network layer. This could be an adapter for TCP or Google Nearby.
 //     * @param protocol a reconciliation protocol class.
      * @param genesisBlock
      */
-    public VegvisirCore(NetworkAdapter adapter,
+    public VegvisirCore(NetworkAdapterManager adapterManager,
 //                        Class<? extends ReconciliationDispatcher> protocol,
                         DataManager manager,
                         NewBlockListener listener,
                         Block genesisBlock,
                         KeyPair keyPair,
                         String userid) {
-        gossipLayer = new Gossip(adapter);
+        gossipLayer = new Gossip(adapterManager);
         this.manager = manager;
         transactionHeight = manager.loadTransactionHeight();
 
@@ -103,7 +104,7 @@ public class VegvisirCore implements Runnable {
         service = Executors.newCachedThreadPool();
         transactionBuffer = new HashSet<>();
         disconnectHandlers = new HashMap<>();
-        adapter.onConnectionLost(this::onLostConnection);
+        adapterManager.onConnectionLost(this::onLostConnection);
     }
 
 //    public VegvisirCore(NetworkAdapter adapter, Class<ReconciliationDispatcher> protocol) {

@@ -12,6 +12,7 @@ import com.vegvisir.core.blockdag.ReconciliationEndListener;
 import com.vegvisir.core.config.Config;
 import com.vegvisir.core.datatype.proto.Block.Transaction;
 import com.vegvisir.core.reconciliation.VectorClockProtocol;
+import com.vegvisir.gossip.adapter.NetworkAdapterManager;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
 import com.vegvisir.pub_sub.VegvisirApplicationDelegator;
@@ -94,7 +95,9 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
         deviceID = Config.pk2str(keyPair.getPublic());
         dataManager = VegvisirDataManager.getDataManager(ctx);
         backupCount = dataManager.loadAppCount();
-        core = new VegvisirCore(new AndroidAdapter(ctx, deviceID),
+        NetworkAdapterManager networkAdapterManager = new NetworkAdapterManager();
+        networkAdapterManager.registerAdapter("GoogleNearBy", 100, new AndroidAdapter(ctx, deviceID));
+        core = new VegvisirCore(networkAdapterManager,
 //                VectorClockProtocol.class,
                 dataManager,
                 this,
