@@ -68,7 +68,7 @@ public class EndPointConnection {
                 sendingTasks.remove(t);
                 synchronized (flushLock) {
                     if (sendingTasks.isEmpty() && this.flushCondition) {
-                        sendingTasks.notify();
+                        flushLock.notify();
                         flushCondition = false;
                     }
                 }
@@ -77,7 +77,7 @@ public class EndPointConnection {
                 sendingTasks.remove(task);
                 synchronized (flushLock) {
                     if (sendingTasks.isEmpty() && this.flushCondition) {
-                        sendingTasks.notify();
+                        flushLock.notify();
                         flushCondition = false;
                     }
                 }
@@ -160,11 +160,14 @@ public class EndPointConnection {
             synchronized (flushLock) {
                 if (!sendingTasks.isEmpty()) {
                     flushCondition = true;
-                    sendingTasks.wait();
+                    flushLock.wait();
                 }
             }
         } catch (InterruptedException ex) {
-
+            synchronized (flushLock) {
+                flushCondition = false;
+            }
+            ex.printStackTrace();
         }
     }
 }

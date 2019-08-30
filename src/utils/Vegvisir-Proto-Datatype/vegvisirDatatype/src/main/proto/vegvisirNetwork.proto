@@ -98,3 +98,10 @@ message ConnectionLostException {
   string error_message = 1;
   Identifier remote_id = 2;
 }
+
+message UDPAdvertisingMessage {
+    string ip_address = 4;
+    int32 tcp_port = 1;
+    string device_id = 2;
+    string protocol_secret = 3;
+}

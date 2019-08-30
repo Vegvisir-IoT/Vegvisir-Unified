@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -100,7 +101,7 @@ public class NetworkAdapterManager implements NetworkAdapter {
             }
             if (adapterName == null) {
                 try {
-                    wait(1000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException ex) {
                     return null;
                 }

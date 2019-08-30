@@ -31,6 +31,7 @@ public class HandshakeHandler {
                 remoteProtocols.retainAll(protocols);
                 List<Handshake.ProtocolVersion> sorted = new ArrayList<>(remoteProtocols);
                 Collections.sort(sorted);
+                Collections.reverse(sorted);
                 Set<Handshake.ProtocolVersion> resp = sorted.size() > 0 ? Collections.singleton(sorted.get(0)) : Collections.emptySet();
                 Handshake.HandshakeMessage res = Handshake.HandshakeMessage.newBuilder()
                         .addAllSpokenVersions(resp)
@@ -72,7 +73,11 @@ public class HandshakeHandler {
         synchronized (lock) {
             if (!locked) {
                 locked = true;
-                lock.wait();
+                try {
+                    lock.wait();
+                } catch (InterruptedException ex) {
+                    locked = false;
+                }
             }
         }
     }

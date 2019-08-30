@@ -132,10 +132,12 @@ public class VectorClockProtocol implements ReconciliationProtocol {
                         .setLocalView(clock)
                         .build())
                 .build();
+        System.err.println("MINE:\n" + clock.getBody().getClocksMap());
         config.send(message);
     }
 
     private void computeSendBlocks(Vector.VectorClock remoteVector) {
+        System.err.println("REMOTE:\n" + remoteVector.getBody().getClocksMap());
         dag.updateVCForDevice(config.getRemoteId(), remoteVector);
         Iterable<com.isaacsheff.charlotte.proto.Block> blocks =
                 dag.findMissedBlocksByVectorClock(remoteVector);
@@ -150,6 +152,7 @@ public class VectorClockProtocol implements ReconciliationProtocol {
                                                 .addAllBlocksToAdd(blocks)
                                                 .build()
                                 )
+                                .setType(Vector.VectorMessage.MessageType.BLOCKS)
                                 .build()
                 )
                 .build();

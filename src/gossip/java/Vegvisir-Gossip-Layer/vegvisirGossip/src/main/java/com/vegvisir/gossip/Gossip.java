@@ -67,6 +67,7 @@ public class Gossip {
      * @return true if remote side is still connected.
      */
     public boolean sendToPeer(String id, Payload payload) {
+        System.err.println("Send data to " + id);
         boolean alive = adapterManager.sendBlock(id, payload);
         if (!alive)
             connections.get(id).disconnect();
@@ -144,6 +145,9 @@ public class Gossip {
      * @param payload
      */
     private void onNewPayload(String id, Payload payload) {
+        System.err.println("Received data from " + id);
+        if (!connections.containsKey(id))
+            connections.put(id, new GossipConnection(id));
         connections.get(id).recvPayload(payload);
     }
 }
