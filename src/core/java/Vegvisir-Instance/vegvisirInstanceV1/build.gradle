@@ -35,4 +35,5 @@ dependencies {
     implementation project(':vegvisirGossip')
     implementation project(':vegvisirAndroid')
     implementation project(':vegvisirDatatype')
+    implementation project(':vegvisirTCP')
 }

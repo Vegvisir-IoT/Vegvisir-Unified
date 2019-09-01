@@ -1,8 +1,8 @@
 package com.vegvisir.vegvisir_lower_level.utils;
 
-import com.vegvisir.common.datatype.proto.LocationRequestResponse;
+import com.vegvisir.core.datatype.proto.LocationRequestResponse;
+import com.vegvisir.core.datatype.proto.Timestamp;
 import com.vegvisir.network.datatype.proto.Payload;
-import com.vegvisir.common.datatype.proto.Timestamp;
 
 import java.util.Date;
 

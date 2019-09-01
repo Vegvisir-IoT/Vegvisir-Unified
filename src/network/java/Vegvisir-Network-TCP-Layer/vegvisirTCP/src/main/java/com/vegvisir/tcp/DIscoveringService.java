@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.concurrent.LinkedBlockingDeque;
 import com.vegvisir.network.datatype.proto.UDPAdvertisingMessage;
 
-public class DIscoveringService {
+public class DiscoveringService {
 
 
     private MulticastSocket socket;
@@ -24,7 +24,7 @@ public class DIscoveringService {
 
     private byte[] buf = new byte[1024];
 
-    public DIscoveringService(Config config) throws IOException {
+    public DiscoveringService(Config config) throws IOException {
         this.config = config;
         socket = new MulticastSocket(config.getUdpPort());
         multicastGroupAddress = InetAddress.getByName(config.getMulticastGroupName());

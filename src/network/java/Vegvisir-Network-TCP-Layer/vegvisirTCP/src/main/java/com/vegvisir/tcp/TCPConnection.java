@@ -14,12 +14,12 @@ public class TCPConnection {
 
     private Socket socket;
     private String remoteID;
-    private LinkedBlockingDeque<Payload> payloads;
+    private LinkedBlockingDeque<Pair<String, Payload>> payloads;
 
-    public TCPConnection(String remoteID, Socket socket) {
+    public TCPConnection(String remoteID, Socket socket, LinkedBlockingDeque<Pair<String, Payload>> payloadBuffer) {
         this.remoteID = remoteID;
         this.socket = socket;
-        this.payloads = new LinkedBlockingDeque<>();
+        this.payloads = payloadBuffer;
         pool.submit(this::run);
     }
 
@@ -27,21 +27,13 @@ public class TCPConnection {
         while (true) {
             try {
                 Payload payload = Payload.parseDelimitedFrom(socket.getInputStream());
-                payloads.add(payload);
+                payloads.add(new Pair<>(remoteID, payload));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         }
     }
 
-    /**
-     * [BLOCKING]
-     * @return
-     * @throws InterruptedException
-     */
-    public Payload read() throws InterruptedException {
-        return payloads.take();
-    }
 
     public void write(Payload payload) throws IOException {
         payload.writeDelimitedTo(socket.getOutputStream());
@@ -56,5 +48,17 @@ public class TCPConnection {
     public void write(com.vegvisir.network.datatype.proto.UDPAdvertisingMessage message) throws IOException {
         message.writeDelimitedTo(socket.getOutputStream());
         socket.getOutputStream().flush();
+    }
+
+    public boolean isSocketAvailable() {
+        return socket.isConnected();
+    }
+
+    public void close() {
+        try {
+            socket.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 }

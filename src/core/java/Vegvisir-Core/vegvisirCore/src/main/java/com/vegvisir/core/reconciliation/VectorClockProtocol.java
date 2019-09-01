@@ -1,17 +1,9 @@
 package com.vegvisir.core.reconciliation;
 
-import com.vegvisir.core.blockdag.BlockDAG;
 import com.vegvisir.core.blockdag.BlockDAGv2;
-import com.vegvisir.core.blockdag.ReconciliationEndListener;
-import com.vegvisir.core.datatype.proto.Block;
-import com.vegvisir.common.datatype.proto.ControlSignal;
-import com.vegvisir.network.datatype.proto.Payload;
 import com.vegvisir.network.datatype.proto.VegvisirProtocolMessage;
 import vegvisir.proto.Handshake;
 import vegvisir.proto.Vector;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class VectorClockProtocol implements ReconciliationProtocol {
 

@@ -1,15 +1,9 @@
 package com.vegvisir.core.reconciliation;
 
-import com.vegvisir.common.datatype.proto.ControlSignal;
 import com.vegvisir.core.blockdag.BlockDAG;
-import com.vegvisir.core.blockdag.ReconciliationEndListener;
-import com.vegvisir.network.datatype.proto.Payload;
 import com.vegvisir.network.datatype.proto.VegvisirProtocolMessage;
 import vegvisir.proto.Handshake;
 import vegvisir.proto.Sendall;
-
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Reconciliation protocol implementation version 1.

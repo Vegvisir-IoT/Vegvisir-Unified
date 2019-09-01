@@ -13,7 +13,7 @@ public class UDPServiceTest {
         Config config = new Config("Device", 10012, "230.0.0.1");
         try {
             AdvertisingService advertisingService = new AdvertisingService(config);
-            DIscoveringService dIscoveringService = new DIscoveringService(config);
+            DiscoveringService dIscoveringService = new DiscoveringService(config);
             TCPService tcpService = new TCPService(config);
             tcpService.startTCPServer();
             advertisingService.startAdvertising();
