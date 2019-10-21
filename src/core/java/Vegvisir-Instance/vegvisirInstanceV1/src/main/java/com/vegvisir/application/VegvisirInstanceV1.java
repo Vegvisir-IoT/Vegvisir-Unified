@@ -97,6 +97,11 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
         backupCount = dataManager.loadAppCount();
         NetworkAdapterManager networkAdapterManager = new NetworkAdapterManager();
         networkAdapterManager.registerAdapter("GoogleNearBy", 100, new AndroidAdapter(ctx, deviceID));
+        try {
+            networkAdapterManager.registerAdapter("TCP", 200, new TCPAdapter(deviceID, 8500));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
         core = new VegvisirCore(networkAdapterManager,
 //                VectorClockProtocol.class,
                 dataManager,

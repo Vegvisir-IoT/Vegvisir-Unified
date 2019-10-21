@@ -30,6 +30,13 @@ public class NetworkAdapterManager implements NetworkAdapter {
         service = Executors.newCachedThreadPool();
     }
 
+
+    /**
+     *
+     * @param name
+     * @param priority the higher number will get higher priority
+     * @param adapter
+     */
     public void registerAdapter(String name, int priority, NetworkAdapter adapter) {
         adapters.put(name, adapter);
         priorities.put(name, priority);
