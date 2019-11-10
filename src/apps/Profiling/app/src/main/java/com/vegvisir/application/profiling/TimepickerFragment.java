@@ -45,7 +45,7 @@ public class TimepickerFragment extends DialogFragment implements TimePickerDial
         now.setHours(this.hourOfDay);
         now.setMinutes(this.minute);
         now.setSeconds(0);
-        this.timetext.setText(now.toString());
+        this.timetext.setText(java.text.DateFormat.getTimeInstance().format(now));
     }
 
     public int getHourOfDay() {

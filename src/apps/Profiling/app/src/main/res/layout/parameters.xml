@@ -102,7 +102,7 @@
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/editText2"
+                android:id="@+id/blockSize"
                 android:layout_width="0px"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -127,7 +127,7 @@
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/editText4"
+                android:id="@+id/blockRate"
                 android:layout_width="0px"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -153,7 +153,7 @@
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/editText6"
+                android:id="@+id/distance"
                 android:layout_width="0px"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -171,6 +171,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:onClick="startExperiment"
                 android:text="Start" />
 
             <Button

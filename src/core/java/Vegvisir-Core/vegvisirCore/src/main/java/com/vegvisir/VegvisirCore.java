@@ -17,6 +17,7 @@ import com.vegvisir.gossip.adapter.NetworkAdapter;
 import com.isaacsheff.charlotte.proto.Block;
 import com.vegvisir.core.datatype.proto.Block.Transaction;
 import com.vegvisir.gossip.adapter.NetworkAdapterManager;
+import com.vegvisir.util.profiling.VegvisirStatsCollector;
 
 
 import java.security.KeyPair;
@@ -52,7 +53,6 @@ public class VegvisirCore implements Runnable {
 
     private ReconciliationEndListener reconciliationEndListener;
 
-
     /**
      * A sequence counter for transactions on this device.
      * TODO: move this to config?
@@ -67,6 +67,9 @@ public class VegvisirCore implements Runnable {
     private ExecutorService service;
 
     private static final Logger logger = Logger.getLogger(VegvisirCore.class.getName());
+
+    /* Collect stats for each reconciliation, including duration and bytes sent and throughput */
+    private VegvisirStatsCollector statsCollector;
 
 
     /**
@@ -105,6 +108,7 @@ public class VegvisirCore implements Runnable {
         transactionBuffer = new HashSet<>();
         disconnectHandlers = new HashMap<>();
         adapterManager.onConnectionLost(this::onLostConnection);
+        statsCollector = VegvisirStatsCollector.getInstance();
     }
 
 //    public VegvisirCore(NetworkAdapter adapter, Class<ReconciliationDispatcher> protocol) {
@@ -140,6 +144,7 @@ public class VegvisirCore implements Runnable {
                  * This can make it easy to update protocol version */
                 service.submit(() -> {
                     try {
+                        statsCollector.logReconciliationStartEvent(remoteId);
                         gossipLayer.linkReconciliationInstanceWithConnection(remoteId, Thread.currentThread());
                         ReconciliationDispatcher dispatcher = new ReconciliationDispatcher(gossipLayer, remoteId, dag);
                         disconnectHandlers.put(remoteId, dispatcher);
@@ -150,6 +155,7 @@ public class VegvisirCore implements Runnable {
                         if (disconnectHandlers.containsKey(remoteId)) {
                             disconnectHandlers.remove(remoteId);
                         }
+                        statsCollector.logReconciliationEndEvent(remoteId);
                         if (reconciliationEndListener != null)
                             reconciliationEndListener.onReconciliationEnd();
                     }

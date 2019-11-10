@@ -10,5 +10,4 @@
         android:name="com.vegvisir.application.profiling.MainActivity"
         android:label="activity_main"
         tools:layout="@layout/activity_main" />
-    <fragment android:id="@+id/placeholder" />
 </navigation>

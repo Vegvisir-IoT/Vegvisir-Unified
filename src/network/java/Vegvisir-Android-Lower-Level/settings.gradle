@@ -1,2 +1,3 @@
-include ':vegvisirAndroid', ':vegvisirDatatype'
+include ':vegvisirAndroid', ':vegvisirDatatype', ':vegvisirEventLogging'
 project(':vegvisirDatatype').projectDir = new File('deps/vegvisirDatatype')
+project(':vegvisirEventLogging').projectDir = new File('deps/vegvisirEventLogging')
