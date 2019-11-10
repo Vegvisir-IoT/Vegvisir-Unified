@@ -1,6 +1,8 @@
 package com.vegvisir.application;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -25,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.NetworkInterface;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -103,7 +106,6 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
             ex.printStackTrace();
         }
         core = new VegvisirCore(networkAdapterManager,
-//                VectorClockProtocol.class,
                 dataManager,
                 this,
                 createGenesisBlock(keyPair),

@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ExperimentManager experimentManager;
 
+    private VegvisirAdapter vegvisirAdapter;
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -53,12 +55,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
-//        mTextMessage = findViewById(R.id.message);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        new Thread(this::initializeExperiment).start();
+    }
+
+    private void initializeExperiment() {
         parameters = new Parameters();
         logFileManager = new LogFileManager(getApplicationContext(), this);
-        experimentManager = new ExperimentManager(logFileManager);
+        vegvisirAdapter = new VegvisirAdapter(getApplicationContext());
+        experimentManager = new ExperimentManager(vegvisirAdapter, logFileManager);
     }
+
 
     public void showTimePickerDialog(View v) {
         EditText text;
@@ -99,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         edDate.setHours(edTime.getHours());
         edDate.setMinutes(edTime.getMinutes());
         edDate.setSeconds(edTime.getSeconds());
-        return builder.setBlockRate(blockRate).setBlockSize(blockSize).setDistance(distance).setEndTime(edDate)
+        return builder.setBlockRate(blockRate).setBlockSize(blockSize).setDistance(distance).setEndTime(edDate).setSamplingRate(1)
                 .setStartTime(stDate).build();
     }
 

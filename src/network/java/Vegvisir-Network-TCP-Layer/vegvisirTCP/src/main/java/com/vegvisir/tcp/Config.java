@@ -2,6 +2,7 @@ package com.vegvisir.tcp;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.UnknownHostException;
 
 public class Config {
@@ -66,4 +67,5 @@ public class Config {
     public String getAddress() {
         return address.getHostAddress();
     }
+
 }

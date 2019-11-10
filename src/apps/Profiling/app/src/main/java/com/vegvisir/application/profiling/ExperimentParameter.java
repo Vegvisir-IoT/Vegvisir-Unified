@@ -4,27 +4,30 @@ import java.util.Date;
 
 public class ExperimentParameter {
 
-    private long blockSize;
+    private int blockSize;
     private int blockRate;
     private Date startTime;
     private Date endTime;
     private int distance;
+    private int samplingRate;
 
     private String name;
 
-    public ExperimentParameter(long blockSize,
+    public ExperimentParameter(int blockSize,
                                int blockRate,
                                Date startTime,
                                Date endTime,
-                               int distance) {
+                               int distance,
+                               int samplingRate) {
         this.blockRate = blockRate;
         this.blockSize = blockSize;
         this.startTime = startTime;
         this.endTime = endTime;
         this.distance = distance;
+        this.samplingRate = samplingRate;
     }
 
-    public long getBlockSize() {
+    public int getBlockSize() {
         return blockSize;
     }
 
@@ -44,6 +47,14 @@ public class ExperimentParameter {
         return distance;
     }
 
+    public int getSamplingRate() {
+        return samplingRate;
+    }
+
+    public int getSamplingPeriod() {
+        return 1000 / samplingRate;
+    }
+
     public String getExperimentName() {
         if (name == null) {
             name = startTime.getTime() + "-"+endTime.getTime()+"-"+distance;
@@ -56,11 +67,12 @@ public class ExperimentParameter {
     }
 
     static class Builder {
-        private long blockSize;
+        private int blockSize;
         private int blockRate;
         private Date startTime;
         private Date endTime;
         private int distance;
+        private int samplingRate;
 
         Builder() {
 
@@ -71,7 +83,7 @@ public class ExperimentParameter {
             return this;
         }
 
-        public Builder setBlockSize(long blockSize) {
+        public Builder setBlockSize(int blockSize) {
             this.blockSize = blockSize;
             return this;
         }
@@ -91,8 +103,13 @@ public class ExperimentParameter {
             return this;
         }
 
+        public Builder setSamplingRate(int samplingRate) {
+            this.samplingRate = samplingRate;
+            return this;
+        }
+
         public ExperimentParameter build() {
-            return new ExperimentParameter(blockSize, blockRate, startTime, endTime, distance);
+            return new ExperimentParameter(blockSize, blockRate, startTime, endTime, distance, samplingRate);
         }
     }
 }

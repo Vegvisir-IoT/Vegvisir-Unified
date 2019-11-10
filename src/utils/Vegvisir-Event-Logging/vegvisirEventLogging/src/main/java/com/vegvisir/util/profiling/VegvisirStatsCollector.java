@@ -38,21 +38,27 @@ public class VegvisirStatsCollector {
         logEvent("New distance: "+this.distance);
     }
 
-    public synchronized void logEvent(String message) {
+    public void logEvent(OutputStreamWriter ow, String message) {
         Date time = new Date();
         String output = String.format("[%d] %s\n", time.getTime(), message);
         try {
-            writer.write(output);
+            ow.write(output);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
+    private synchronized void logEvent(String message) {
+        logEvent(this.writer, message);
+    }
+
     public void logReconciliationStartEvent(String remoteID) {
+        stats.incrementReconciliation();
         logEvent(String.format("Reconciliation with %s Start", remoteID));
     }
 
     public void logReconciliationEndEvent(String remoteID) {
+        stats.incrementReconciliation();
         logEvent(String.format("Reconciliation with %s end", remoteID));
 
     }
@@ -72,5 +78,15 @@ public class VegvisirStatsCollector {
         logEvent(String.format("bytes transferred: %d", bytes));
     }
 
+    public VegvisirProfilingStats getStats() {
+        return stats;
+    }
 
+    public int getDistance() {
+        return distance;
+    }
+
+    public void logFixedRateSamplingEvent(OutputStreamWriter ow) {
+        logEvent(ow, String.format("%d,%d,%d", stats.getNumOfReconciliation(), stats.getBytesSoFar(), distance));
+    }
 }

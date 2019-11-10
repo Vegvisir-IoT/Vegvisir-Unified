@@ -145,7 +145,4 @@ public class NetworkAdapterManager implements NetworkAdapter {
     public void shutdown() {
         isRunning = false;
     }
-
-
-
 }

@@ -5,6 +5,7 @@ import com.vegvisir.network.datatype.proto.Payload;
 import com.vegvisir.tcp.*;
 
 import java.io.IOException;
+import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -18,8 +19,8 @@ public class TCPAdapter implements NetworkAdapter {
 
     private final Object lock = new Object();
 
-    public TCPAdapter(String deviceID, int updPort) throws IOException {
-        network = new Network(deviceID, updPort);
+    public TCPAdapter(String deviceID, int udpPort) throws IOException {
+        network = new Network(deviceID, udpPort);
         new Thread(this::pollingData).start();
     }
 

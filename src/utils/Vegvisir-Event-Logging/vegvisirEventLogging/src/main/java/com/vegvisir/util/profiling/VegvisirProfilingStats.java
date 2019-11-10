@@ -31,4 +31,12 @@ public class VegvisirProfilingStats {
     public void end() {
         endTime = new Date();
     }
+
+    public long getBytesSoFar() {
+        return bytesSoFar;
+    }
+
+    public int getNumOfReconciliation() {
+        return numOfReconciliation / 2;
+    }
 }
