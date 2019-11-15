@@ -1,6 +1,8 @@
 package com.vegvisir.application.profiling;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -8,6 +10,8 @@ import com.vegvisir.util.profiling.VegvisirStatsCollector;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
@@ -56,6 +60,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+        PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            }
+        }
         new Thread(this::initializeExperiment).start();
     }
 
@@ -63,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         parameters = new Parameters();
         logFileManager = new LogFileManager(getApplicationContext(), this);
         vegvisirAdapter = new VegvisirAdapter(getApplicationContext());
-        experimentManager = new ExperimentManager(vegvisirAdapter, logFileManager);
+        experimentManager = new ExperimentManager(vegvisirAdapter, logFileManager, getApplicationContext());
     }
 
 

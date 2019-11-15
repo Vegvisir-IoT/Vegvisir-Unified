@@ -1,14 +1,27 @@
 package com.vegvisir.application.profiling;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.vegvisir.util.profiling.VegvisirStatsCollector;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
@@ -19,14 +32,31 @@ public class ExperimentManager {
     private ExecutorService service;
     private LogFileManager fileManager;
     private VegvisirAdapter adapter;
+    private LocationManager locationManager;
 
 
-    public ExperimentManager(VegvisirAdapter adapter, LogFileManager fileManager) {
+    public ExperimentManager(VegvisirAdapter adapter, LogFileManager fileManager, Context ctx) {
         service = Executors.newCachedThreadPool();
         this.fileManager = fileManager;
         this.adapter = adapter;
-
+        initLocationService(ctx);
     }
+
+    private void initLocationService(Context ctx) {
+        locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Log.d("LOC", "initLocationService: GPS is available");
+        } else {
+            Log.d("LOC", "initLocationService: GPS is not available");
+
+        }
+        if (ctx.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ctx.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.d("", "initLocationService: No Permission");
+            return;
+        }
+        Log.d("", "initLocationService: Permission Granted");
+    }
+
 
     public void startExperiment(ExperimentParameter parameter) {
         adapter.setBlockRate(parameter.getBlockSize());
@@ -84,15 +114,24 @@ public class ExperimentManager {
         VegvisirStatsCollector collector = VegvisirStatsCollector.getInstance();
         Timer t = new Timer();
         try {
-            ow.write("timestamp,number of reconciliation,bytes so far,distance\n");
+            ow.write("timestamp,number of reconciliation,bytes so far,distance,latitude,longitude\n");
         } catch (IOException ex) {
             ex.printStackTrace();
             return;
         }
+        ExperimentManager self = this;
         t.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                collector.logFixedRateSamplingEvent(ow);
+                @SuppressLint("MissingPermission")
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                double  latitude = location == null ? 0.0 : location.getLatitude();
+                double longitude = location == null ? 0.0 : location.getLongitude();
+                Log.d("LOC", "run: " + latitude + "||"+longitude);
+                List<String> loc = new ArrayList<>();
+                loc.add(String.valueOf(latitude));
+                loc.add(String.valueOf(longitude));
+                collector.logFixedRateSamplingEvent(ow, loc);
                 if (edTime.before(new Date())) {
                     t.cancel();
                 }

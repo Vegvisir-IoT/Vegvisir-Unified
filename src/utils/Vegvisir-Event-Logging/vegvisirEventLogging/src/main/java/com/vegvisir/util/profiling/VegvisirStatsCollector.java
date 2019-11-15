@@ -86,7 +86,15 @@ public class VegvisirStatsCollector {
         return distance;
     }
 
-    public void logFixedRateSamplingEvent(OutputStreamWriter ow) {
-        logEvent(ow, String.format("%d,%d,%d", stats.getNumOfReconciliation(), stats.getBytesSoFar(), distance));
+    public void logFixedRateSamplingEvent(OutputStreamWriter ow, Iterable<String> extra) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(stats.getNumOfReconciliation()).append(",");
+        builder.append(stats.getBytesSoFar()).append(",");
+        builder.append(distance).append(",");
+        for (String s : extra) {
+            builder.append(s).append(",");
+        }
+        builder.deleteCharAt(builder.length()-1);
+        logEvent(ow, builder.toString());
     }
 }
