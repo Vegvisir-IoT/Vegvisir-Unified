@@ -156,6 +156,7 @@ public class VegvisirCore implements Runnable {
                             disconnectHandlers.remove(remoteId);
                         }
                         statsCollector.logReconciliationEndEvent(remoteId);
+                        statsCollector.logNewBlockCount(dag.getAllBlocks().size());
                         if (reconciliationEndListener != null)
                             reconciliationEndListener.onReconciliationEnd();
                     }

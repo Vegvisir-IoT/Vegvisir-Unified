@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Base64;
 import java.util.Date;
 
 public class VegvisirStatsCollector {
@@ -55,28 +56,32 @@ public class VegvisirStatsCollector {
 
     public void logReconciliationStartEvent(String remoteID) {
         stats.incrementReconciliation();
-        logEvent(String.format("Reconciliation with %s Start", remoteID));
+//        logEvent(String.format("Reconciliation with %s Start", remoteID));
     }
 
     public void logReconciliationEndEvent(String remoteID) {
         stats.incrementReconciliation();
-        logEvent(String.format("Reconciliation with %s end", remoteID));
+//        logEvent(String.format("Reconciliation with %s end", remoteID));
 
     }
 
     public void logExperimentStartEvent(String name) {
-        logEvent(String.format("Experiment %s Start", name));
+//        logEvent(String.format("Experiment %s Start", Base64.getEncoder().encodeToString(name.getBytes())));
 
     }
 
     public void logExperimentEndEvent(String name) {
-        logEvent(String.format("Experiment %s end", name));
+//        logEvent(String.format("Experiment %s end", Base64.getEncoder().encodeToString(name.getBytes())));
 
     }
 
-    public void logDataTransferredEvent(long bytes) {
+    public synchronized void logDataTransferredEvent(long bytes) {
         stats.addBytes(bytes);
-        logEvent(String.format("bytes transferred: %d", bytes));
+//        logEvent(String.format("bytes transferred: %d", bytes));
+    }
+
+    public synchronized void logNewBlockCount(int blocks){
+        stats.setBlocks(blocks);
     }
 
     public VegvisirProfilingStats getStats() {
@@ -92,6 +97,7 @@ public class VegvisirStatsCollector {
         builder.append(stats.getNumOfReconciliation()).append(",");
         builder.append(stats.getBytesSoFar()).append(",");
         builder.append(distance).append(",");
+        builder.append(stats.getBlocks()).append(",");
         for (String s : extra) {
             builder.append(s).append(",");
         }

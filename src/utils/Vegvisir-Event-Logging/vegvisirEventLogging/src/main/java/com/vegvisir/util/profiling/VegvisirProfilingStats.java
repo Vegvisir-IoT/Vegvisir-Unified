@@ -12,6 +12,8 @@ public class VegvisirProfilingStats {
 
     private Date endTime;
 
+    private long blocks = 0;
+
     public VegvisirProfilingStats() {
 
     }
@@ -38,5 +40,17 @@ public class VegvisirProfilingStats {
 
     public int getNumOfReconciliation() {
         return numOfReconciliation / 2;
+    }
+
+    public void addBlocks(int blocks) {
+        this.blocks += blocks;
+    }
+
+    public long getBlocks() {
+        return blocks;
+    }
+
+    public void setBlocks(long blocks) {
+        this.blocks = blocks;
     }
 }

@@ -101,12 +101,15 @@ public class ByteStream {
             if (connections.containsKey(remoteId)) {
                 recv(remoteId, payload);
             }
+            Log.d(TAG, "onPayloadReceived: Payload Received");
         }
 
         @Override
         public void onPayloadTransferUpdate(String endPointId,
                 PayloadTransferUpdate payloadTransferUpdate) {
             statsCollector.logDataTransferredEvent(payloadTransferUpdate.getBytesTransferred());
+            Log.d(TAG, "onPayloadTransferUpdate: Payload Transferred " + payloadTransferUpdate.getBytesTransferred());
+            Log.d(TAG, "onPayloadTransferUpdate: Payload Total " + payloadTransferUpdate.getTotalBytes());
         }
     };
 

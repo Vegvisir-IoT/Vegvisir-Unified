@@ -2,6 +2,8 @@ package com.vegvisir.core.reconciliation;
 
 import com.vegvisir.core.blockdag.BlockDAGv2;
 import com.vegvisir.network.datatype.proto.VegvisirProtocolMessage;
+import com.vegvisir.util.profiling.VegvisirStatsCollector;
+
 import vegvisir.proto.Handshake;
 import vegvisir.proto.Vector;
 
@@ -162,6 +164,7 @@ public class VectorClockProtocol implements ReconciliationProtocol {
 
             case BLOCKS:
                 handleAddBlocks(message.getVector().getAdd().getBlocksToAddList());
+//                VegvisirStatsCollector.getInstance().logNewBlockCount(message.getVector().getAdd().getBlocksToAddList().size());
                 config.endProtocol();
                 synchronized (lock) {
                     lock.notifyAll();
