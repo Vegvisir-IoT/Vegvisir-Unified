@@ -23,7 +23,6 @@ public class LogFileManager {
     }
 
     public OutputStreamWriter createFile(String name) throws VegvisirProfilingException, IOException {
-//        createFile("text/plain", name);
 
         String state = Environment.getExternalStorageState();
         if (!state.equals(Environment.MEDIA_MOUNTED)) {
@@ -38,18 +37,5 @@ public class LogFileManager {
         } else {
             throw new VegvisirProfilingException("Created file with name("+name+") failed");
         }
-    }
-
-    private void createFile(String mimeType, String fileName) {
-        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-
-        // Filter to only show results that can be "opened", such as
-        // a file (as opposed to a list of contacts or timezones).
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-        // Create a file with the requested MIME type.
-        intent.setType(mimeType);
-        intent.putExtra(Intent.EXTRA_TITLE, fileName);
-        this.main.startActivityForResult(intent, WRITE_REQUEST_CODE);
     }
 }

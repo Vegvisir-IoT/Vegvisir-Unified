@@ -33,12 +33,14 @@ public class ExperimentManager {
     private LogFileManager fileManager;
     private VegvisirAdapter adapter;
     private LocationManager locationManager;
+    private AppendObservableList<String> logTexts;
 
 
     public ExperimentManager(VegvisirAdapter adapter, LogFileManager fileManager, Context ctx) {
         service = Executors.newCachedThreadPool();
         this.fileManager = fileManager;
         this.adapter = adapter;
+        logTexts = new AppendObservableList<>();
         initLocationService(ctx);
     }
 
@@ -59,7 +61,8 @@ public class ExperimentManager {
 
 
     public void startExperiment(ExperimentParameter parameter) {
-        adapter.setBlockRate(parameter.getBlockSize());
+        logTexts.clear();
+        adapter.setBlockSize(parameter.getBlockSize());
         adapter.setBlockRate(parameter.getBlockRate());
         adapter.setStTime(parameter.getStartTime());
         adapter.setEdTime(parameter.getEndTime());
@@ -131,7 +134,7 @@ public class ExperimentManager {
                 List<String> loc = new ArrayList<>();
                 loc.add(String.valueOf(latitude));
                 loc.add(String.valueOf(longitude));
-                collector.logFixedRateSamplingEvent(ow, loc);
+                logTexts.append(collector.logFixedRateSamplingEvent(ow, loc));
                 if (edTime.before(new Date())) {
                     t.cancel();
                 }
@@ -139,4 +142,7 @@ public class ExperimentManager {
         }, stTime, period);
     }
 
+    public AppendObservableList<String> getLogTexts() {
+        return logTexts;
+    }
 }

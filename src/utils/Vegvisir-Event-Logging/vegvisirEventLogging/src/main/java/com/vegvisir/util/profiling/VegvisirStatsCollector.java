@@ -42,7 +42,8 @@ public class VegvisirStatsCollector {
         Date time = new Date();
         String output = String.format("[%d] %s\n", time.getTime(), message);
         try {
-            ow.write(output);
+            if (ow != null)
+                ow.write(output);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -86,7 +87,7 @@ public class VegvisirStatsCollector {
         return distance;
     }
 
-    public void logFixedRateSamplingEvent(OutputStreamWriter ow, Iterable<String> extra) {
+    public String logFixedRateSamplingEvent(OutputStreamWriter ow, Iterable<String> extra) {
         StringBuilder builder = new StringBuilder();
         builder.append(stats.getNumOfReconciliation()).append(",");
         builder.append(stats.getBytesSoFar()).append(",");
@@ -95,6 +96,8 @@ public class VegvisirStatsCollector {
             builder.append(s).append(",");
         }
         builder.deleteCharAt(builder.length()-1);
-        logEvent(ow, builder.toString());
+        String logText = builder.toString();
+        logEvent(ow, logText);
+        return logText;
     }
 }

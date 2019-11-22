@@ -1,12 +1,10 @@
 package com.vegvisir.application.profiling;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.vegvisir.util.profiling.VegvisirStatsCollector;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
@@ -14,14 +12,15 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
@@ -37,6 +36,13 @@ public class MainActivity extends AppCompatActivity {
 
     private VegvisirAdapter vegvisirAdapter;
 
+    private FragmentManager fragmentManager;
+
+    private BottomNavigationView navView;
+
+    private Fragment parametersFragmt;
+    private Fragment logFragmt;
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -44,8 +50,14 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
+                    fragmentManager.beginTransaction().replace(R.id.frgmt_container, parametersFragmt).commit();
                     return true;
                 case R.id.navigation_dashboard:
+                    if (logFragmt == null) {
+                        Log.d("INFO", "onNavigationItemSelected: No fragment");
+                        logFragmt = new ProgressFragment(experimentManager.getLogTexts(), null);
+                    }
+                    fragmentManager.beginTransaction().replace(R.id.frgmt_container, logFragmt).commit();
                     return true;
                 case R.id.navigation_notifications:
                     return true;
@@ -58,13 +70,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        fragmentManager = getSupportFragmentManager();
+        parametersFragmt = new Parameters();
+        fragmentManager.beginTransaction().replace(R.id.frgmt_container, parametersFragmt).commit();
 
+
+        /* Check permission. We need both fine & coarse location permission */
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
-        PackageManager.PERMISSION_GRANTED) {
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_COARSE_LOCATION)) {
             } else {
@@ -72,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                         new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 0);
             }
         }
+
         new Thread(this::initializeExperiment).start();
     }
 
@@ -96,7 +113,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void startExperiment(View v) {
         try {
-             experimentManager.startExperiment(readParameters());
+            logFragmt = new ProgressFragment(experimentManager.getLogTexts(), this);
+            experimentManager.startExperiment(readParameters());
+            navView.setSelectedItemId(R.id.navigation_dashboard);
+
         } catch (ParseException ex) {
             ex.printStackTrace();
         }
