@@ -11,10 +11,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import vegvisir.proto.Vector;
+
 public class BlockchainV1 extends Blockchain {
 
-
-    Block.VectorClock latestVC;
+    Vector.VectorClock latestVC;
+//    Block.VectorClock latestVC;
 
     /**
      * Constructor for a blockchain.
@@ -49,14 +51,14 @@ public class BlockchainV1 extends Blockchain {
                 .setUserid(_dag.getConfig().getNodeId())
                 .setCryptoID(this.getCryptoId())
                 .setHeight(_blocks.size()+1)
-                .setTimestamp(com.vegvisir.common.datatype.proto.Timestamp.newBuilder().setUtcTime(new Date().getTime()).build())
+                .setTimestamp(com.vegvisir.core.datatype.proto.Timestamp.newBuilder().setUtcTime(new Date().getTime()).build())
                 .addAllTransactions(transactions)
                 .build();
         com.isaacsheff.charlotte.proto.Block block = com.isaacsheff.charlotte.proto.Block.newBuilder()
-                .setVegvisirBlock(
-                        Block.newBuilder().setBlock(content)
+                .setBlock(
+                        Block.newBuilder().setUserBlock(content)
                                 .setSignature(_dag.getConfig().signProtoObject(content))
-                                .build()
+                                .build().toByteString()
                 ).build();
         return block;
     }
@@ -103,11 +105,11 @@ public class BlockchainV1 extends Blockchain {
         return true;
     }
 
-    public void setLatestVC(Block.VectorClock latestVC) {
+    public void setLatestVC(Vector.VectorClock latestVC) {
         this.latestVC = latestVC;
     }
 
-    public Block.VectorClock getLatestVC() {
+    public Vector.VectorClock getLatestVC() {
         return latestVC;
     }
 }

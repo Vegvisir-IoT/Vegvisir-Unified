@@ -1,21 +1,20 @@
 package com.vegvisir.application;
 
 import android.content.Context;
-import android.util.Log;
-
-import androidx.core.util.Pair;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.isaacsheff.charlotte.proto.Block;
-import com.isaacsheff.charlotte.proto.Reference;
 import com.vegvisir.VegvisirCore;
 import com.vegvisir.core.blockdag.DataManager;
 import com.vegvisir.core.blockdag.NewBlockListener;
 import com.vegvisir.core.blockdag.ReconciliationEndListener;
 import com.vegvisir.core.config.Config;
 import com.vegvisir.core.datatype.proto.Block.Transaction;
-import com.vegvisir.core.reconciliation.ReconciliationV1;
-import com.vegvisir.core.reconciliation.ReconciliationV2;
+import com.vegvisir.core.reconciliation.VectorClockProtocol;
+import com.vegvisir.gossip.adapter.NetworkAdapterManager;
 import com.vegvisir.pub_sub.TransactionID;
 import com.vegvisir.pub_sub.VegvisirApplicationContext;
 import com.vegvisir.pub_sub.VegvisirApplicationDelegator;
@@ -28,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.NetworkInterface;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -98,8 +98,14 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
         deviceID = Config.pk2str(keyPair.getPublic());
         dataManager = VegvisirDataManager.getDataManager(ctx);
         backupCount = dataManager.loadAppCount();
-        core = new VegvisirCore(new AndroidAdapter(ctx, deviceID),
-                ReconciliationV2.class,
+        NetworkAdapterManager networkAdapterManager = new NetworkAdapterManager();
+        networkAdapterManager.registerAdapter("GoogleNearBy", 100, new AndroidAdapter(ctx, deviceID));
+        try {
+            networkAdapterManager.registerAdapter("TCP", 200, new TCPAdapter(deviceID, 8500));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        core = new VegvisirCore(networkAdapterManager,
                 dataManager,
                 this,
                 createGenesisBlock(keyPair),
@@ -284,10 +290,17 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
     @Override
     public void onNewBlock(Block block) {
         com.isaacsheff.charlotte.proto.Hash bh = Config.sha3(block);
-        block.getVegvisirBlock().getBlock().getTransactionsList().parallelStream().forEach(transaction -> {
+        com.vegvisir.core.datatype.proto.Block _block;
+        try {
+            _block = com.vegvisir.core.datatype.proto.Block.parseFrom(block.getBlock());
+        } catch (InvalidProtocolBufferException ex) {
+            ex.printStackTrace();
+            return;
+        }
+        _block.getUserBlock().getTransactionsList().parallelStream().forEach(transaction -> {
             tx2block.put(txIDFromProto(transaction), bh);
         });
-        transactionQueue.addAll(block.getVegvisirBlock().getBlock().getTransactionsList());
+        transactionQueue.addAll(_block.getUserBlock().getTransactionsList());
     }
 
     @Override
@@ -302,14 +315,12 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
      */
     private Block createGenesisBlock(KeyPair keyPair) {
         com.vegvisir.core.datatype.proto.Block.GenesisBlock genesis =
-                                com.vegvisir.core.datatype.proto.Block.GenesisBlock.newBuilder().build();
-        return Block.newBuilder().setVegvisirBlock(
-                com.vegvisir.core.datatype.proto.Block.newBuilder()
-                .setGenesisBlock(genesis)
-//                .setSignature(Config.signProtoObject(keyPair, genesis))
-                .build()
-
-        ).build();
+                                com.vegvisir.core.datatype.proto.Block.GenesisBlock.newBuilder().
+                                        build();
+        return Block.newBuilder().
+                setBlock(com.vegvisir.core.datatype.proto.Block.newBuilder()
+                .setGenesisBlock(genesis).build().toByteString())
+                .build();
     }
 
     private TransactionID txIDFromProto(Transaction tx) {

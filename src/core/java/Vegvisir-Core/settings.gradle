@@ -7,9 +7,11 @@
  * in the user manual at https://docs.gradle.org/5.2.1/userguide/multi_project_builds.html
  */
 
- include ':vegvisirCore', ':vegvisirGossip', ':vegvisirDatatype'
+ include ':vegvisirCore', ':vegvisirGossip', ':vegvisirDatatype',
+ ':vegvisirEventLogging'
 
 rootProject.name = 'Vegvisir-Core'
 
 project(':vegvisirGossip').projectDir = new File('deps/vegvisirGossip')
 project(':vegvisirDatatype').projectDir = new File('deps/vegvisirDatatype')
+project(':vegvisirEventLogging').projectDir = new File('deps/vegvisirEventLogging')

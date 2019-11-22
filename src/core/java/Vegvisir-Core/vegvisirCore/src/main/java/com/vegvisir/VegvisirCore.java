@@ -9,23 +9,21 @@ import com.vegvisir.core.blockdag.DataManager;
 import com.vegvisir.core.blockdag.NewBlockListener;
 import com.vegvisir.core.blockdag.ReconciliationEndListener;
 import com.vegvisir.core.config.Config;
-import com.vegvisir.core.reconciliation.ReconciliationProtocol;
-import com.vegvisir.core.reconciliation.ReconciliationV1;
+import com.vegvisir.core.reconciliation.ReconciliationDispatcher;
+import com.vegvisir.core.reconciliation.SendAllProtocol;
 import com.vegvisir.core.reconciliation.exceptions.VegvisirReconciliationException;
 import com.vegvisir.gossip.*;
 import com.vegvisir.gossip.adapter.NetworkAdapter;
 import com.isaacsheff.charlotte.proto.Block;
 import com.vegvisir.core.datatype.proto.Block.Transaction;
+import com.vegvisir.gossip.adapter.NetworkAdapterManager;
+import com.vegvisir.util.profiling.VegvisirStatsCollector;
 
 
-import java.security.KeyFactory;
 import java.security.KeyPair;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -43,18 +41,17 @@ public class VegvisirCore implements Runnable {
     private Gossip gossipLayer;
 
     /* Block DAG containing real blocks */
-    private final BlockDAG dag;
+    private final BlockDAGv2 dag;
 
     /* Protocol that this instance will use for reconciliation with peers */
-    private Class<? extends ReconciliationProtocol> protocol;
+//    private Class<? extends ReconciliationDispatcher> protocol;
 
     /* Config object contains device configuration such as key pairs */
     private Config config;
 
-    private Map<String, ReconciliationProtocol> disconnectHandlers;
+    private Map<String, ReconciliationDispatcher> disconnectHandlers;
 
     private ReconciliationEndListener reconciliationEndListener;
-
 
     /**
      * A sequence counter for transactions on this device.
@@ -71,22 +68,25 @@ public class VegvisirCore implements Runnable {
 
     private static final Logger logger = Logger.getLogger(VegvisirCore.class.getName());
 
+    /* Collect stats for each reconciliation, including duration and bytes sent and throughput */
+    private VegvisirStatsCollector statsCollector;
+
 
     /**
      * Constructor for a Core instance. Core contains a block dag for storing all blocks; a gossip layer to disseminate new blocks.
      * And a protocol blueprint for doing reconciliation.
-     * @param adapter an adapter for network layer. This could be an adapter for TCP or Google Nearby.
-     * @param protocol a reconciliation protocol class.
+     * @param adapterManager an adapter for network layer. This could be an adapter for TCP or Google Nearby.
+//     * @param protocol a reconciliation protocol class.
      * @param genesisBlock
      */
-    public VegvisirCore(NetworkAdapter adapter,
-                        Class<? extends ReconciliationProtocol> protocol,
+    public VegvisirCore(NetworkAdapterManager adapterManager,
+//                        Class<? extends ReconciliationDispatcher> protocol,
                         DataManager manager,
                         NewBlockListener listener,
                         Block genesisBlock,
                         KeyPair keyPair,
                         String userid) {
-        gossipLayer = new Gossip(adapter);
+        gossipLayer = new Gossip(adapterManager);
         this.manager = manager;
         transactionHeight = manager.loadTransactionHeight();
 
@@ -98,31 +98,32 @@ public class VegvisirCore implements Runnable {
 
         config = new Config(userid, keyPair);
 
-        if (protocol.getName().equals(ReconciliationV1.class.getName()))
-            dag = new BlockDAGv1(genesisBlock, config, manager, listener);
-        else
-            dag = new BlockDAGv2(genesisBlock, config, manager, listener);
+//        if (protocol.getName().equals(SendAllProtocol.class.getName()))
+//            dag = new BlockDAGv1(genesisBlock, config, manager, listener);
+//        else
+        dag = new BlockDAGv2(genesisBlock, config, manager, listener);
 
-        this.protocol = protocol;
+//        this.protocol = protocol;
         service = Executors.newCachedThreadPool();
         transactionBuffer = new HashSet<>();
         disconnectHandlers = new HashMap<>();
-        adapter.onConnectionLost(this::onLostConnection);
+        adapterManager.onConnectionLost(this::onLostConnection);
+        statsCollector = VegvisirStatsCollector.getInstance();
     }
 
-//    public VegvisirCore(NetworkAdapter adapter, Class<ReconciliationProtocol> protocol) {
+//    public VegvisirCore(NetworkAdapter adapter, Class<ReconciliationDispatcher> protocol) {
 //        this(adapter, protocol, null, null, null, null);
 //    }
 //
 //    public VegvisirCore(NetworkAdapter adapter) {
-//        this(adapter, ReconciliationV1.class, null, null, null);
+//        this(adapter, SendAllProtocol.class, null, null, null);
 //    }
 
-    public void updateProtocol(Class<? extends ReconciliationProtocol> newProtocol)
-    {
-        /* Don't know whether this will cause a issue if a race condition happens */
-        this.protocol = newProtocol;
-    }
+//    public void updateProtocol(Class<? extends ReconciliationDispatcher> newProtocol)
+//    {
+//        /* Don't know whether this will cause a issue if a race condition happens */
+//        this.protocol = newProtocol;
+//    }
 
     /**
      * @return the block dag for this Core instance.
@@ -143,22 +144,20 @@ public class VegvisirCore implements Runnable {
                  * This can make it easy to update protocol version */
                 service.submit(() -> {
                     try {
+                        statsCollector.logReconciliationStartEvent(remoteId);
                         gossipLayer.linkReconciliationInstanceWithConnection(remoteId, Thread.currentThread());
-                        ReconciliationProtocol _protocol = protocol.newInstance();
-                        _protocol.setGossipLayer(gossipLayer);
-                        disconnectHandlers.put(remoteId, _protocol);
-                        _protocol.exchangeBlocks(dag, remoteId, reconciliationEndListener);
-                    } catch (VegvisirReconciliationException ex) {
-                        logger.info(ex.getLocalizedMessage());
-                    } catch (InstantiationException ex) {
-                    }
-                    catch (IllegalAccessException ex) {
-                    }
-                    finally {
+                        ReconciliationDispatcher dispatcher = new ReconciliationDispatcher(gossipLayer, remoteId, dag);
+                        disconnectHandlers.put(remoteId, dispatcher);
+                        dispatcher.reconcile();
+                    } finally {
                         System.out.println("run: CATCH ALL REACHED");
+                        gossipLayer.disconnect(remoteId);
                         if (disconnectHandlers.containsKey(remoteId)) {
                             disconnectHandlers.remove(remoteId);
                         }
+                        statsCollector.logReconciliationEndEvent(remoteId);
+                        if (reconciliationEndListener != null)
+                            reconciliationEndListener.onReconciliationEnd();
                     }
                 });
             }
@@ -167,7 +166,7 @@ public class VegvisirCore implements Runnable {
 
     public void onLostConnection(String id) {
         if (disconnectHandlers.containsKey(id)) {
-            disconnectHandlers.get(id).onDisconnected(id);
+            disconnectHandlers.get(id).onDisconnected();
         }
     }
 

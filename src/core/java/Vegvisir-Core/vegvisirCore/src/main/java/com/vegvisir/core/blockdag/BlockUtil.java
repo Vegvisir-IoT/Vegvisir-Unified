@@ -1,6 +1,7 @@
 package com.vegvisir.core.blockdag;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Value;
 import com.isaacsheff.charlotte.proto.Reference;
 import com.isaacsheff.charlotte.proto.Block;
@@ -10,6 +11,8 @@ import com.vegvisir.core.config.Config;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import vegvisir.proto.Vector;
 
 public class BlockUtil {
 
@@ -43,19 +46,19 @@ public class BlockUtil {
      * @param clock
      * @return
      */
-    public static com.vegvisir.core.datatype.proto.Block.VectorClock
-    incrementClock(com.isaacsheff.charlotte.proto.CryptoId my_id,
-                   com.vegvisir.core.datatype.proto.Block.VectorClock clock) {
-
-        Map<String, com.vegvisir.core.datatype.proto.Block.VectorClock.Value> valueMap = clock.getValuesMap();
-        com.vegvisir.core.datatype.proto.Block.VectorClock.Value _value = valueMap.get(cryptoId2Str(my_id));
-        _value = com.vegvisir.core.datatype.proto.Block.VectorClock.Value.newBuilder(_value)
-                .setIndex(_value.getIndex() + 1)
-                .build();
-        valueMap.put(cryptoId2Str(my_id),  _value);
-        return com.vegvisir.core.datatype.proto.Block.VectorClock.newBuilder(clock)
-                .clearValues().putAllValues(valueMap).build();
-    }
+//    public static Vector.VectorClock
+//    incrementClock(com.isaacsheff.charlotte.proto.CryptoId my_id,
+//                   Vector.VectorClock clock) {
+//
+//        Map<String, com.vegvisir.core.datatype.proto.Block.VectorClock.Value> valueMap = clock.getValuesMap();
+//        com.vegvisir.core.datatype.proto.Block.VectorClock.Value _value = valueMap.get(cryptoId2Str(my_id));
+//        _value = com.vegvisir.core.datatype.proto.Block.VectorClock.Value.newBuilder(_value)
+//                .setIndex(_value.getIndex() + 1)
+//                .build();
+//        valueMap.put(cryptoId2Str(my_id),  _value);
+//        return com.vegvisir.core.datatype.proto.Block.VectorClock.newBuilder(clock)
+//                .clearValues().putAllValues(valueMap).build();
+//    }
 
 
     /**
@@ -90,5 +93,9 @@ public class BlockUtil {
                         .setSha3(ByteString.copyFromUtf8(idstr)).build())
                 .build();
 
+    }
+
+    public static com.vegvisir.core.datatype.proto.Block getVegvisirBlock(Block block) throws InvalidProtocolBufferException  {
+        return com.vegvisir.core.datatype.proto.Block.parseFrom(block.getBlock());
     }
 }

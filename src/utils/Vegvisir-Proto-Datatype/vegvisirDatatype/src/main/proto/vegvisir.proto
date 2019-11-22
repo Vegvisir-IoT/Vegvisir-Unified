@@ -58,6 +58,8 @@ message Block {
         Location location = 3;
         repeated charlotte.Reference parents = 4;
         repeated Transaction transactions = 5;
+        charlotte.CryptoId cryptoID = 6;
+        int64 height = 7;
     }
     
     charlotte.Signature signature = 1;

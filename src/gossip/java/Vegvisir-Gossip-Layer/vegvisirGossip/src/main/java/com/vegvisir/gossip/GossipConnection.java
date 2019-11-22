@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import com.vegvisir.common.datatype.proto.Location;
+import com.vegvisir.core.datatype.proto.Location;
 
 /**
  * This class stores basic information related to a peer node's connection.

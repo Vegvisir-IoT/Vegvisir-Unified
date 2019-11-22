@@ -20,6 +20,7 @@ import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
 import com.google.android.gms.tasks.Task;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.vegvisir.util.profiling.VegvisirStatsCollector;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -90,6 +91,8 @@ public class ByteStream {
 
     private boolean isInPairingProgress = false;
 
+    private VegvisirStatsCollector statsCollector = VegvisirStatsCollector.getInstance();
+
     /* Callbacks for receiving payloads */
     private final PayloadCallback payloadCallback = new PayloadCallback() {
         @Override
@@ -103,6 +106,7 @@ public class ByteStream {
         @Override
         public void onPayloadTransferUpdate(String endPointId,
                 PayloadTransferUpdate payloadTransferUpdate) {
+            statsCollector.logDataTransferredEvent(payloadTransferUpdate.getBytesTransferred());
         }
     };
 

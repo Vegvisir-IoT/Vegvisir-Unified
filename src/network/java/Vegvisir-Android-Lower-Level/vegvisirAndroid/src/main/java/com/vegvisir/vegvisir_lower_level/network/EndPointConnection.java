@@ -1,18 +1,15 @@
 package com.vegvisir.vegvisir_lower_level.network;
 
 import android.content.Context;
-
 import com.google.android.gms.tasks.Task;
-import com.vegvisir.vegvisir_lower_level.utils.Utils;
+import com.vegvisir.network.datatype.proto.Payload;
 import com.vegvisir.vegvisir_lower_level.network.Exceptions.ConnectionNotAvailableException;
+import com.vegvisir.vegvisir_lower_level.utils.Utils;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
-import com.vegvisir.network.datatype.proto.Payload;
-import com.vegvisir.network.datatype.proto.Identifier;
-import com.vegvisir.common.datatype.proto.Timestamp;
 
 /**
  * Used for storing states for each connection
@@ -68,7 +65,7 @@ public class EndPointConnection {
                 sendingTasks.remove(t);
                 synchronized (flushLock) {
                     if (sendingTasks.isEmpty() && this.flushCondition) {
-                        sendingTasks.notify();
+                        flushLock.notify();
                         flushCondition = false;
                     }
                 }
@@ -77,7 +74,7 @@ public class EndPointConnection {
                 sendingTasks.remove(task);
                 synchronized (flushLock) {
                     if (sendingTasks.isEmpty() && this.flushCondition) {
-                        sendingTasks.notify();
+                        flushLock.notify();
                         flushCondition = false;
                     }
                 }
@@ -98,7 +95,6 @@ public class EndPointConnection {
     /**
      * Wait until next payload available for this connection.
      * @return the arrived payload.
-     * @throws InterruptedException
      */
     @Deprecated
     public Payload blockingRecv() throws InterruptedException {
@@ -139,14 +135,14 @@ public class EndPointConnection {
         return connected;
     }
 
-    @Deprecated
-    public com.vegvisir.network.datatype.proto.Connection toProtoConnection() {
-        return com.vegvisir.network.datatype.proto.Connection.newBuilder()
-                .setRemoteId(Identifier.newBuilder().setName(endPointId).build())
-                .setWakeupTime(Timestamp.newBuilder().setUtcTime(wakeupTime).build())
-                .setConnectedTime(Timestamp.newBuilder().setElapsedTime(connectedTime).build())
-                .build();
-    }
+//    @Deprecated
+//    public com.vegvisir.network.datatype.proto.Connection toProtoConnection() {
+//        return com.vegvisir.network.datatype.proto.Connection.newBuilder()
+//                .setRemoteId(Identifier.newBuilder().setName(endPointId).build())
+//                .setWakeupTime(Timestamp.newBuilder().setUtcTime(wakeupTime).build())
+//                .setConnectedTime(Timestamp.newBuilder().setElapsedTime(connectedTime).build())
+//                .build();
+//    }
 
     public String getEndPointId() {
         return endPointId;
@@ -161,11 +157,14 @@ public class EndPointConnection {
             synchronized (flushLock) {
                 if (!sendingTasks.isEmpty()) {
                     flushCondition = true;
-                    sendingTasks.wait();
+                    flushLock.wait();
                 }
             }
         } catch (InterruptedException ex) {
-
+            synchronized (flushLock) {
+                flushCondition = false;
+            }
+            ex.printStackTrace();
         }
     }
 }

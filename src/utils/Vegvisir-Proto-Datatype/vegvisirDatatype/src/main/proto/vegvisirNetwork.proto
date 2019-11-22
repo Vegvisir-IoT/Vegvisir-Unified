@@ -16,13 +16,23 @@ import "sendall.proto";
 
 message VegvisirProtocolMessage {
     bool endProtocol = 1;
-    oneof message_types {
+    enum MessageType {
+        OTHERS = 0;
+        END = 1;
+        HANDSHAKE = 2;
+        SEND_ALL = 3;
+        FRONTIER = 4;
+        VECTOR_CLOCK = 5;
+    }
+
+    oneof message_body {
         vegvisir.proto.HandshakeMessage handshake  = 2;
         vegvisir.proto.GenericMessage generic = 3;
         vegvisir.proto.SendallMessage sendall = 4;
         vegvisir.proto.VectorMessage vector = 5;
         vegvisir.proto.FrontierMessage frontier = 6;
     }
+    MessageType message_type = 7;
 }
 
 message Payload {
@@ -83,4 +93,11 @@ message RecvInteruptedException {
 message ConnectionLostException {
   string error_message = 1;
   Identifier remote_id = 2;
+}
+
+message UDPAdvertisingMessage {
+    string ip_address = 4;
+    int32 tcp_port = 1;
+    string device_id = 2;
+    string protocol_secret = 3;
 }
