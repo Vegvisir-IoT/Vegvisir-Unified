@@ -11,11 +11,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.Date;
@@ -37,13 +40,32 @@ public class ProgressFragment extends Fragment {
         this.logData = logData;
         this.main = main;
         if (main != null)  {
-            linearLayout = new LinearLayout(main.getApplicationContext());
+            linearLayout = new TableLayout(main.getApplicationContext());
             linearLayout.setOrientation(LinearLayout.VERTICAL);
-            logData.setAppendEventListener((x) -> {
+            TableRow header = new TableRow(main.getApplicationContext());
+            for (String s: "timestamp,#reconciliation,#bytes,distance,#blocks,#receivedBytes,latitude,longitude".split(",")) {
                 TextView txt = new TextView(main.getApplicationContext());
-                txt.setText(new Date().toLocaleString() + " "+ x);
+                txt.setText(s);
+                txt.setPadding(5,2,5,2);
+                txt.setGravity(Gravity.CENTER);
+                header.addView(txt);
+                }
+            linearLayout.addView(header);
+            logData.setAppendEventListener((x) -> {
+                TableRow row = new TableRow(main.getApplicationContext());
+                TextView dtxt = new TextView(main.getApplicationContext());
+                dtxt.setPadding(5,2,5,2);
+                dtxt.setText(new Date().toLocaleString());
+                row.addView(dtxt);
+                for (String r : x.split(",")) {
+                    TextView txt = new TextView(main.getApplicationContext());
+                    txt.setText(r);
+                    txt.setPadding(5,2,5,2);
+                    txt.setGravity(Gravity.CENTER);
+                    row.addView(txt);
+                }
                 main.runOnUiThread(() -> {
-                    linearLayout.addView(txt, 0);
+                    linearLayout.addView(row, 1);
                 });
             });
         }

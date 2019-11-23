@@ -17,6 +17,7 @@ import com.vegvisir.gossip.adapter.NetworkAdapter;
 import com.isaacsheff.charlotte.proto.Block;
 import com.vegvisir.core.datatype.proto.Block.Transaction;
 import com.vegvisir.gossip.adapter.NetworkAdapterManager;
+import com.vegvisir.util.profiling.DebugUtils;
 import com.vegvisir.util.profiling.VegvisirStatsCollector;
 
 
@@ -97,6 +98,9 @@ public class VegvisirCore implements Runnable {
             userid = ByteString.copyFrom(keyPair.getPublic().getEncoded()).toString();
 
         config = new Config(userid, keyPair);
+
+        System.err.println("DEVICE CRYPTOID: "+DebugUtils.utf82base64(BlockUtil.cryptoId2Str(config.getCryptoId())));
+        System.err.println("DEVICE CRYPTOID STR: "+DebugUtils.utf82base64(config.getDeviceID()));
 
 //        if (protocol.getName().equals(SendAllProtocol.class.getName()))
 //            dag = new BlockDAGv1(genesisBlock, config, manager, listener);

@@ -112,6 +112,7 @@ public class VegvisirInstanceV1 implements VegvisirInstance, NewBlockListener, R
                 keyPair,
                 deviceID
         );
+        assert core.getDag().getConfig().getDeviceID().equals(deviceID);
         core.registerReconciliationEndListener(this);
 
         new Thread(this::pollTransactions).start();

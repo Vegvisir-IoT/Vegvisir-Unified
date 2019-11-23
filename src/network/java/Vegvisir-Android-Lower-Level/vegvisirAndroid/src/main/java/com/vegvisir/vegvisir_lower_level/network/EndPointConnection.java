@@ -34,6 +34,8 @@ public class EndPointConnection {
 
     private Set<Task> sendingTasks;
 
+    private Set<Long> sentPayloadIDs;
+
     private final Object flushLock = new Object();
 
     private Boolean flushCondition = false;
@@ -50,6 +52,7 @@ public class EndPointConnection {
         connectedTime = Utils.getTimeInMilliseconds();
         wakeupTime = Utils.getTimeInMilliseconds();
         sendingTasks = new HashSet<>();
+        sentPayloadIDs = new HashSet<>();
     }
 
     /**
@@ -166,5 +169,13 @@ public class EndPointConnection {
             }
             ex.printStackTrace();
         }
+    }
+
+    public boolean addPayloadID(long id) {
+        return sentPayloadIDs.add(id);
+    }
+
+    public boolean removePayloadID(long id) {
+        return sentPayloadIDs.remove(id);
     }
 }

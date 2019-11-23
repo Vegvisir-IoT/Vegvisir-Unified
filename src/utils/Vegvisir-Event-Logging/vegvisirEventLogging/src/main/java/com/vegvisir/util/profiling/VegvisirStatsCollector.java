@@ -84,6 +84,10 @@ public class VegvisirStatsCollector {
         stats.setBlocks(blocks);
     }
 
+    public synchronized void logReceivedPayloadSize(long bytes) {
+        stats.addReceivedBytes(bytes);
+    }
+
     public VegvisirProfilingStats getStats() {
         return stats;
     }
@@ -98,6 +102,7 @@ public class VegvisirStatsCollector {
         builder.append(stats.getBytesSoFar()).append(",");
         builder.append(distance).append(",");
         builder.append(stats.getBlocks()).append(",");
+        builder.append(stats.getReceivedBytes()).append(",");
         for (String s : extra) {
             builder.append(s).append(",");
         }

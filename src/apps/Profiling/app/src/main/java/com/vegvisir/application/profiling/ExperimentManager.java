@@ -121,7 +121,7 @@ public class ExperimentManager {
         VegvisirStatsCollector collector = VegvisirStatsCollector.getInstance();
         Timer t = new Timer();
         try {
-            ow.write("timestamp,#reconciliation,#bytes,distance,#blocks,latitude,longitude\n");
+            ow.write("timestamp,#reconciliation,#bytes,distance,#blocks,#receivedBytes,latitude,longitude\n");
         } catch (IOException ex) {
             ex.printStackTrace();
             return;

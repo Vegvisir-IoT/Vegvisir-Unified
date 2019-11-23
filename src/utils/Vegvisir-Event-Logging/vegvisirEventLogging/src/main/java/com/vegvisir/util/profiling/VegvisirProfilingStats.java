@@ -14,6 +14,8 @@ public class VegvisirProfilingStats {
 
     private long blocks = 0;
 
+    private long receivedBytes = 0;
+
     public VegvisirProfilingStats() {
 
     }
@@ -52,5 +54,13 @@ public class VegvisirProfilingStats {
 
     public void setBlocks(long blocks) {
         this.blocks = blocks;
+    }
+
+    public void addReceivedBytes(long receivedBytes) {
+        this.receivedBytes += receivedBytes;
+    }
+
+    public long getReceivedBytes() {
+        return receivedBytes;
     }
 }

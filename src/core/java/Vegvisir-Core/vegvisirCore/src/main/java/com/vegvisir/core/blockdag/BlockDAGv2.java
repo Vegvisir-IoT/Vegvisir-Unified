@@ -6,6 +6,7 @@ import com.isaacsheff.charlotte.proto.Reference;
 
 import com.isaacsheff.charlotte.proto.CryptoId;
 import com.vegvisir.core.config.Config;
+import com.vegvisir.util.profiling.DebugUtils;
 
 import java.sql.Ref;
 import java.util.ArrayDeque;
@@ -38,7 +39,8 @@ public class BlockDAGv2 extends BlockDAG {
         super(genesisBlock, config, listener);
         this.manager = manager;
         blockchains = new HashMap<>();
-        blockchains.put(config.getDeviceID(), new BlockchainV1(this, config.getCryptoId()));
+        addNewChain(config.getCryptoId());
+//        blockchains.put(config.getDeviceID(), new BlockchainV1(this, config.getCryptoId()));
         leadingSet = new HashSet<>();
         Block oldGenesisBlock = manager.loadGenesisBlock();
         this.genesisBlock = oldGenesisBlock == null ? genesisBlock : oldGenesisBlock;
@@ -100,6 +102,7 @@ public class BlockDAGv2 extends BlockDAG {
         blockId = _block.getUserBlock().getCryptoID();
         if (!blockchains.containsKey(BlockUtil.cryptoId2Str(blockId))) {
             if (validatePeer(blockId)) {
+                System.err.println("ADD BLOCK ID: "+ DebugUtils.utf82base64(BlockUtil.cryptoId2Str(blockId)));
                 addNewChain(blockId);
             } else {
                 return null;
@@ -150,10 +153,11 @@ public class BlockDAGv2 extends BlockDAG {
      * @param id the id of the node. This is also the key to be used.
      */
     protected synchronized void addNewChain(com.isaacsheff.charlotte.proto.CryptoId id) {
-        if (!blockchains.containsKey(BlockUtil.cryptoId2Str(id)))
+        if (!blockchains.containsKey(BlockUtil.cryptoId2Str(id))) {
+            System.err.println("New chain added: "+DebugUtils.utf82base64(BlockUtil.cryptoId2Str(id)));
             blockchains.put(BlockUtil.cryptoId2Str(id), new BlockchainV1(this,  id));
+        }
     }
-
 
     /**
      * Check whether the given id is in the peer set. This call will delegate to a CRDT 2P set to
@@ -199,6 +203,8 @@ public class BlockDAGv2 extends BlockDAG {
         /* finding the last common frontier set */
         Set<Reference> commonFrontierSet = new HashSet<>();
         VectorClock myClock = computeFrontierSet();
+        System.err.println("My Clock: "+myClock.getBody().getClocksMap().toString());
+        System.err.println("Remote Clock: "+remoteVC.getBody().getClocksMap().toString());
         long index = 0;
         for (Map.Entry<String, Long> entry: myClock.getBody().getClocksMap().entrySet()) {
             index = 0;
@@ -212,6 +218,7 @@ public class BlockDAGv2 extends BlockDAG {
                                 .get((int)index-1));
             }
         }
+        System.err.println("Common frontier: " + commonFrontierSet.toString());
 //        Blockchain thisChain = blockchains.get(BlockUtil.cryptoId2Str(this.config.getCryptoId()));
 //        Reference leadingBlock = thisChain.getBlockList().get(thisChain.getBlockList().size()-1);
         return _findMissedBlocks(commonFrontierSet, leadingSet);
@@ -248,6 +255,7 @@ public class BlockDAGv2 extends BlockDAG {
             }
         }
         Collections.reverse(blocks);
+        System.err.println("Missed block #: "+blocks.size());
         return blocks;
     }
 
@@ -291,8 +299,11 @@ public class BlockDAGv2 extends BlockDAG {
     }
 
     public void updateVCForDevice(String deviceID, VectorClock vc) {
-        if (!blockchains.containsKey(deviceID))
-            blockchains.putIfAbsent(deviceID, new BlockchainV1(this, BlockUtil.str2cryptoId(deviceID)));
+        if (!blockchains.containsKey(deviceID)) {
+            assert  BlockUtil.cryptoId2Str(BlockUtil.str2cryptoId(deviceID)).equals(deviceID);
+            addNewChain(BlockUtil.str2cryptoId(deviceID));
+        }
+//            blockchains.putIfAbsent(deviceID, new BlockchainV1(this, ));
         blockchains.get(deviceID).setLatestVC(vc);
     }
 
