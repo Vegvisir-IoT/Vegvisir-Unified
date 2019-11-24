@@ -14,12 +14,8 @@ import "vector.proto";
 import "frontier.proto";
 import "sendall.proto";
 
-
-
-
 message VegvisirProtocolMessage {
     bool endProtocol = 1;
-
     enum MessageType {
         OTHERS = 0;
         END = 1;

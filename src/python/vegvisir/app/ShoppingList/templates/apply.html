@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}">
+    <title>Shopping List</title>
+</head>
+<body>
+        <nav>
+
+                <ul>
+          
+                  <li><a href="/">Transaction History</a></li>
+                  <!-- <li><a href="apply">Verified</a></li> -->
+          
+                </ul>
+          
+              </nav>
+    <center>
+    <h1 style="margin-top: 5%; margin-bottom: 2%;">Applied List</h1>
+    </center>
+    <div class = "list" style="border: 1px solid black; border-radius: 5%; margin: 0% 35%; padding: 2%;">
+
+      
+            
+            {% for item in shoplist %}
+                
+                    <div>
+                            
+                            <form action="add" method='POST'>
+
+                                    {% csrf_token %}
+                                    {{item}} 
+                                    <input type="hidden" name="item" value="{{item}}">
+                                    <input type="submit" name="remove" value="remove">
+                            </form>   
+
+                      
+                    
+                    
+                    </div>
+               
+            {% endfor %}
+
+            
+        
+    </div>
+</body>
+</html>

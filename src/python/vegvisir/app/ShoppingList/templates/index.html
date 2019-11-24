@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}">
+    <title>Shopping List</title>
+</head>
+<body>
+        <nav>
+
+                <ul>
+          
+                  <!-- <li><a href="/">Home</a></li> -->
+                  <li><a href="apply">Witnessed</a></li>
+          
+                </ul>
+          
+              </nav>
+    <center>
+    <h1 style="margin-top: 5%; margin-bottom: 2%;">Shopping List</h1>
+    </center>
+    <div class = "list" style="border: 1px solid black; border-radius: 5%; margin: 0% 35%; padding: 2%;">
+
+        {% if user.is_authenticated %}
+            <h1> DeviceID: {{user.username}} </h1>  
+            <form action="users/logout">
+                <input type="submit" value="LOG OUT">
+            </form>
+            
+            {% for item in shoplist %}
+                
+                    <div>
+                                  <p> {{item}}  </p> 
+                    </div>
+               
+            {% endfor %}
+
+            <form action="add" method='POST'>
+
+                {% csrf_token %}
+                <input placeholder="Add to list" type="text" name="item"><br>
+                <input type="submit" name="add" value="add">
+            </form>
+
+        {% else %}
+            <form action="/users/login">
+                <input type="submit" value="LOG IN">
+            </form>
+        {% endif %}
+        
+    </div>
+</body>
+</html>
