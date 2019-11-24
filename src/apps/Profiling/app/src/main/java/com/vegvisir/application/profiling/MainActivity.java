@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
 
     private LogFileManager logFileManager;
 
+    private VegvisirPowerProfiler powerProfiler;
+
     private ExperimentManager experimentManager;
 
     private VegvisirAdapter vegvisirAdapter;
@@ -93,10 +95,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeExperiment() {
-        parameters = new Parameters();
-        logFileManager = new LogFileManager(getApplicationContext(), this);
-        vegvisirAdapter = new VegvisirAdapter(getApplicationContext());
-        experimentManager = new ExperimentManager(vegvisirAdapter, logFileManager, getApplicationContext());
+        parameters        = new Parameters();
+        logFileManager    = new LogFileManager(getApplicationContext(), this);
+        vegvisirAdapter   = new VegvisirAdapter(getApplicationContext());
+        powerProfiler     = new VegvisirPowerProfiler(getApplicationContext(), this);
+        experimentManager = new ExperimentManager(vegvisirAdapter, logFileManager, powerProfiler, getApplicationContext());
     }
 
 

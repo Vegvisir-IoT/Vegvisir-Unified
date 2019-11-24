@@ -1,4 +1,4 @@
-package com.vegvisir.vegvisir_lower_level.utils;
+package com.vegvisir.application.profiling;
 
 import android.app.Activity;
 import android.content.Context;
@@ -87,12 +87,12 @@ public class VegvisirPowerProfiler {
      * format of saving: time, percentage, capacity, isCharging
      * Saved in directory: /data/user/_someNumber_/com.vegvisir.powerapplication/files/
      */
-    public void saveBatteryStatus( String fileName, String comment, Activity m){
+    public void saveBatteryStatus( String fileName, String comment){
 
         // Step I: Ensure main is set
         if (main == null){
-            Log.d("MAIN", "Main activity lost. Restoring");
-            this.main = m;
+            Log.d("MAIN", "Main activity lost. saveBatteryStatus Failed");
+            return;
         }
         try {
             // What one needs to know is if the file exists. If it doesn't exist
@@ -111,6 +111,12 @@ public class VegvisirPowerProfiler {
             Log.d("FILE", "Failed to write to file.");
             e.printStackTrace();
         }
+    }
+
+    public void writeMetrics(OutputStreamWriter ow, String tag) throws IOException{
+         BatteryMetrics metrics =  retrieveBatteryStatus( tag );
+         ow.write(metrics.getFullMetrics() + "\n");
+         ow.flush();
     }
 
     public OutputStreamWriter initSaveWriter ( String name) throws IOException{
