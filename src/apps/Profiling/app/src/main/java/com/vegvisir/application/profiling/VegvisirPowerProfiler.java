@@ -36,22 +36,23 @@ public class VegvisirPowerProfiler {
             @Override
             public void onReceive(Context context, Intent intent) {
                 synchronized(lock) {
-                    batteryMetrics = retrieveBatteryStatus("");
+                    batteryMetrics = retrieveBatteryStatus(intent);
                 }
+                Log.d("Battery", "onReceive: battery changed");
             }
         }, filter);
         main = m;
-        batteryMetrics = retrieveBatteryStatus("");
+        batteryMetrics = retrieveBatteryStatus(manager);
     }
 
     /**
      * getPowerLevel
      * @return float representation of percentage of remaining Battery Life (format :: 22.79f)
      */
-    public float getPowerLevel() {
+    public float getPowerLevel(Intent intent) {
 
-        int level = manager.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        int scale = manager.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+        int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 
         float batteryPct = (level / (float)scale) * 100.0f;
         Log.i("Second Findings", "Level: " + level + " Scale: " + scale +
@@ -70,7 +71,6 @@ public class VegvisirPowerProfiler {
         Object mPowerProfile;
         double batteryCapacity = 0;
         final String POWER_PROFILE_CLASS = "com.android.internal.os.PowerProfile";
-
         try {
             mPowerProfile = Class.forName(POWER_PROFILE_CLASS)
                     .getConstructor(Context.class)
@@ -84,6 +84,11 @@ public class VegvisirPowerProfiler {
             e.printStackTrace();
         }
         return batteryCapacity;
+    }
+
+    public boolean isCharging(Intent intent){
+        int condition = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+        return condition == BatteryManager.BATTERY_STATUS_CHARGING;
     }
 
     public boolean isCharging(){
@@ -115,7 +120,7 @@ public class VegvisirPowerProfiler {
             Boolean exists = o.exists();
 
             OutputStreamWriter writer = initSaveWriter( fileName );
-            BatteryMetrics metrics = retrieveBatteryStatus(comment);
+            BatteryMetrics metrics = batteryMetrics;
             if (!exists)
                 writer.write( metrics.getHeader() + "\n" );
             writer.write( metrics.getFullMetrics() + "\n" );
@@ -128,7 +133,7 @@ public class VegvisirPowerProfiler {
     }
 
     public void writeMetrics(OutputStreamWriter ow, String tag) throws IOException{
-         BatteryMetrics metrics =  retrieveBatteryStatus(tag);
+         BatteryMetrics metrics =  batteryMetrics;
          ow.write(metrics.getFullMetrics() + "\n");
          ow.flush();
     }
@@ -153,13 +158,15 @@ public class VegvisirPowerProfiler {
     }
 
 
-    public BatteryMetrics retrieveBatteryStatus(String purpose){
-        return new BatteryMetrics(getDateTime(), getPowerLevel(),
-                retrieveBatteryCapacity(), isCharging(), purpose);
+    public BatteryMetrics retrieveBatteryStatus(Intent intent){
+        return new BatteryMetrics(getDateTime(), getPowerLevel(intent),
+                retrieveBatteryCapacity(), isCharging(intent), "");
     }
 
     public List<String> getBatteryStatus() {
-        return batteryMetrics.getFullMetricsList();
+        synchronized (lock) {
+            return batteryMetrics.getFullMetricsList();
+        }
     }
 
 
