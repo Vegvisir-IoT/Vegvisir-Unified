@@ -5,20 +5,13 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Bundle;
-import android.os.Looper;
 import android.util.Log;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.vegvisir.util.profiling.VegvisirStatsCollector;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -79,17 +72,13 @@ public class ExperimentManager {
                 Thread current = Thread.currentThread();
                 OutputStreamWriter verboseWriter = fileManager.createFile(parameter.getExperimentName()+"-verbose");
                 OutputStreamWriter samplingWriter = fileManager.createFile(parameter.getExperimentName()+"-sampling-"+parameter.getSamplingRate());
-                OutputStreamWriter powerWriter = powerProfiler.initSaveWriter( powerFile );
                 VegvisirStatsCollector collector = VegvisirStatsCollector.getInstance();
                 collector.startCollecting(verboseWriter);
                 collector.logDistanceChangedEvent(parameter.getDistance());
-                String powerSetting = "Distance_"+ Integer.toString(parameter.getDistance());
                 waitToTime(parameter.getStartTime(), () -> {
                     collector.logExperimentStartEvent(parameter.getExperimentName());
-                    powerProfiler.saveBatteryStatus( powerFile, powerSetting);
                     adapter.startCreatingBlocks();
-                    samplingAtFixedRate(parameter.getStartTime(), parameter.getEndTime(), parameter.getSamplingPeriod(), samplingWriter,
-                            powerWriter, powerSetting);
+                    samplingAtFixedRate(parameter.getStartTime(), parameter.getEndTime(), parameter.getSamplingPeriod(), samplingWriter);
                 });
                 waitToTime(parameter.getEndTime(), () -> {
                     collector.logExperimentEndEvent(parameter.getExperimentName());
@@ -105,9 +94,6 @@ public class ExperimentManager {
                 verboseWriter.close();
                 samplingWriter.flush();
                 samplingWriter.close();
-                powerWriter.flush();
-                powerWriter.close();
-
             } catch (IOException ex) {
                 ex.printStackTrace();
             } catch (VegvisirProfilingException ex) {
@@ -128,13 +114,12 @@ public class ExperimentManager {
         }, time);
     }
 
-    private void samplingAtFixedRate(Date stTime, Date edTime, int period, OutputStreamWriter ow,
-                                     OutputStreamWriter pow, String setting) {
+    private void samplingAtFixedRate(Date stTime, Date edTime, int period, OutputStreamWriter ow) {
         VegvisirStatsCollector collector = VegvisirStatsCollector.getInstance();
 
         Timer t = new Timer();
         try {
-            ow.write("timestamp,#reconciliation,#bytes,distance,#blocks,#receivedBytes,latitude,longitude\n");
+            ow.write("timestamp,#reconciliation,#bytes,distance,#blocks,#receivedBytes,latitude,longitude,percentage,remaining,isCharging\n");
         } catch (IOException ex) {
             ex.printStackTrace();
             return;
@@ -151,9 +136,7 @@ public class ExperimentManager {
                 List<String> loc = new ArrayList<>();
                 loc.add(String.valueOf(latitude));
                 loc.add(String.valueOf(longitude));
-                try {
-                    powerProfiler.writeMetrics(pow, setting );
-                }catch(IOException e){Log.d("FILE:", "Failed to write power in synch");}
+                loc.addAll(powerProfiler.getBatteryStatus());
                 logTexts.append(collector.logFixedRateSamplingEvent(ow, loc));
                 if (edTime.before(new Date())) {
                     try {

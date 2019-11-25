@@ -1,6 +1,7 @@
 package com.vegvisir.application.profiling;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -13,7 +14,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class VegvisirPowerProfiler {
@@ -23,11 +26,22 @@ public class VegvisirPowerProfiler {
     private Activity main;
     private double cap = 0;
 
+    private static final Object lock = new Object();
+    private BatteryMetrics batteryMetrics;
+
     VegvisirPowerProfiler( Context c, Activity m){
         ourContext = c;
         filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        manager= ourContext.registerReceiver(null, filter);
+        manager= ourContext.registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                synchronized(lock) {
+                    batteryMetrics = retrieveBatteryStatus("");
+                }
+            }
+        }, filter);
         main = m;
+        batteryMetrics = retrieveBatteryStatus("");
     }
 
     /**
@@ -114,7 +128,7 @@ public class VegvisirPowerProfiler {
     }
 
     public void writeMetrics(OutputStreamWriter ow, String tag) throws IOException{
-         BatteryMetrics metrics =  retrieveBatteryStatus( tag );
+         BatteryMetrics metrics =  retrieveBatteryStatus(tag);
          ow.write(metrics.getFullMetrics() + "\n");
          ow.flush();
     }
@@ -142,6 +156,10 @@ public class VegvisirPowerProfiler {
     public BatteryMetrics retrieveBatteryStatus(String purpose){
         return new BatteryMetrics(getDateTime(), getPowerLevel(),
                 retrieveBatteryCapacity(), isCharging(), purpose);
+    }
+
+    public List<String> getBatteryStatus() {
+        return batteryMetrics.getFullMetricsList();
     }
 
 
@@ -183,6 +201,14 @@ public class VegvisirPowerProfiler {
             return dateTime +", " + String.valueOf(percentage) +", "+
                     String.valueOf(remaining) + ", " + String.valueOf(isCharge) +
                     ", " + comment;
+        }
+
+        public List<String> getFullMetricsList(){
+            List<String> metrics = new ArrayList<>();
+            metrics.add(percentage + "");
+            metrics.add(remaining+ "");
+            metrics.add(isCharge+ "");
+            return metrics;
         }
 
         /**

@@ -43,7 +43,7 @@ public class ProgressFragment extends Fragment {
             linearLayout = new TableLayout(main.getApplicationContext());
             linearLayout.setOrientation(LinearLayout.VERTICAL);
             TableRow header = new TableRow(main.getApplicationContext());
-            for (String s: "timestamp,#reconciliation,#bytes,distance,#blocks,#receivedBytes,latitude,longitude".split(",")) {
+            for (String s: "timestamp,#reconciliation,#bytes,distance,#blocks,#receivedBytes,latitude,longitude,percentage,remaining,isCharging".split(",")) {
                 TextView txt = new TextView(main.getApplicationContext());
                 txt.setText(s);
                 txt.setPadding(5,2,5,2);
