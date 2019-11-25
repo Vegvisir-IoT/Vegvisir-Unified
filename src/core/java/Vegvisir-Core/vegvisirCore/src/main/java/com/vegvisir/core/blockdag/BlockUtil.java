@@ -9,6 +9,7 @@ import com.isaacsheff.charlotte.proto.Hash;
 import com.vegvisir.core.config.Config;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -98,4 +99,6 @@ public class BlockUtil {
     public static com.vegvisir.core.datatype.proto.Block getVegvisirBlock(Block block) throws InvalidProtocolBufferException  {
         return com.vegvisir.core.datatype.proto.Block.parseFrom(block.getBlock());
     }
+
+
 }

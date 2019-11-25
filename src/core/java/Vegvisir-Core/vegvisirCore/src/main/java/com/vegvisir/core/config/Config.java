@@ -93,6 +93,7 @@ public class Config {
                             )
                            .build()
             ).build();
+            assert BlockUtil.cryptoId2Str(cryptoId).equals(this.nodeId);
         } catch (InvalidKeyException e) {
             e.printStackTrace();
         }

@@ -2,6 +2,8 @@ package com.vegvisir.core.reconciliation;
 
 import com.vegvisir.core.blockdag.BlockDAGv2;
 import com.vegvisir.network.datatype.proto.VegvisirProtocolMessage;
+import com.vegvisir.util.profiling.VegvisirStatsCollector;
+
 import vegvisir.proto.Handshake;
 import vegvisir.proto.Vector;
 
@@ -135,20 +137,37 @@ public class VectorClockProtocol implements ReconciliationProtocol {
                 dag.findMissedBlocksByVectorClock(remoteVector);
 
         /* Send blocks */
-        VegvisirProtocolMessage message = VegvisirProtocolMessage
-                .newBuilder().setMessageType(VegvisirProtocolMessage.MessageType.VECTOR_CLOCK)
-                .setVector(
-                        Vector.VectorMessage.newBuilder()
-                                .setAdd(
-                                        com.vegvisir.common.datatype.proto.AddBlocks.newBuilder()
-                                                .addAllBlocksToAdd(blocks)
-                                                .build()
-                                )
-                                .setType(Vector.VectorMessage.MessageType.BLOCKS)
-                                .build()
-                )
-                .build();
-        config.send(message);
+
+//        VegvisirProtocolMessage message = VegvisirProtocolMessage
+//                .newBuilder().setMessageType(VegvisirProtocolMessage.MessageType.VECTOR_CLOCK)
+//                .setVector(
+//                        Vector.VectorMessage.newBuilder()
+//                                .setAdd(
+//                                        com.vegvisir.common.datatype.proto.AddBlocks.newBuilder()
+//                                                .addAllBlocksToAdd(blocks)
+//                                                .build()
+//                                )
+//                                .setType(Vector.VectorMessage.MessageType.BLOCKS)
+//                                .build()
+//                )
+//                .build();
+//        config.send(message);
+        blocks.forEach(b -> {
+            VegvisirProtocolMessage message = VegvisirProtocolMessage
+                    .newBuilder().setMessageType(VegvisirProtocolMessage.MessageType.VECTOR_CLOCK)
+                    .setVector(
+                            Vector.VectorMessage.newBuilder()
+                                    .setAdd(
+                                            com.vegvisir.common.datatype.proto.AddBlocks.newBuilder()
+                                                    .addBlocksToAdd(b)
+                                                    .build()
+                                    )
+                                    .setType(Vector.VectorMessage.MessageType.BLOCKS)
+                                    .build()
+                    )
+                    .build();
+            config.send(message);
+        });
     }
 
 
@@ -162,6 +181,7 @@ public class VectorClockProtocol implements ReconciliationProtocol {
 
             case BLOCKS:
                 handleAddBlocks(message.getVector().getAdd().getBlocksToAddList());
+//                VegvisirStatsCollector.getInstance().logNewBlockCount(message.getVector().getAdd().getBlocksToAddList().size());
                 config.endProtocol();
                 synchronized (lock) {
                     lock.notifyAll();

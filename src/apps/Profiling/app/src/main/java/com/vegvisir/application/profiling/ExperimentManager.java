@@ -53,6 +53,10 @@ public class ExperimentManager {
             Log.d("LOC", "initLocationService: GPS is available");
         } else {
             Log.d("LOC", "initLocationService: GPS is not available");
+            Log.d("LOC", "initLocationService: This device has the following providers:");
+            locationManager.getAllProviders().forEach(p -> {
+                Log.d("LOC", "initLocationService: "+p);
+            });
 
         }
         if (ctx.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ctx.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -103,6 +107,7 @@ public class ExperimentManager {
                 samplingWriter.close();
                 powerWriter.flush();
                 powerWriter.close();
+
             } catch (IOException ex) {
                 ex.printStackTrace();
             } catch (VegvisirProfilingException ex) {
@@ -129,7 +134,7 @@ public class ExperimentManager {
 
         Timer t = new Timer();
         try {
-            ow.write("timestamp,number of reconciliation,bytes so far,distance,latitude,longitude\n");
+            ow.write("timestamp,#reconciliation,#bytes,distance,#blocks,#receivedBytes,latitude,longitude\n");
         } catch (IOException ex) {
             ex.printStackTrace();
             return;
@@ -151,6 +156,12 @@ public class ExperimentManager {
                 }catch(IOException e){Log.d("FILE:", "Failed to write power in synch");}
                 logTexts.append(collector.logFixedRateSamplingEvent(ow, loc));
                 if (edTime.before(new Date())) {
+                    try {
+                        ow.flush();
+                        ow.close();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
                     t.cancel();
                 }
             }

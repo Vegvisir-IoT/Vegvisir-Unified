@@ -76,6 +76,8 @@ public class HandshakeHandler {
                 try {
                     lock.wait();
                 } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                    System.err.println("GOT Interrupt: "+ex.getLocalizedMessage());
                     locked = false;
                 }
             }
