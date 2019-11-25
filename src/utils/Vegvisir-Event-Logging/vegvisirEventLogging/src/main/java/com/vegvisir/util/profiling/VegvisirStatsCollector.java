@@ -41,7 +41,7 @@ public class VegvisirStatsCollector {
 
     public void logEvent(OutputStreamWriter ow, String message) {
         Date time = new Date();
-        String output = String.format("[%d] %s\n", time.getTime(), message);
+        String output = String.format("%d,%s\n", time.getTime(), message);
         try {
             if (ow != null)
                 ow.write(output);
