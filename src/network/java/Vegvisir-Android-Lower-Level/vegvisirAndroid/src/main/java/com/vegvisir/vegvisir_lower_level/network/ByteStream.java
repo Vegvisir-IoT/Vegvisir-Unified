@@ -98,6 +98,7 @@ public class ByteStream {
 
     private HashMap<Long, Long> transferredPayloadMap;
     private HashSet<Long> sentPayloadMap;
+    private HashSet<Long> receivedPayloadMap;
 
     /* Callbacks for receiving payloads */
     private final PayloadCallback payloadCallback = new PayloadCallback() {
@@ -117,6 +118,7 @@ public class ByteStream {
                     establishedConnection.push(connections.get(endpoint2id.get(endPointId)));
                 }
             } else if (payload.getType() == Payload.Type.STREAM) {
+                receivedPayloadMap.add(payload.getId());
                 String remoteId = endpoint2id.get(endPointId);
                 if (connections.containsKey(remoteId)) {
                     recv(remoteId, payload);
@@ -141,6 +143,10 @@ public class ByteStream {
             } else {
                 transferredPayloadMap.remove(payloadTransferUpdate.getPayloadId());
                 sentPayloadMap.remove(payloadTransferUpdate.getPayloadId());
+                if (receivedPayloadMap.contains(payloadTransferUpdate.getPayloadId())) {
+                    statsCollector.logReceivedPayloadSize(payloadTransferUpdate.getBytesTransferred());
+                    receivedPayloadMap.remove(payloadTransferUpdate.getPayloadId());
+                }
                 Log.d(TAG, "onPayloadTransferUpdate: Not in Progress Payload Transferred " + payloadTransferUpdate.getBytesTransferred() + " Status: "+payloadTransferUpdate.getStatus());
             }
         }
@@ -305,6 +311,7 @@ public class ByteStream {
         connections = new HashMap<>();
         transferredPayloadMap = new HashMap<>();
         sentPayloadMap = new HashSet<>();
+        receivedPayloadMap = new HashSet<>();
         cachePayload = new LinkedBlockingQueue<>();
         self = this;
         disconnectedId = new LinkedBlockingQueue<>();
