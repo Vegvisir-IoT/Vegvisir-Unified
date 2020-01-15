@@ -1,8 +1,12 @@
 package com.vegvisir.core.reconciliation;
 
+import com.isaacsheff.charlotte.proto.Block;
+import com.vegvisir.common.datatype.proto.AddBlocks;
 import com.vegvisir.core.blockdag.BlockDAGv2;
 import com.vegvisir.network.datatype.proto.VegvisirProtocolMessage;
 import com.vegvisir.util.profiling.VegvisirStatsCollector;
+
+import java.util.List;
 
 import vegvisir.proto.Handshake;
 import vegvisir.proto.Vector;
@@ -133,41 +137,43 @@ public class VectorClockProtocol implements ReconciliationProtocol {
     private void computeSendBlocks(Vector.VectorClock remoteVector) {
         System.err.println("REMOTE:\n" + remoteVector.getBody().getClocksMap());
         dag.updateVCForDevice(config.getRemoteId(), remoteVector);
-        Iterable<com.isaacsheff.charlotte.proto.Block> blocks =
+        List<Block> blocks =
                 dag.findMissedBlocksByVectorClock(remoteVector);
 
         /* Send blocks */
 
-        VegvisirProtocolMessage message = VegvisirProtocolMessage
-                .newBuilder().setMessageType(VegvisirProtocolMessage.MessageType.VECTOR_CLOCK)
-                .setVector(
-                        Vector.VectorMessage.newBuilder()
-                                .setAdd(
-                                        com.vegvisir.common.datatype.proto.AddBlocks.newBuilder()
-                                                .addAllBlocksToAdd(blocks)
-                                                .build()
-                                )
-                                .setType(Vector.VectorMessage.MessageType.BLOCKS)
-                                .build()
-                )
-                .build();
-        config.send(message);
-//        blocks.forEach(b -> {
-//            VegvisirProtocolMessage message = VegvisirProtocolMessage
-//                    .newBuilder().setMessageType(VegvisirProtocolMessage.MessageType.VECTOR_CLOCK)
-//                    .setVector(
-//                            Vector.VectorMessage.newBuilder()
-//                                    .setAdd(
-//                                            com.vegvisir.common.datatype.proto.AddBlocks.newBuilder()
-//                                                    .addBlocksToAdd(b)
-//                                                    .build()
-//                                    )
-//                                    .setType(Vector.VectorMessage.MessageType.BLOCKS)
-//                                    .build()
-//                    )
-//                    .build();
-//            config.send(message);
-//        });
+//        VegvisirProtocolMessage message = VegvisirProtocolMessage
+//                .newBuilder().setMessageType(VegvisirProtocolMessage.MessageType.VECTOR_CLOCK)
+//                .setVector(
+//                        Vector.VectorMessage.newBuilder()
+//                                .setAdd(
+//                                        com.vegvisir.common.datatype.proto.AddBlocks.newBuilder()
+//                                                .addAllBlocksToAdd(blocks)
+//                                                .build()
+//                                )
+//                                .setType(Vector.VectorMessage.MessageType.BLOCKS)
+//                                .build()
+//                )
+//                .build();
+//        config.send(message);
+        int rest2Sent = blocks.size();
+        for (Block b : blocks) {
+            VegvisirProtocolMessage message = VegvisirProtocolMessage
+                    .newBuilder().setMessageType(VegvisirProtocolMessage.MessageType.VECTOR_CLOCK)
+                    .setVector(
+                            Vector.VectorMessage.newBuilder()
+                                    .setAdd(
+                                            AddBlocks.newBuilder()
+                                                    .addBlocksToAdd(b)
+                                                    .build()
+                                    )
+                                    .setSendLimit(--rest2Sent)
+                                    .setType(Vector.VectorMessage.MessageType.BLOCKS)
+                                    .build()
+                    )
+                    .build();
+            config.send(message);
+        }
     }
 
 
@@ -182,9 +188,11 @@ public class VectorClockProtocol implements ReconciliationProtocol {
             case BLOCKS:
                 handleAddBlocks(message.getVector().getAdd().getBlocksToAddList());
 //                VegvisirStatsCollector.getInstance().logNewBlockCount(message.getVector().getAdd().getBlocksToAddList().size());
-                config.endProtocol();
-                synchronized (lock) {
-                    lock.notifyAll();
+                if (message.getVector().getSendLimit() == 0) {
+                    config.endProtocol();
+                    synchronized (lock) {
+                        lock.notifyAll();
+                    }
                 }
                 break;
             case LOCAL_VECTOR_CLOCK:

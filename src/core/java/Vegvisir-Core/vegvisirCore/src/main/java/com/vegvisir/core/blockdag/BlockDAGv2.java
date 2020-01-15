@@ -199,7 +199,7 @@ public class BlockDAGv2 extends BlockDAG {
      * @param remoteVC the vector clock from remote device.
      * @return a list of blocks to be sent.
      */
-    public Iterable<Block> findMissedBlocksByVectorClock(VectorClock remoteVC) {
+    public List<Block> findMissedBlocksByVectorClock(VectorClock remoteVC) {
         /* finding the last common frontier set */
         Set<Reference> commonFrontierSet = new HashSet<>();
         VectorClock myClock = computeFrontierSet();

@@ -136,7 +136,11 @@ public class ByteStream {
             if (payloadTransferUpdate.getTotalBytes() > 0) {
                 return;
             }
-            statsCollector.logDataTransferredEvent(payloadTransferUpdate.getBytesTransferred() - transferredPayloadMap.getOrDefault(payloadTransferUpdate.getPayloadId(), 0L));
+            long bytesTransferred = payloadTransferUpdate.getBytesTransferred() - transferredPayloadMap.getOrDefault(payloadTransferUpdate.getPayloadId(), 0L);
+            statsCollector.logDataTransferredEvent(bytesTransferred);
+            if (receivedPayloadMap.contains(payloadTransferUpdate.getPayloadId())) {
+                statsCollector.logReceivedPayloadSize(bytesTransferred);
+            }
             if (payloadTransferUpdate.getStatus() == PayloadTransferUpdate.Status.IN_PROGRESS) {
                 transferredPayloadMap.put(payloadTransferUpdate.getPayloadId(), payloadTransferUpdate.getBytesTransferred());
                 Log.d(TAG, "onPayloadTransferUpdate: In Progress Payload Transferred " + payloadTransferUpdate.getBytesTransferred());
@@ -144,7 +148,7 @@ public class ByteStream {
                 transferredPayloadMap.remove(payloadTransferUpdate.getPayloadId());
                 sentPayloadMap.remove(payloadTransferUpdate.getPayloadId());
                 if (receivedPayloadMap.contains(payloadTransferUpdate.getPayloadId())) {
-                    statsCollector.logReceivedPayloadSize(payloadTransferUpdate.getBytesTransferred());
+//                    statsCollector.logReceivedPayloadSize(payloadTransferUpdate.getBytesTransferred());
                     receivedPayloadMap.remove(payloadTransferUpdate.getPayloadId());
                 }
                 Log.d(TAG, "onPayloadTransferUpdate: Not in Progress Payload Transferred " + payloadTransferUpdate.getBytesTransferred() + " Status: "+payloadTransferUpdate.getStatus());
