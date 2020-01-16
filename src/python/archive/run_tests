@@ -1,3 +1,0 @@
-#1 /bin/bash -ha
-
-python3 -m unittest discover .
